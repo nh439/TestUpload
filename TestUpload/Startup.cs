@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestUpload.Repository.SQL;
 
 namespace TestUpload
 {
@@ -29,6 +30,15 @@ namespace TestUpload
             services.AddControllersWithViews();
             services.AddDbContext<DataContext>(options =>
         options.UseMySQL(Connstring));
+
+            #region Repository
+            services.AddScoped<LoginRepository>();
+            services.AddScoped<UserRepository>();
+            #endregion
+
+            #region Services
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

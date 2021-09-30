@@ -53,7 +53,7 @@
         </div>
         <div class="form-group row">
             <div class="offset-2 col-10">
-                <button name="submit" type="submit" class="btn btn-primary">Register</button>
+                <button name="submit" type="submit" class="btn btn-primary" id="Sub01">Register</button>
             </div>
         </div>
         <script>
@@ -62,9 +62,11 @@
                 var j = document.getElementById('ret').value;
                 if (i === j) {
                     document.getElementById('ms1').style.display = " none";
+                    document.getElementById('Sub01').disabled = false;
                 }
                 else {
                     document.getElementById('ms1').style.display = " block";
+                    document.getElementById('Sub01').disabled = true;
                 }
             }
         </script>
