@@ -9,8 +9,8 @@ using TestUpload;
 namespace TestUpload.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210930074446_Update Index")]
-    partial class UpdateIndex
+    [Migration("20210930082340_D")]
+    partial class D
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,12 +19,66 @@ namespace TestUpload.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.10");
 
+            modelBuilder.Entity("TestUpload.Models.Entity.FileStorage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<DateTime>("AddDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("FileExtension")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("FileSize")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("Filename")
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("RawData")
+                        .HasColumnType("longblob");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("fileStorage");
+                });
+
+            modelBuilder.Entity("TestUpload.Models.Entity.FileUpload", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<DateTime>("AddDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("FileExtension")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("FileSize")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("Filename")
+                        .HasColumnType("text");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("fileUploads");
+                });
+
             modelBuilder.Entity("TestUpload.Models.Entity.Login", b =>
                 {
                     b.Property<string>("Username")
                         .HasColumnType("varchar(767)");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Username");

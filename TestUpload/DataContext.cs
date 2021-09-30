@@ -18,6 +18,8 @@ namespace TestUpload
 
         public DbSet<User> User { get; set; }
         public DbSet<Login> login { get; set; }
+        public DbSet<FileStorage> fileStorage { get; set; }
+        public DbSet<FileUpload> fileUploads { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
