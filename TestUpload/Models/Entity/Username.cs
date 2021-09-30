@@ -21,6 +21,11 @@ namespace TestUpload.Models.Entity
         public string Rules { get; set; } = "User";
         public virtual Login Login { get; set; }
 
+        [Required]
+        public bool Male { get; set; }
+
+        public DateTime BrithDay { get; set; }
+
     }
     public class Login
     {

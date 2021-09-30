@@ -18,5 +18,10 @@ namespace TestUpload.Controllers
         {
             return View();
         }
+        [HttpGet("user/register")]
+        public IActionResult register()
+        {
+            return View();
+        }
     }
 }
