@@ -27,6 +27,7 @@ namespace TestUpload.Models.Entity
         [Key]
         public string Username { get; set; }
         [Required]
+        [StringLength(514)]
         public string Password { get; set; }
     }
 }

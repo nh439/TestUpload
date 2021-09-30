@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TestUpload;
 
 namespace TestUpload.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210930131204_G")]
+    partial class G
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,28 +99,6 @@ namespace TestUpload.Migrations
                     b.HasKey("Username");
 
                     b.ToTable("login");
-                });
-
-            modelBuilder.Entity("TestUpload.Models.Entity.Session", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(767)");
-
-                    b.Property<string>("IpAddress")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("LoggedIn")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime?>("Loggedout")
-                        .HasColumnType("datetime");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("sessions");
                 });
 
             modelBuilder.Entity("TestUpload.Models.Entity.User", b =>
