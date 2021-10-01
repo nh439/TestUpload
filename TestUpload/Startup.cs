@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TestUpload.Repository.SQL;
+using TestUpload.Service;
 
 namespace TestUpload
 {
@@ -37,6 +38,7 @@ namespace TestUpload
             #endregion
 
             #region Services
+            services.AddScoped<IuserService, userService>();
 
             #endregion
         }
