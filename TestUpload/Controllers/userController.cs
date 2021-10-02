@@ -12,9 +12,11 @@ namespace TestUpload.Controllers
     public class userController : Controller
     {
         private readonly IuserService _iuserService ;
-        public userController(IuserService iuserService)
+        private readonly ILoginService _loginService;
+        public userController(IuserService iuserService,ILoginService loginService)
         {
             _iuserService = iuserService;
+            _loginService = loginService;
         }
 
         [HttpGet("/user")]
@@ -26,6 +28,19 @@ namespace TestUpload.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost("user/login")]
+        public IActionResult Logined()
+        {
+            string username = Request.Form["login"].ToString();
+            string password = Request.Form["pass"].ToString();
+            User principal = _loginService.GetLogin(username, password);
+            if(principal != null)
+            {
+                return Ok(principal);
+            }
+            return Ok(500);
         }
         [HttpGet("user/register")]
         public IActionResult register()

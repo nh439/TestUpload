@@ -35,10 +35,14 @@ namespace TestUpload
             #region Repository
             services.AddScoped<LoginRepository>();
             services.AddScoped<UserRepository>();
+            services.AddScoped<ChangepassRepository>();
             #endregion
 
             #region Services
-            services.AddScoped<IuserService, userService>();
+            services.AddScoped<IChangepasswordService, ChangepasswordService>();
+            services.AddScoped<IuserService, userService>();           
+            services.AddScoped<ILoginService, LoginService>();
+
 
             #endregion
         }
@@ -69,6 +73,8 @@ namespace TestUpload
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+          //  app.UseSession();
+            app.UseHttpsRedirection();
         }
     }
 }

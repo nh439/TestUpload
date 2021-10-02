@@ -21,6 +21,7 @@ namespace TestUpload
         public DbSet<FileStorage> fileStorage { get; set; }
         public DbSet<FileUpload> fileUploads { get; set; }
         public DbSet<Session> sessions { get; set; }
+        public DbSet<Changepassword> changepassword { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

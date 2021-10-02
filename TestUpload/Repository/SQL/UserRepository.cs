@@ -28,6 +28,10 @@ namespace TestUpload.Repository.SQL
             var data = _context.User.Where(x => x.Id == id).FirstOrDefault();
             return data;
         }
+        public User GetByUsername(String Username)
+        {
+            return _context.User.Where(x => x.Login.Username == Username).FirstOrDefault();
+        }
 
 
     }

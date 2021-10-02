@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TestUpload.Models.Entity;
+using TestUpload.Repository.SQL;
+using TestUpload.Securities;
+
+namespace TestUpload.Service
+{
+    public interface ILoginService
+    {
+         User GetLogin(string username, string password);
+    }
+    public class LoginService :ILoginService
+    {
+        private readonly LoginRepository _loginRepository;
+        private readonly UserRepository _userRepository;
+        public LoginService(LoginRepository loginRepository,UserRepository UserRepository)
+        {
+            _loginRepository = loginRepository;
+            _userRepository = UserRepository;
+        }
+        public User GetLogin(string username,string password)
+        {
+            PasswordHash passwordHash = new PasswordHash();
+            password = passwordHash.Create(username, password);
+            bool t = _loginRepository.GetLogin(username, password);
+            if(t)
+            {
+                var res = _userRepository.GetByUsername(username);
+                res.Login.Password = "PASSWORD";
+                return res;
+            }
+            return null;
+        }
+    }
+}

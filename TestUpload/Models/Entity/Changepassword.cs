@@ -12,6 +12,9 @@ namespace TestUpload.Models.Entity
         public long Id { get; set; }
         public long UserId { get; set; }
         public DateTime ChangeDate { get; set; } = DateTime.Now;
+        public bool BySystem { get; set; } = false;
+        public bool ResetPasswordRequire { get; set; } = false;
+
 
     }
 }
