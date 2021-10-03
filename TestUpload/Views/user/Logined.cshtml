@@ -3,13 +3,21 @@
 *@
 @{
 }
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
 <link rel="stylesheet" href="~/css/Login.css" />
 
 
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
-        <!-- Icon -->    
+        <!-- Icon -->      
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.result
+            </div>      
         <div class="fadeIn first">
             <h1><b>Login</b></h1>
         </div>

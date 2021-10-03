@@ -50,7 +50,7 @@ namespace TestUpload.Controllers
                 return Redirect("/");
             }
             ViewBag.result = "Username or Password Incorrect \n Please Try Again";
-            return Redirect("login");
+            return View();
         }
         [HttpGet("user/logout")]
         public IActionResult Logout()

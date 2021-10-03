@@ -1,16 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Mvc
+@inject IHttpContextAccessor HttpContextAccessor
 <div class="text-center">
     <h1 class="display-4">File Center</h1>
-    
+
 </div>
 <br />
 <div class="ui three column grid">
     <div class="column ">
         <div class="ui segment bg-primary">
-           <h1><b>Total Users</b></h1> 
+            <h1><b>Total Users</b></h1>
             <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.Totaluser</div>
         </div>
 
@@ -30,3 +32,104 @@
 
     </div>
 </div>
+@if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
+{
+    <h1><b>My Storage</b></h1>
+    <hr />
+    <div class="ui three column grid">
+        <div class="column ">
+            <div class="ui segment bg-info">
+                <h1><b>Files</b></h1>
+                <div style="text-align: right; font-size: xx-large; font-weight: bold ">0</div>
+            </div>
+
+        </div>
+        <div class="column ">
+            <div class="ui segment bg-warning" style="color:black">
+                <h1><b>Blob</b></h1>
+                <div style="text-align: right; font-size: xx-large; font-weight: bold">0</div>
+            </div>
+        </div>
+        <div class="column ">
+            <div class="ui segment bg-warning" style="color:black">
+                <h1><b>Data Useage</b></h1>
+                <div style="text-align: right; font-size: xx-large; font-weight: bold">0</div>
+            </div>
+        </div>
+
+    </div>
+    <h1><b>Services</b></h1>
+    <div class="ui three column grid">
+        <div class="column">
+            <div id="f01" class="ui icon message" onmouseover="Hoverd('f01')" onmouseout="Unhoverd('f01')">
+                <i class="archive icon"></i>
+                <div class="content">
+                    <h1>My Uploads</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div id="f02" class="ui icon message" onmouseover="Hoverd('f02')" onmouseout="Unhoverd('f02')">
+                <i class="file icon"></i>
+                <div class="content">
+                    <h1>Upload Files</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div id="f03" class="ui icon message" onmouseover="Hoverd('f03')" onmouseout="Unhoverd('f03')">
+                <i class="server icon"></i>
+                <div class="content">
+                    <h1>Upload Blob</h1>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <h1>My Profile</h1>
+    <hr />
+    <div class="ui three column grid">
+        <div class="column">
+            <div id="f04" class="ui icon message" onmouseover="Hoverd('f04')" onmouseout="Unhoverd('f04')">
+                <i class="user icon"></i>
+                <div class="content">
+                    <h1>View Profile</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div id="f05" class="ui icon message" onmouseover="Hoverd('f05')" onmouseout="Unhoverd('f05')">
+                <i class="key icon"></i>
+                <div class="content">
+                    <h1>Change Password</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div id="f06" class="ui icon message" onmouseover="Hoverd('f05')" onmouseout="Unhoverd('f05')">
+                <i class="lock icon"></i>
+                <div class="content">
+                    <h1>Account Authencation</h1>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function Hoverd(x) {
+            document.getElementById(x).className = "ui icon message bg-info";
+
+        }
+
+        function Unhoverd(x) {
+            document.getElementById(x).className = "ui icon message";
+
+        }
+    </script>
+}
+
