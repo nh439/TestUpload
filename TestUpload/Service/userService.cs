@@ -13,6 +13,7 @@ namespace TestUpload.Service
          bool Register(User item);
          User GetWithoutPassword(long id);
          User GetByUsername(string Username);
+         Task<List<User>> GetallUsersAsync();
     }
     public class userService :IuserService
     {
@@ -47,16 +48,11 @@ namespace TestUpload.Service
             user.Login.Password = "PASSWORD";
             return user;
         }
-       public List<User> GetallUsers()
+       public async Task<List<User>> GetallUsersAsync()
         {
-            var users = _userRepository.Getall();
-            List<User> data = new List<User>();
-            foreach (var i in users)
-            {
-                i.Login.Password = "PASSWORD";
-                data.Add(i);
-            }
-            return data;
+            var users = await  _userRepository.GetallAsync();
+            
+            return users;
         }
 
 

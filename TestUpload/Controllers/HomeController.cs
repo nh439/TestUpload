@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TestUpload.Models;
 using TestUpload.Service;
+using TestUpload.Models.Entity;
 
 namespace TestUpload.Controllers
 {
@@ -21,9 +22,10 @@ namespace TestUpload.Controllers
             _iuserService = iuserService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            
+            var i = await _iuserService.GetallUsersAsync();
+            ViewBag.Totaluser = i.Count;
 
             return View();
         }

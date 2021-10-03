@@ -4,17 +4,18 @@
 @{
 }
 <link rel="stylesheet" href="~/css/Login.css" />
-@if (!string.IsNullOrEmpty(ViewBag.result))
-{
-    <div class="alert alert-danger" role="alert">
-       @ViewBag.result
-    </div>
-}
+
 
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
         <!-- Icon -->
+        @if (!string.IsNullOrEmpty(ViewBag.result))
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.result
+            </div>
+        }
         <div class="fadeIn first">
             <h1><b>Login</b></h1>
         </div>
