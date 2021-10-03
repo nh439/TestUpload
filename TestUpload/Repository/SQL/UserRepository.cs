@@ -32,6 +32,10 @@ namespace TestUpload.Repository.SQL
         {
             return _context.User.Where(x => x.Login.Username == Username).FirstOrDefault();
         }
+        public List<User> Getall()
+        {
+            return _context.User.OrderBy(x => x.Registerd).ToList();
+        }
 
 
     }

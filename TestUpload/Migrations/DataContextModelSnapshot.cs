@@ -113,6 +113,29 @@ namespace TestUpload.Migrations
                     b.ToTable("fileUploads");
                 });
 
+            modelBuilder.Entity("TestUpload.Models.Entity.History", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("FileMode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Filename")
+                        .HasColumnType("text");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("History");
+                });
+
             modelBuilder.Entity("TestUpload.Models.Entity.Login", b =>
                 {
                     b.Property<string>("Username")
@@ -128,7 +151,7 @@ namespace TestUpload.Migrations
                     b.ToTable("login");
                 });
 
-            modelBuilder.Entity("TestUpload.Models.Entity.Session", b =>
+            modelBuilder.Entity("TestUpload.Models.Entity.Sessions", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(767)");

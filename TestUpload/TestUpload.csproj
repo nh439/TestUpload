@@ -17,10 +17,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
     <PackageReference Include="MySql.Data.EntityFramework" Version="8.0.26" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.5" />
+    <PackageReference Include="Semantic-UI-2.0" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Models\View\" />
+    <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
 </Project>

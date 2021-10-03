@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+    <metadata minClientVersion="2.0">
+        <id>Semantic-UI-2.0</id>
+        <version>2.01</version>
+        <title>Semantic UI JavaScript and CSS framework</title>
+        <authors>Semantic Org (packaged by Ahmad Hmoud)</authors>
+        <owners>Semantic Org</owners>
+        <licenseUrl>https://github.com/Semantic-Org/Semantic-UI/blob/master/LICENSE.md</licenseUrl>
+        <projectUrl>http://semantic-ui.com/</projectUrl>
+        <iconUrl>http://semantic-ui.com/images/logo.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Semantic is a UI framework designed for theming.</description>
+        <tags>UI JavaScript</tags>
+        <dependencies>
+            <dependency id="jQuery" version="1.8.1" />
+        </dependencies>
+    </metadata>
+</package>

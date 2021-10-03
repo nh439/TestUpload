@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace TestUpload.Models.Entity
 {
-    public class Session
+    public class History
     {
         [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public long Id { get; set; }
+        public string Filename { get; set; }
+        public string FileMode { get; set; }
         public long UserId { get; set; }
-        public DateTime LoggedIn { get; set; }
-        public DateTime? Loggedout { get; set; }
-        public string IpAddress { get; set; }
-
+        public DateTime Date { get; set; } = DateTime.Now;
     }
 }

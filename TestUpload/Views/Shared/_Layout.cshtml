@@ -6,16 +6,23 @@
     <title>@ViewData["Title"] - TestUpload</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    
+    <link rel="stylesheet" href="~/lib/semantic-ui-2.0/2.1.0/Content/Content/semantic.css" />
+
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    
+    <script src="~/lib/semantic-ui-2.0/2.1.0/Content/Scripts/semantic.js"></script>
+
+    @using Microsoft.AspNetCore.Http
+    @using Microsoft.AspNetCore.Mvc
+    @inject IHttpContextAccessor HttpContextAccessor
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-info border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-info border-bottom box-shadow mb-3" style="font-size:x-large">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TestUpload</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">File Center</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -28,12 +35,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">@HttpContextAccessor.HttpContext.Session.GetString("fn")&nbsp;@HttpContextAccessor.HttpContext.Session.GetString("ln")</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Uploads</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="logout">Log Out</a>
+                            </li>
+                        }
+                        else
+                        {
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="Login">Login</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="register">Register</a>
                         </li>
+                        }
+
                     </ul>
                 </div>
             </div>
@@ -45,7 +69,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted bg-success" >
         <div class="container">
             &copy; 2564 - TestUpload - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

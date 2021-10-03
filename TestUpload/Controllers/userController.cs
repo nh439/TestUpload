@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TestUpload.Models.Entity;
+using TestUpload.Profile;
 using TestUpload.Service;
+
+
 
 
 namespace TestUpload.Controllers
@@ -38,9 +42,21 @@ namespace TestUpload.Controllers
             User principal = _loginService.GetLogin(username, password);
             if(principal != null)
             {
-                return Ok(principal);
+                // System.Web.HttpContext.Current.Session("userId") = principal.Id;
+                HttpContext.Session.SetString("uid", principal.Id.ToString());
+                HttpContext.Session.SetString("fn", principal.Firstname);
+                HttpContext.Session.SetString("ln", principal.Lastname);
+                ViewBag.result = string.Empty;
+                return Redirect("/");
             }
-            return Ok(500);
+            ViewBag.result = "Username or Password Incorrect \n Please Try Again";
+            return Redirect("user/login");
+        }
+        [HttpGet("user/logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return Redirect("/");
         }
         [HttpGet("user/register")]
         public IActionResult register()

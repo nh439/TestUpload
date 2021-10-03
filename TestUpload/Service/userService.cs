@@ -47,6 +47,17 @@ namespace TestUpload.Service
             user.Login.Password = "PASSWORD";
             return user;
         }
+       public List<User> GetallUsers()
+        {
+            var users = _userRepository.Getall();
+            List<User> data = new List<User>();
+            foreach (var i in users)
+            {
+                i.Login.Password = "PASSWORD";
+                data.Add(i);
+            }
+            return data;
+        }
 
 
 

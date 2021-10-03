@@ -4,6 +4,12 @@
 @{
 }
 <link rel="stylesheet" href="~/css/Login.css" />
+@if (!string.IsNullOrEmpty(ViewBag.result))
+{
+    <div class="alert alert-danger" role="alert">
+       @ViewBag.result
+    </div>
+}
 
 <div class="wrapper fadeInDown">
     <div id="formContent">
@@ -16,7 +22,7 @@
         <!-- Login Form -->
         <form method="post">
             <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-            <input type="password" id="password" class="fadeIn third" name="pass" placeholder="password" >
+            <input type="password" id="password" class="fadeIn third" name="pass" placeholder="password">
             <input type="submit" class="fadeIn fourth" value="Log In" formaction="/user/login">
         </form>
 
