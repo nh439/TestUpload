@@ -40,6 +40,22 @@ namespace TestUpload.Migrations
                     b.ToTable("changepassword");
                 });
 
+            modelBuilder.Entity("TestUpload.Models.Entity.ErrorLog", b =>
+                {
+                    b.Property<string>("Reference")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<string>("ExceptionMessage")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InnerException")
+                        .HasColumnType("text");
+
+                    b.HasKey("Reference");
+
+                    b.ToTable("errorLog");
+                });
+
             modelBuilder.Entity("TestUpload.Models.Entity.FileStorage", b =>
                 {
                     b.Property<string>("Id")
@@ -122,16 +138,27 @@ namespace TestUpload.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("FileMode")
+                    b.Property<string>("Detail")
                         .HasColumnType("text");
 
-                    b.Property<string>("Filename")
+                    b.Property<string>("ErrorLogReference")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<string>("HistoryMode")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Issuccess")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("RelatedFile")
                         .HasColumnType("text");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ErrorLogReference");
 
                     b.ToTable("History");
                 });
@@ -212,6 +239,15 @@ namespace TestUpload.Migrations
                     b.HasIndex("LoginUsername");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("TestUpload.Models.Entity.History", b =>
+                {
+                    b.HasOne("TestUpload.Models.Entity.ErrorLog", "ErrorLog")
+                        .WithMany()
+                        .HasForeignKey("ErrorLogReference");
+
+                    b.Navigation("ErrorLog");
                 });
 
             modelBuilder.Entity("TestUpload.Models.Entity.User", b =>

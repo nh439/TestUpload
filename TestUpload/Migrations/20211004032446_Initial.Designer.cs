@@ -9,8 +9,8 @@ using TestUpload;
 namespace TestUpload.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211002130002_Update Changepass")]
-    partial class UpdateChangepass
+    [Migration("20211004032446_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -40,6 +40,22 @@ namespace TestUpload.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("changepassword");
+                });
+
+            modelBuilder.Entity("TestUpload.Models.Entity.ErrorLog", b =>
+                {
+                    b.Property<string>("Reference")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<string>("ExceptionMessage")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InnerException")
+                        .HasColumnType("text");
+
+                    b.HasKey("Reference");
+
+                    b.ToTable("errorLog");
                 });
 
             modelBuilder.Entity("TestUpload.Models.Entity.FileStorage", b =>
@@ -115,6 +131,40 @@ namespace TestUpload.Migrations
                     b.ToTable("fileUploads");
                 });
 
+            modelBuilder.Entity("TestUpload.Models.Entity.History", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Detail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ErrorLogReference")
+                        .HasColumnType("varchar(767)");
+
+                    b.Property<string>("HistoryMode")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Issuccess")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("RelatedFile")
+                        .HasColumnType("text");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ErrorLogReference");
+
+                    b.ToTable("History");
+                });
+
             modelBuilder.Entity("TestUpload.Models.Entity.Login", b =>
                 {
                     b.Property<string>("Username")
@@ -130,7 +180,7 @@ namespace TestUpload.Migrations
                     b.ToTable("login");
                 });
 
-            modelBuilder.Entity("TestUpload.Models.Entity.Session", b =>
+            modelBuilder.Entity("TestUpload.Models.Entity.Sessions", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(767)");
@@ -191,6 +241,15 @@ namespace TestUpload.Migrations
                     b.HasIndex("LoginUsername");
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("TestUpload.Models.Entity.History", b =>
+                {
+                    b.HasOne("TestUpload.Models.Entity.ErrorLog", "ErrorLog")
+                        .WithMany()
+                        .HasForeignKey("ErrorLogReference");
+
+                    b.Navigation("ErrorLog");
                 });
 
             modelBuilder.Entity("TestUpload.Models.Entity.User", b =>
