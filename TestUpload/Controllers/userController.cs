@@ -17,10 +17,12 @@ namespace TestUpload.Controllers
     {
         private readonly IuserService _iuserService ;
         private readonly ILoginService _loginService;
-        public userController(IuserService iuserService,ILoginService loginService)
+        private readonly IhistoryLogService service;
+        public userController(IuserService iuserService,ILoginService loginService, IhistoryLogService ihistory)
         {
             _iuserService = iuserService;
             _loginService = loginService;
+            service = ihistory;
         }
 
         [HttpGet("/user")]
@@ -80,13 +82,11 @@ namespace TestUpload.Controllers
                     fn = HttpContext.Request.Form["Fn"].ToString();
                     ln = HttpContext.Request.Form["Ln"].ToString();
                     Email = HttpContext.Request.Form["Email"].ToString();
-                    Rules = "user";
                     username = HttpContext.Request.Form["username"].ToString();
                     male = bool.Parse(HttpContext.Request.Form["Gender"].ToString());
                     brithday = DateTime.Parse(HttpContext.Request.Form["BR"].ToString());
                     principal = new User
-                    {
-                        Rules = Rules,
+                    {       
                         BrithDay = brithday,
                         Email = Email,
                         Firstname = fn,
@@ -101,6 +101,7 @@ namespace TestUpload.Controllers
                     var t = _iuserService.Register(principal);
                     if (t)
                     {
+                        service.CreateSuccessHistory("User", "Register", null, 0);
                         ViewBag.result = "Registerd Successful";
                         return View();
                     }
@@ -109,8 +110,9 @@ namespace TestUpload.Controllers
                 }
                 catch(Exception x)
                 {
-                    Console.WriteLine(x.Message);
-                    ViewBag.result = "Registerd Corruped";
+
+                    var i = service.CreateErrorHistory("User", "Register", null, 0, x.Message, x.InnerException.Message);
+                    ViewBag.result = "Registerd Corruped \n ref: "+i;
                     return View();
                 }
 

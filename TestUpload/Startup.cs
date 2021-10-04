@@ -39,12 +39,15 @@ namespace TestUpload
             services.AddScoped<LoginRepository>();
             services.AddScoped<UserRepository>();
             services.AddScoped<ChangepassRepository>();
+            services.AddScoped<HistoryRepository>();
+            services.AddScoped<ErrorLogRepository>();
             #endregion
 
             #region Services
             services.AddScoped<IChangepasswordService, ChangepasswordService>();
             services.AddScoped<IuserService, userService>();           
             services.AddScoped<ILoginService, LoginService>();
+            services.AddScoped<IhistoryLogService, historyLogService>();
 
 
             #endregion

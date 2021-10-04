@@ -38,7 +38,7 @@
                         @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">@HttpContextAccessor.HttpContext.Session.GetString("fn")&nbsp;@HttpContextAccessor.HttpContext.Session.GetString("ln")</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Uploads</a>
@@ -69,11 +69,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-success" >
-        <div class="container">
-            &copy; 2564 - TestUpload - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

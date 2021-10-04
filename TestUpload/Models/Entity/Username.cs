@@ -18,7 +18,7 @@ namespace TestUpload.Models.Entity
         [Required]
         public string Email { get; set; }
         public DateTime Registerd { get; set; } = DateTime.Now;
-        public string Rules { get; set; } = "User";
+        public bool Admin { get; set; } = false;
         public virtual Login Login { get; set; }
 
         [Required]
