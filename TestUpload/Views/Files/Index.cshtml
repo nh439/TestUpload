@@ -1,0 +1,220 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="document">
+    <center>
+        <h1><b>My Files</b></h1>
+    </center>
+    <br />
+    <br />
+    <button class="btn btn-primary">Add Files</button>
+    &nbsp;&nbsp;
+    <button class="btn btn-danger">Remove Selected</button>
+    <br />
+    <table class="table table-hover table-bordered" style="text-align:center">
+        <thead class="table-dark">
+            <tr>
+                <th></th>
+                <th>Id</th>
+                <th>Filename</th>
+                <th>Filesize</th>
+                <th>Password</th>
+                <th>action</th>
+
+            </tr>
+
+        </thead>
+        <tbody class="table-success">
+            <tr>
+                <td><input type="checkbox" /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>Harry Potter.rar</td>
+                <td>42.3Mb</td>
+                <td></td>
+                <td>
+                    <button class="btn btn-primary">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox" /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>Sonic Mania.rar</td>
+                <td>2.95GB</td>
+                <td></td>
+                <td>
+                    <button class="btn btn-primary">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" disabled /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>Assignment15.docx</td>
+                <td>135k</td>
+                <td><i class="flag icon"></i></td>
+                <td>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Assignment15.docx</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h1>Assignment15.docx Has Encrypted Require Password to unlock</h1>
+                                <br />
+                                <div class="form-group row">
+                                    <label for="pass" class="col-2 col-form-label">Password</label>
+                                    <div class="col-10">
+                                        <input id="pass" name="pass" type="password" class="form-control" value="" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox" disabled /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>BenzShop.php</td>
+                <td>1.2Mb</td>
+                <td><i class="flag icon"></i></td>
+                <td>
+                    <button class="btn btn-primary">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+
+
+        </tbody>
+
+    </table>
+    <br />
+    <br />
+    <center>
+        <h1>My Blob</h1>
+    </center>
+    <br />
+    <br />
+    <button class="btn btn-primary">Add Files</button>
+    &nbsp;&nbsp;
+    <button class="btn btn-danger">Remove Selected</button>
+    <br />
+    <table class="table table-hover table-bordered" style="text-align:center">
+        <thead class="table-dark">
+            <tr>
+                <th></th>
+                <th>Id</th>
+                <th>Filename</th>
+                <th>Filesize</th>
+                <th>Password</th>
+                <th>action</th>
+
+            </tr>
+
+        </thead>
+        <tbody class="table-success">
+            <tr>
+                <td><input type="checkbox" /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>Iron Man.rar</td>
+                <td>92.3MB</td>
+                <td></td>
+                <td>
+                    <button class="btn btn-primary">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox" /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>GTA San Andreas.rar</td>
+                <td>4.35GB</td>
+                <td></td>
+                <td>
+                    <button class="btn btn-primary">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" disabled /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>Form1.exe</td>
+                <td>935kB</td>
+                <td><i class="flag icon"></i></td>
+                <td>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+
+                <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Form1.exe</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h1>Form1.exe Has Encrypted Require Password to unlock</h1>
+                                <br />
+                                <div class="form-group row">
+                                    <label for="pass" class="col-2 col-form-label">Password</label>
+                                    <div class="col-10">
+                                        <input id="pass" name="pass" type="password" class="form-control" value="" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </tr>
+            <tr>
+                <td><input type="checkbox" /></td>
+                <td>@Guid.NewGuid().ToString()</td>
+                <td>Myfile.txt</td>
+                <td>1.2MB</td>
+                <td></td>
+                <td>
+                    <button class="btn btn-primary">Download</button>
+                    <button class="btn btn-warning">Change</button>
+                    <button class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+
+
+        </tbody>
+
+    </table>
+
+</div>

@@ -9,9 +9,9 @@
 @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
 {
 
-<div class="text-center">
-    <h1>Welcome Back @HttpContextAccessor.HttpContext.Session.GetString("fn")  @HttpContextAccessor.HttpContext.Session.GetString("ln")</h1>
-</div>
+    <div class="text-center">
+        <h1>Welcome Back @HttpContextAccessor.HttpContext.Session.GetString("fn")  @HttpContextAccessor.HttpContext.Session.GetString("ln")</h1>
+    </div>
 
     <hr />
     <br />
@@ -76,7 +76,7 @@ else
     <h1><b>Services</b></h1>
     <div class="ui three column grid">
         <div class="column">
-            <div id="f01" class="ui icon message" onmouseover="Hoverd('f01')" onmouseout="Unhoverd('f01')">
+            <div id="f01" class="ui icon message" onmouseover="Hoverd('f01')" onmouseout="Unhoverd('f01')" onclick="window.location.href = '/files';">
                 <br />
                 <i class="archive icon"></i>
                 <div class="content">
@@ -188,15 +188,66 @@ else
     </div>
 }
 
-<script>
-    function Hoverd(x) {
-        document.getElementById(x).className = "ui icon message bg-info";
+@if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("admin")))
+{
+    <h1><b>Admin Tools</b></h1>
+    <hr />
+    <div class="ui three column grid">
+        <div class="column">
+            <div id="f10" class="ui icon message" onmouseover="Hoverd('f10')" onmouseout="Unhoverd('f10')">
+                <br />
+                <i class="address card icon"></i>
+                <div class="content">
+                    <h1>User Management</h1>
+                </div>
+                <br />
+            </div>
+        </div>
+        <div class="column">
+            <div id="f11" class="ui icon message" onmouseover="Hoverd('f11')" onmouseout="Unhoverd('f11')">
+                <br />
+                <i class="upload icon"></i>
+                <div class="content">
+                    <h1>All Uploads</h1>
+                </div>
+                <br />
+            </div>
+        </div>
 
-    }
+        <div class="column">
+            <div id="f12" class="ui icon message" onmouseover="Hoverd('f12')" onmouseout="Unhoverd('f12')">
+                <br />
+                <i class="stop icon"></i>
+                <div class="content">
+                    <h1>Suspend Accounts</h1>
+                </div>
+                <br />
+            </div>
+        </div>
 
-    function Unhoverd(x) {
-        document.getElementById(x).className = "ui icon message";
+        <div class="column">
+            <div id="f13" class="ui icon message" onmouseover="Hoverd('f13')" onmouseout="Unhoverd('f13')">
+                <br />
+                <i class="folder icon"></i>
+                <div class="content">
+                    <h1>Restricted Extension</h1>
+                </div>
+                <br />
+            </div>
+        </div>
 
-    }
-</script>
+    </div>
+        }
+
+        <script>
+            function Hoverd(x) {
+                document.getElementById(x).className = "ui icon message bg-info";
+
+            }
+
+            function Unhoverd(x) {
+                document.getElementById(x).className = "ui icon message";
+
+            }
+        </script>
 
