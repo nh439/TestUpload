@@ -15,17 +15,31 @@ namespace TestUpload.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IuserService _iuserService;
+        private readonly IFileUploadService _ifileUploadService;
+        private readonly IFileStorageService _ifileStorageService;
 
-        public HomeController(ILogger<HomeController> logger,IuserService iuserService)
+        public HomeController(ILogger<HomeController> logger,
+            IuserService iuserService,
+            IFileStorageService fileStorageService,
+            IFileUploadService fileUploadService
+            )
         {
             _logger = logger;
             _iuserService = iuserService;
+            _ifileStorageService = fileStorageService;
+            _ifileUploadService = fileUploadService;
         }
 
         public async Task<IActionResult> Index()
         {
             var i = await _iuserService.GetallUsersAsync();
+            var f = await _ifileUploadService.GetAllFileUploadsAsync();
+            var s = await _ifileStorageService.GetAllFileStoragesAsync();
+
             ViewBag.Totaluser = i.Count;
+            ViewBag.TotalFiles = f.Count;
+            ViewBag.TotalBlobs = s.Count;
+
 
             return View();
         }

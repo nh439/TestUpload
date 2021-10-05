@@ -1,25 +1,43 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
+@{ List<FileUpload> files = ViewBag.files;
+    List<FilestorageView> storage = ViewBag.storage;
 }
+@using TestUpload.Models.Entity;
+@using TestUpload.Models.View;
 <div class="document">
     <center>
         <h1><b>My Files</b></h1>
     </center>
     <br />
+
+    <div class="input-group mb-3" style="width:50%">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon3">Search Filenames</span>
+        </div>
+        <input type="text" class="form-control" id="KeyInp" aria-describedby="basic-addon3" onkeyup="Commonsearch()">
+        <div class="input-group-append">
+            <button class="btn btn-warning" type="button" id="button-addon2" data-toggle="modal" data-target="#exampleModal">Advanced Search</button>
+        </div>
+    </div>
     <br />
     <button class="btn btn-primary">Add Files</button>
     &nbsp;&nbsp;
     <button class="btn btn-danger">Remove Selected</button>
     <br />
-    <table class="table table-hover table-bordered" style="text-align:center">
+    <br />
+    <br />
+    <table class="table table-hover table-bordered" style="text-align:center" id="Myupload">
         <thead class="table-dark">
             <tr>
                 <th></th>
                 <th>Id</th>
                 <th>Filename</th>
                 <th>Filesize</th>
+                <th>Date Created</th>
+                <th>Date Updated</th>
+                <th>Stored Type</th>
                 <th>Password</th>
                 <th>action</th>
 
@@ -27,194 +45,294 @@
 
         </thead>
         <tbody class="table-success">
-            <tr>
-                <td><input type="checkbox" /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>Harry Potter.rar</td>
-                <td>42.3Mb</td>
-                <td></td>
-                <td>
-                    <button class="btn btn-primary">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
+            @foreach (FileUpload file in files)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(file.pass))
+                        {
+                            <input type="checkbox" disabled />
 
-            </tr>
-            <tr>
-                <td><input type="checkbox" /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>Sonic Mania.rar</td>
-                <td>2.95GB</td>
-                <td></td>
-                <td>
-                    <button class="btn btn-primary">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" disabled /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>Assignment15.docx</td>
-                <td>135k</td>
-                <td><i class="flag icon"></i></td>
-                <td>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
+                        }
+                        else
+                        {
+                            <input type="checkbox" />
+                        }
+                    </td>
+                    <td>@file.Id</td>
+                    <td>@file.Filename@file.FileExtension</td>
+                    <td>@file.FileSize</td>
+                    <td>@file.AddDate.ToLongDateString()</td>
+                    <td>@file.LastUpdate.ToLongDateString()</td>
+                    <td>File</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(file.pass))
+                        {
+                            <i class="flag icon"></i>
+                        }
+                    </td>
 
-                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Assignment15.docx</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <h1>Assignment15.docx Has Encrypted Require Password to unlock</h1>
-                                <br />
-                                <div class="form-group row">
-                                    <label for="pass" class="col-2 col-form-label">Password</label>
-                                    <div class="col-10">
-                                        <input id="pass" name="pass" type="password" class="form-control" value="" required>
+                    <td>
+                        @if (!string.IsNullOrEmpty(file.pass))
+                        {
+                            <i class="download icon" data-toggle="modal" data-target="#@file.Id"></i>
+                            <i class="eye icon"></i>
+                            <i class="trash alternate icon"></i>
+                        }
+                        else
+                        {
+                            <i class="download icon"></i>
+                            <i class="eye icon"></i>
+                            <i class="trash alternate icon"></i>
+                        }
+                    </td>
+                    @if (!string.IsNullOrEmpty(file.pass))
+                    {
+                        <form method="post">
+                            <div class="modal fade" id="@file.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">@file.Filename@file.FileExtension</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h1>@file.Filename@file.FileExtension Has Encrypted Require Password to unlock</h1>
+                                            <br />
+                                            <div class="form-group row">
+                                                <label for="pass" class="col-2 col-form-label">Password</label>
+                                                <input type="hidden" name="fid" value="@file.Id" />
+                                                <div class="col-10">
+                                                    <input id="pass" name="pass" type="password" class="form-control" value="" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary" asp-controller="" asp-action="">Download</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Download</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        </form>
+                    }
+                </tr>
+            }
 
-            </tr>
-            <tr>
-                <td><input type="checkbox" disabled /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>BenzShop.php</td>
-                <td>1.2Mb</td>
-                <td><i class="flag icon"></i></td>
-                <td>
-                    <button class="btn btn-primary">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
-            </tr>
+            @foreach (FilestorageView file in storage)
+            {
+                
+                    var md = file.Id + "-B";
+                
+                <tr>
+                    <td>
+                        @if (file.HasPassword)
+                        {
+                            <input type="checkbox" disabled />
 
+                        }
+                        else
+                        {
+                            <input type="checkbox" />
+                        }
+                    </td>
+                    <td>@file.Id</td>
+                    <td>@file.Filename@file.FileExtension</td>
+                    <td>@file.FileSize</td>
+                    <td>@file.AddDate.ToLongDateString()</td>
+                    <td>@file.LastUpdate.ToLongDateString()</td>
+                    <td>Blob Storage</td>
+                    <td>
+                        @if (file.HasPassword)
+                        {
+                            <i class="flag icon"></i>
+                        }
+                    </td>
 
-        </tbody>
-
-    </table>
-    <br />
-    <br />
-    <center>
-        <h1>My Blob</h1>
-    </center>
-    <br />
-    <br />
-    <button class="btn btn-primary">Add Files</button>
-    &nbsp;&nbsp;
-    <button class="btn btn-danger">Remove Selected</button>
-    <br />
-    <table class="table table-hover table-bordered" style="text-align:center">
-        <thead class="table-dark">
-            <tr>
-                <th></th>
-                <th>Id</th>
-                <th>Filename</th>
-                <th>Filesize</th>
-                <th>Password</th>
-                <th>action</th>
-
-            </tr>
-
-        </thead>
-        <tbody class="table-success">
-            <tr>
-                <td><input type="checkbox" /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>Iron Man.rar</td>
-                <td>92.3MB</td>
-                <td></td>
-                <td>
-                    <button class="btn btn-primary">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
-
-            </tr>
-            <tr>
-                <td><input type="checkbox" /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>GTA San Andreas.rar</td>
-                <td>4.35GB</td>
-                <td></td>
-                <td>
-                    <button class="btn btn-primary">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" disabled /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>Form1.exe</td>
-                <td>935kB</td>
-                <td><i class="flag icon"></i></td>
-                <td>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
-
-                <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Form1.exe</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <h1>Form1.exe Has Encrypted Require Password to unlock</h1>
-                                <br />
-                                <div class="form-group row">
-                                    <label for="pass" class="col-2 col-form-label">Password</label>
-                                    <div class="col-10">
-                                        <input id="pass" name="pass" type="password" class="form-control" value="" required>
+                    <td>
+                        @if (file.HasPassword)
+                        {
+                            <i class="download icon" data-toggle="modal" data-target="#@md"></i>
+                            <i class="eye icon"></i>
+                            <i class="trash alternate icon"></i>
+                        }
+                        else
+                        {
+                            <i class="download icon"></i>
+                            <i class="eye icon"></i>
+                            <i class="trash alternate icon"></i>
+                        }
+                    </td>
+                    @if (file.HasPassword)
+                    {
+                        <form method="post">
+                            <div class="modal fade" id="@md" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">@file.Filename@file.FileExtension</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h1>@file.Filename@file.FileExtension Has Encrypted Require Password to unlock</h1>
+                                            <br />
+                                            <div class="form-group row">
+                                                <label for="pass" class="col-2 col-form-label">Password</label>
+                                                <input type="hidden" name="fid" value="@file.Id" />
+                                                <div class="col-10">
+                                                    <input id="pass" name="pass" type="password" class="form-control" value="" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary" asp-controller="" asp-action="">Download</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Download</button>
+                        </form>
+                    }
+                </tr>
+            }
+
+            @if ((files == null || files.Count == 0) && (storage == null || storage.Count == 0))
+            {
+            <td colspan="9"> No Uploaded Files</td>
+        }
+
+
+            </tbody>
+
+        </table>
+        <br />
+        <br />
+
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Advanced Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+
+                        <h1>Add Date</h1>
+                        <hr />
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
+                            </div>
+                            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">End</span>
+                            </div>
+                            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
+
+                        <h1>Last Updated</h1>
+                        <hr />
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
+                            </div>
+                            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">End</span>
+                            </div>
+                            <input type="date" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <hr />
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">File Extension</span>
+                            </div>
+                            <select class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="0">All Extension</option>
+                                <option value="1">.php</option>
+                                <option value="2">.py</option>
+                                <option value="3">.cs</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-4"><h3>Storage Type</h3></label>
+                            <div class="col-8">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input name="radio" id="radio_0" type="radio" class="custom-control-input" value="0" checked>
+                                    <label for="radio_0" class="custom-control-label">All</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input name="radio" id="radio_1" type="radio" class="custom-control-input" value="1">
+                                    <label for="radio_1" class="custom-control-label">Files</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input name="radio" id="radio_2" type="radio" class="custom-control-input" value="2">
+                                    <label for="radio_2" class="custom-control-label">Blob</label>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="form-group row">
+                            <div class="col-8">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input name="checkbox1" id="checkbox1_0" type="checkbox" class="custom-control-input" value="rabbit">
+                                    <label for="checkbox1_0" class="custom-control-label">Has Password</label>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                     </div>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-            </tr>
-            <tr>
-                <td><input type="checkbox" /></td>
-                <td>@Guid.NewGuid().ToString()</td>
-                <td>Myfile.txt</td>
-                <td>1.2MB</td>
-                <td></td>
-                <td>
-                    <button class="btn btn-primary">Download</button>
-                    <button class="btn btn-warning">Change</button>
-                    <button class="btn btn-danger">Delete</button>
-                </td>
-            </tr>
+    <script>
+        function Commonsearch() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("KeyInp");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("Myupload");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
 
 
-        </tbody>
 
-    </table>
-
-</div>
+            }
+            console.log(filter);
+        }
+    </script>

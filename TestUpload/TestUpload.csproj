@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Models\View\" />
     <Folder Include="wwwroot\img\" />
     <Folder Include="wwwroot\attachment\" />
   </ItemGroup>

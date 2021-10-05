@@ -41,6 +41,8 @@ namespace TestUpload
             services.AddScoped<ChangepassRepository>();
             services.AddScoped<HistoryRepository>();
             services.AddScoped<ErrorLogRepository>();
+            services.AddScoped<FileUploadRepository>();
+            services.AddScoped<FileStorageRepository>();
             #endregion
 
             #region Services
@@ -48,8 +50,8 @@ namespace TestUpload
             services.AddScoped<IuserService, userService>();           
             services.AddScoped<ILoginService, LoginService>();
             services.AddScoped<IhistoryLogService, historyLogService>();
-
-
+            services.AddScoped<IFileUploadService, FileUploadService>();
+            services.AddScoped<IFileStorageService, FileStorageService>();
             #endregion
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession(options =>
