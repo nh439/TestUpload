@@ -1,0 +1,115 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<center>
+    <h1>Upload Files</h1>
+</center>
+<br />
+<br />
+<div class="container-fluid">
+    <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <center>
+                <div>
+                    <label for="Files" class="form-label">File Input</label>
+                    <input class="" type="file" id="Files" name="Files" multiple required onchange="ShowFile()">
+                </div>
+            </center>
+        </div>
+        <br />
+        <br />
+        <div class="form-group row">
+            <label class="col-4">Storage Type</label>
+            <div class="col-8">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input name="Storage" id="Storage_0" type="radio" checked class="custom-control-input" value="0">
+                    <label for="Storage_0" class="custom-control-label">Files</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input name="Storage" id="Storage_1" type="radio" class="custom-control-input" value="1">
+                    <label for="Storage_1" class="custom-control-label">Blobs</label>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="form-group row" >
+            <div class="col-8">
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input name="checkbox" id="checkbox_0" type="checkbox" class="custom-control-input" value="rabbit" onchange="showpass()">
+                    <label for="checkbox_0" class="custom-control-label">Password Encryption(Optional)</label>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="form-group row" id="PSD" style="display:none">
+            <label for="text" class="col-2 col-form-label">Password</label>
+            <div class="col-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <i class="fa fa-key"></i>
+                        </div>
+                    </div>
+                    <input id="pass" name="pass" type="password" class="form-control">
+                </div>
+            </div>
+        </div>
+        <br />
+        <h2>Filelist</h2>
+        <hr />
+        <div>
+            <table class="table table table-bordered" style="text-align:center" id="Filelist">
+                <thead class="bg-warning">
+                    <tr>
+                        <th>Filenames</th>
+                        <th>File Type</th>
+                        <th>FileSize</th> 
+                    </tr>
+                </thead>
+                <tbody id="Tablebody" class="table-danger"></tbody>
+            </table>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-outline-primary">Submit</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    function showpass() {
+        var x = document.getElementById("checkbox_0");
+        var f = document.getElementById("PSD");
+        var i = x.checked;
+        if (i) {
+            f.style.display = '';
+        }
+        else {
+            f.style.display = 'none';
+        }
+        
+    }
+    function ShowFile() {
+        var table = document.getElementById("Tablebody");
+        var Files = document.getElementById('Files');
+        $("#Tablebody").empty();
+        for (var i = 0; i < Files.files.length; i++) {
+            console.log(i);
+            var fst = Files.files[i];
+            console.log(fst);
+            var row = table.insertRow(i);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+          //  var cell4 = row.insertCell(3);
+            cell1.innerHTML = fst.name;
+            cell2.innerHTML = fst.type;
+            cell3.innerHTML = fst.size+" bytes";
+          //  cell4.innerHTML = "<i class='trash alternate icon'></i>";
+        }
+    }
+</script>

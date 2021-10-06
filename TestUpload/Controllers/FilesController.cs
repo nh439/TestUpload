@@ -36,5 +36,15 @@ namespace TestUpload.Controllers
             }
             return Redirect("/");
         }
+        [HttpGet("/Files/Uploads")]
+        public IActionResult Uploads()
+        {
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            {
+                return View();
+            }
+            return Redirect("/");
+        }
+
     }
 }

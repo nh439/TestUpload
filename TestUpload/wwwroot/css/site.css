@@ -59,10 +59,12 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
-  background-image: url(/img/bg.jpg);
-  color:white;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    /* background-image: url(/img/bg.jpg);
+ color:white;*/
+    background-color: #181818;
+    color: white;
 }
 .footer {
   position: absolute;

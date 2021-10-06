@@ -27,7 +27,25 @@ namespace TestUpload.Securities
             return hash;
         }
 
-         public string DecodeFrom64(string encodedData)
+        public string CreateEncrypted(string key, string password)
+        {
+            // string p = key + password + password + key + key + password;
+            string p = password + key + key + password + password + key;
+            string hash;
+            for (int i = 0; i <= 10; i++)
+            {
+                p = EncodeTo64(p);
+            }
+            using (var md5 = MD5.Create())
+            {
+                byte[] sourceBytes = Encoding.UTF8.GetBytes(p);
+                byte[] hashBytes = md5.ComputeHash(sourceBytes);
+                hash = BitConverter.ToString(hashBytes).Replace("-", String.Empty);
+            }
+            return hash;
+        }
+
+        public string DecodeFrom64(string encodedData)
 
         {
 
