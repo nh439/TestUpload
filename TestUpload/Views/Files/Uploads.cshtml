@@ -3,6 +3,8 @@
 *@
 @{
 }
+<link rel=" stylesheet" href="~/css/Loading.css" />
+<script src="~/js/Upload.js" > </script>
 <center>
     <h1>Upload Files</h1>
 </center>
@@ -13,7 +15,7 @@
         <div class="mb-3">
             <center>
                 <div>
-                    <label for="Files" class="form-label">File Input</label>
+                    <label for="Files" class="form-label">File Input(maximum 2.1GB)</label>
                     <input class="" type="file" id="Files" name="Files" multiple required onchange="ShowFile()">
                 </div>
             </center>
@@ -35,7 +37,7 @@
         </div>
         <br />
         <br />
-        <div class="form-group row" >
+        <div class="form-group row">
             <div class="col-8">
                 <div class="custom-control custom-checkbox custom-control-inline">
                     <input name="checkbox" id="checkbox_0" type="checkbox" class="custom-control-input" value="rabbit" onchange="showpass()">
@@ -58,6 +60,12 @@
                 </div>
             </div>
         </div>
+        <div class="form-group row">
+            <label for="textarea" class="col-4 col-form-label">Text Area</label>
+            <div class="col-8">
+                <textarea name="com" id="textarea" cols="40" rows="5" class="form-control"></textarea>
+            </div>
+        </div>
         <br />
         <h2>Filelist</h2>
         <hr />
@@ -67,49 +75,42 @@
                     <tr>
                         <th>Filenames</th>
                         <th>File Type</th>
-                        <th>FileSize</th> 
+                        <th>FileSize</th>
                     </tr>
                 </thead>
                 <tbody id="Tablebody" class="table-danger"></tbody>
             </table>
         </div>
+        <div id="Total"></div>
         <div>
-            <button type="submit" class="btn btn-outline-primary">Submit</button>
+            <button type="submit" id="S01" class="btn btn-outline-primary" formaction="Uploads" onclick="Submitted()" disabled>Submit</button>
+
         </div>
 
     </form>
 </div>
 
-<script>
-    function showpass() {
-        var x = document.getElementById("checkbox_0");
-        var f = document.getElementById("PSD");
-        var i = x.checked;
-        if (i) {
-            f.style.display = '';
-        }
-        else {
-            f.style.display = 'none';
-        }
-        
-    }
-    function ShowFile() {
-        var table = document.getElementById("Tablebody");
-        var Files = document.getElementById('Files');
-        $("#Tablebody").empty();
-        for (var i = 0; i < Files.files.length; i++) {
-            console.log(i);
-            var fst = Files.files[i];
-            console.log(fst);
-            var row = table.insertRow(i);
-            var cell1 = row.insertCell(0);
-            var cell2 = row.insertCell(1);
-            var cell3 = row.insertCell(2);
-          //  var cell4 = row.insertCell(3);
-            cell1.innerHTML = fst.name;
-            cell2.innerHTML = fst.type;
-            cell3.innerHTML = fst.size+" bytes";
-          //  cell4.innerHTML = "<i class='trash alternate icon'></i>";
-        }
-    }
-</script>
+
+<div class="modal fade" id="Subbmitted" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Uploading</h5>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <div class="loader"></div>
+                    <br />
+                    <br />
+                  <h1><b>File Uploading...</b></h1>  
+                </center>
+            </div>
+            <div class="modal-footer">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

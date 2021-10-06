@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.1.0" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.10">
       <PrivateAssets>all</PrivateAssets>
@@ -22,8 +23,9 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="attachment\" />
     <Folder Include="wwwroot\img\" />
-    <Folder Include="wwwroot\attachment\" />
+    <Folder Include="wwwroot\Temp\" />
   </ItemGroup>
 
 </Project>

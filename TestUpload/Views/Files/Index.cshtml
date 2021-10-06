@@ -32,13 +32,13 @@
         <thead class="table-dark">
             <tr>
                 <th></th>
-                <th>Id</th>
-                <th>Filename</th>
-                <th>Filesize</th>
-                <th>Date Created</th>
-                <th>Date Updated</th>
-                <th>Stored Type</th>
-                <th>Password</th>
+                <th onclick="sortTable(1)">Id</th>
+                <th onclick="sortTable(2)">Filename</th>
+                <th onclick="sortTable(3)">Filesize</th>
+                <th onclick="sortTable(4)">Date Created</th>
+                <th onclick="sortTable(5)">Date Updated</th>
+                <th onclick="sortTable(6)">Stored Type</th>
+                <th onclick="sortTable(7)">Password</th>
                 <th>action</th>
 
             </tr>
@@ -72,52 +72,12 @@
                         }
                     </td>
 
-                    <td>
-                        @if (!string.IsNullOrEmpty(file.pass))
-                        {
-                            <i class="download icon" data-toggle="modal" data-target="#@file.Id"></i>
-                            <i class="eye icon"></i>
-                            <i class="trash alternate icon"></i>
-                        }
-                        else
-                        {
+                    <td>                                              
                             <i class="download icon"></i>
                             <i class="eye icon"></i>
-                            <i class="trash alternate icon"></i>
-                        }
+                            <i class="trash alternate icon"></i>                    
                     </td>
-                    @if (!string.IsNullOrEmpty(file.pass))
-                    {
-                        <form method="post">
-                            <div class="modal fade" id="@file.Id" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">@file.Filename@file.FileExtension</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <h1>@file.Filename@file.FileExtension Has Encrypted Require Password to unlock</h1>
-                                            <br />
-                                            <div class="form-group row">
-                                                <label for="pass" class="col-2 col-form-label">Password</label>
-                                                <input type="hidden" name="fid" value="@file.Id" />
-                                                <div class="col-10">
-                                                    <input id="pass" name="pass" type="password" class="form-control" value="" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary" asp-controller="" asp-action="">Download</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    }
+                   
                 </tr>
             }
 
@@ -152,51 +112,13 @@
                     </td>
 
                     <td>
-                        @if (file.HasPassword)
-                        {
-                            <i class="download icon" data-toggle="modal" data-target="#@md"></i>
-                            <i class="eye icon"></i>
-                            <i class="trash alternate icon"></i>
-                        }
-                        else
-                        {
+                       
                             <i class="download icon"></i>
                             <i class="eye icon"></i>
                             <i class="trash alternate icon"></i>
-                        }
+                        
                     </td>
-                    @if (file.HasPassword)
-                    {
-                        <form method="post">
-                            <div class="modal fade" id="@md" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">@file.Filename@file.FileExtension</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <h1>@file.Filename@file.FileExtension Has Encrypted Require Password to unlock</h1>
-                                            <br />
-                                            <div class="form-group row">
-                                                <label for="pass" class="col-2 col-form-label">Password</label>
-                                                <input type="hidden" name="fid" value="@file.Id" />
-                                                <div class="col-10">
-                                                    <input id="pass" name="pass" type="password" class="form-control" value="" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary" asp-controller="" asp-action="">Download</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    }
+                   
                 </tr>
             }
 
@@ -333,6 +255,61 @@
 
 
             }
-            console.log(filter);
+
+        }
+
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("Myupload");
+            switching = true;
+            // Set the sorting direction to ascending:
+            dir = "asc";
+            /* Make a loop that will continue until
+            no switching has been done: */
+            while (switching) {
+                // Start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /* Loop through all table rows (except the
+                first, which contains table headers): */
+                for (i = 1; i < (rows.length - 1); i++) {
+                    // Start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /* Get the two elements you want to compare,
+                    one from current row and one from the next: */
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /* Check if the two rows should switch place,
+                    based on the direction, asc or desc: */
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            // If so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            // If so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    /* If a switch has been marked, make the switch
+                    and mark that a switch has been done: */
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    // Each time a switch is done, increase this count by 1:
+                    switchcount++;
+                } else {
+                    /* If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again. */
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
         }
     </script>

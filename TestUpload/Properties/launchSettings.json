@@ -14,7 +14,9 @@
       "environmentVariables": {
         "Production": "Production",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "sqlDebugging": false,
+      "jsWebView2Debugging": false
     },
     "TestUpload": {
       "commandName": "Project",
