@@ -116,8 +116,15 @@
 
                     <td>
 
-                        <i class="download icon" onclick="window.open('/Blob/Download/@file.Id');" ></i>
-                        <i class="trash alternate icon"></i>
+                        <i class="download icon" onclick="window.open('/Blob/Download/@file.Id');"></i>
+                        @if (file.HasPassword)
+                        {
+                            <i class="trash alternate icon" onclick="window.location.href = '/Blob/Verifyremove/@file.Id'"></i>
+                        }
+                        else
+                        {
+                            <i class="trash alternate icon" onclick="window.location.href = '/Blob/Remove/@file.Id'"></i>
+                        }
 
                     </td>
 

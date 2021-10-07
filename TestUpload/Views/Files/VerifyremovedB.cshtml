@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    FilestorageView data = ViewBag.file;
+}
+@using TestUpload.Models.View
+<center>
+    <br />
+    <h1>@data.Filename@data.FileExtension Are Required Password To Remove</h1>
+    <br />
+    <br />
+    <form method="post">
+        <h2>This File Has Password Protected</h2>
+        <hr />
+        <div class="form-group row" id="PSD">
+            <label for="text" class="col-2 col-form-label">Password</label>
+            <div class="col-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <i class="fa fa-key"></i>
+                        </div>
+                    </div>
+                    <input id="pass" name="pass" type="password" class="form-control">
+                </div>
+            </div>
+        </div>
+        <input id="id" name="id" value="@data.Id" type="hidden" />
+        <button type="submit" class="btn btn-outline-danger"  asp-controller="Blob" asp-action="Verifyremove">Remove</button>
+    </form>
+
+</center>

@@ -16,6 +16,7 @@ namespace TestUpload.Service
         FileStorage Download(string reference);
         FileStorage VerifyDownload(string reference, string password);
         int Delete(List<string> references);
+        bool DeleteOne(string reference);
         bool VerifyRemove(string reference, string password);
         Task<FilestorageView> GetViewById(string FileId);
     }

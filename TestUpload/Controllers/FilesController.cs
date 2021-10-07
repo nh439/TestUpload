@@ -386,5 +386,65 @@ namespace TestUpload.Controllers
             return File(ms, Storage.FileType, Storage.Filename + Storage.FileExtension);
         }
 
+        [HttpGet("/Blob/Remove/{id}")]
+        public IActionResult RemoveBlob(string id)
+        {
+            FilestorageView StorageView = IfileStorageService.GetViewById(id).GetAwaiter().GetResult();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && StorageView.UserId == long.Parse(HttpContext.Session.GetString("uid")))
+            {
+                var user = long.Parse(HttpContext.Session.GetString("uid"));
+                try
+                {             
+                    IfileStorageService.DeleteOne(id);
+                    service.CreateSuccessHistory("Upload Files", "Deleted File Successful", StorageView.Filename + StorageView.FileExtension, user);
+                    return Redirect("/Files");
+                }
+                catch (Exception x)
+                {
+                    service.CreateErrorHistory("Upload Files", "Deleted File Failed", "", user, x.Message, x.InnerException.Message);
+                    return Content("Delete Error");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+
+        [HttpGet("/Blob/Verifyremove/{id}")]
+        public IActionResult VerifyremovedB(string Id)
+        {
+            FilestorageView StorageView = IfileStorageService.GetViewById(Id).GetAwaiter().GetResult();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && StorageView.UserId == long.Parse(HttpContext.Session.GetString("uid")))
+            {
+                ViewBag.file = StorageView;
+                return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
+        [HttpPost("/Blob/Verifyremove")]
+        public IActionResult RemoveVerifyB()
+        {
+            var user = long.Parse(HttpContext.Session.GetString("uid"));
+            try
+            {
+                PasswordHash hash = new PasswordHash();
+                string Id = Request.Form["id"].ToString();
+                string password = Request.Form["pass"].ToString();
+                password = hash.CreateEncrypted(Id, password);
+                var i = IfileStorageService.GetViewById(Id).GetAwaiter().GetResult();
+                var res = IfileStorageService.VerifyRemove(Id, password);
+                if (res)
+                {
+                    service.CreateSuccessHistory("Upload Files", "Deleted File Successful", i.Filename + i.FileExtension, user );
+                    return Redirect("/Files");
+                }
+                return View();
+            }
+            catch (Exception x)
+            {
+                service.CreateErrorHistory("Upload Files", "Deleted File Unsuccessful", "", user, x.Message, x.InnerException.Message);
+                return Content("Delete Error");
+            }
+
+        }
+
     }
 }
