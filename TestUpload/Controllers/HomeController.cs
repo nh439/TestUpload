@@ -47,7 +47,7 @@ namespace TestUpload.Controllers
                 var Mystorage = await _ifileStorageService.GetFilesByUserAsync(user);
                 ViewBag.Files = Myfile.Count();
                 ViewBag.Storage = Mystorage.Count();
-                var j = Myfile.Select(x => x.FileSize).Sum() + Mystorage.Select(x => x.FileSize).Sum();
+                var j = Myfile.Select(x => x.FileSize).Sum() + Mystorage.Select(x => x.FileSize).Sum();          
                 if (j <= 1024)
                 {
                     ViewBag.space = j.ToString("0.00") + " Bytes";
@@ -64,7 +64,6 @@ namespace TestUpload.Controllers
                 {
                     ViewBag.space = (j / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
                 }
-
 
             }
 
