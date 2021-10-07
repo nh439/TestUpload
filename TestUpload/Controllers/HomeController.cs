@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TestUpload.Models;
 using TestUpload.Service;
 using TestUpload.Models.Entity;
+using Microsoft.AspNetCore.Http;
 
 namespace TestUpload.Controllers
 {
@@ -39,6 +40,33 @@ namespace TestUpload.Controllers
             ViewBag.Totaluser = i.Count;
             ViewBag.TotalFiles = f.Count;
             ViewBag.TotalBlobs = s.Count;
+            if(!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            {
+                long user = long.Parse(HttpContext.Session.GetString("uid"));
+                var Myfile = await _ifileUploadService.GetFilesByUserAsync(user);
+                var Mystorage = await _ifileStorageService.GetFilesByUserAsync(user);
+                ViewBag.Files = Myfile.Count();
+                ViewBag.Storage = Mystorage.Count();
+                var j = Myfile.Select(x => x.FileSize).Sum() + Mystorage.Select(x => x.FileSize).Sum();
+                if (j <= 1024)
+                {
+                    ViewBag.space = j.ToString("0.00") + " Bytes";
+                }
+                else if (j <= (1024 * 1024))
+                {
+                    ViewBag.space = (j / 1024).ToString("0.00") + " KB";
+                }
+                else if (j <= (1024 * 1024 * 1024))
+                {
+                    ViewBag.space = (j / (1024 * 1024)).ToString("0.00") + " MB";
+                }
+                else
+                {
+                    ViewBag.space = (j / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
+                }
+
+
+            }
 
 
             return View();
@@ -53,6 +81,11 @@ namespace TestUpload.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        [HttpGet("/Home/Restricted")]
+        public IActionResult Rest()
+        {
+            return View();
         }
     }
 }

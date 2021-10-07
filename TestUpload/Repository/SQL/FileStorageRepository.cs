@@ -55,6 +55,37 @@ namespace TestUpload.Repository.SQL
             }
             return views;
         }
+        public async Task<FilestorageView> GetById(string id)
+        {
+            var i = await (from storage in _context.fileStorage where storage.Id==id
+                              select new
+                              {
+                                  storage.Id,
+                                  storage.Filename,
+                                  storage.FileExtension,
+                                  storage.FileSize,
+                                  storage.AddDate,
+                                  storage.LastUpdate,
+                                  storage.pass,
+                                  storage.Comment,
+                                  storage.UserId
+                              }
+                     ).FirstOrDefaultAsync();
+           var views = new FilestorageView
+            {
+                AddDate = i.AddDate,
+                FileExtension = i.FileExtension,
+                Comment = i.Comment,
+                Filename = i.Filename,
+                FileSize = i.FileSize,
+                HasPassword = !string.IsNullOrEmpty(i.pass) ? true : false,
+                Id = i.Id,
+                LastUpdate = i.LastUpdate,
+                UserId = i.UserId
+
+            };
+            return views;
+        }
         public async Task<List<FilestorageView>> GetByUser(long user)
         {
             List<FilestorageView> views = new List<FilestorageView>();
@@ -112,6 +143,17 @@ namespace TestUpload.Repository.SQL
                 }
             }
             return _context.SaveChanges();
+        }
+        public bool RemoveOne(string reference)
+        {
+            var item = _context.fileStorage.FirstOrDefault();
+            if (string.IsNullOrEmpty(item.pass))
+            {
+                _context.fileStorage.Attach(item);
+                _context.fileStorage.Remove(item);
+            }
+            return _context.SaveChanges() > 0 ? true : false;
+
         }
         public bool VerifyRemoved(string reference, string password)
         {

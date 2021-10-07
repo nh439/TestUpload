@@ -72,20 +72,26 @@
                         }
                     </td>
 
-                    <td>                                              
-                            <i class="download icon"></i>
-                            <i class="eye icon"></i>
-                            <i class="trash alternate icon"></i>                    
+                    <td>
+                        <i class="download icon" onclick="window.open('/Files/Download/@file.Id');"></i>
+                        @if (!string.IsNullOrEmpty(file.pass))
+                        {
+                            <i class="trash alternate icon" onclick="window.location.href = '/Files/Verifyremove/@file.Id'"></i>
+                        }
+                        else
+                        {
+                            <i class="trash alternate icon" onclick="window.location.href = '/Files/Remove/@file.Id'"></i>
+                        }
                     </td>
-                   
+
                 </tr>
             }
 
             @foreach (FilestorageView file in storage)
             {
-                
-                    var md = file.Id + "-B";
-                
+
+                var md = file.Id + "-B";
+
                 <tr>
                     <td>
                         @if (file.HasPassword)
@@ -112,13 +118,12 @@
                     </td>
 
                     <td>
-                       
-                            <i class="download icon"></i>
-                            <i class="eye icon"></i>
-                            <i class="trash alternate icon"></i>
-                        
+
+                        <i class="download icon" onclick="window.open('/Blob/Download/@file.Id');" ></i>
+                        <i class="trash alternate icon"></i>
+
                     </td>
-                   
+
                 </tr>
             }
 
@@ -131,6 +136,9 @@
             </tbody>
 
         </table>
+        <div>
+            <h1><b>Total Used : @ViewBag.space</b></h1>
+        </div>
         <br />
         <br />
 

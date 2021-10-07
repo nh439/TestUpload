@@ -1,0 +1,57 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+@{
+
+      FileUpload data = ViewBag.data;
+}
+@using TestUpload.Models.Entity;
+<form method="post">
+    <center>
+        <h1><b>@data.Filename@data.FileExtension</b></h1>
+        <hr />
+        Size @ViewBag.space
+
+        <br />
+        <br />
+        <br />
+        <div class="form-group row">
+            <label for="textarea" class="col-4 col-form-label"><h2>Details</h2></label>
+            <div class="col-8">
+                <textarea name="com" id="textarea" cols="40" rows="5" class="form-control" readonly>@data.Comment</textarea>
+            </div>
+        </div>
+        <hr />
+        @if (!string.IsNullOrEmpty(data.pass))
+        {
+            <h2>This File Has Password Protected</h2>
+            <hr />
+            <div class="form-group row" id="PSD">
+                <label for="text" class="col-2 col-form-label">Password</label>
+                <div class="col-10">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <i class="fa fa-key"></i>
+                            </div>
+                        </div>
+                        <input id="pass" name="pass" type="password" class="form-control">
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <input type="hidden" value="@data.Id" name="id" />
+        @if (!string.IsNullOrEmpty(data.pass))
+        {
+            <button class="btn btn-outline-success" type="submit" asp-controller="Files" asp-action="DownloadV">Download</button>
+        }
+        else
+        {
+            <button class="btn btn-outline-success" type="submit" asp-controller="Files" asp-action="Download">Download</button>
+        }
+
+    </center>
+</form>

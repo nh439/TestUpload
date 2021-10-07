@@ -17,6 +17,7 @@ namespace TestUpload.Models.Entity
         public decimal FileSize { get; set; }
         public DateTime AddDate { get; set; }
         public DateTime LastUpdate { get; set; }
+        public string FileType { get; set; }
         [Column(TypeName ="longblob")]
         public byte[] RawData { get; set; }
 

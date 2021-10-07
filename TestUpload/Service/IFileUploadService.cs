@@ -15,7 +15,9 @@ namespace TestUpload.Service
         FileUpload Download(string reference);
         FileUpload VerifyDownload(string reference, string password);
         int Delete(List<string> references);
+        bool DeleteOne(string references);
         bool VerifyRemove(string reference, string password);
+        FileUpload GetById(string reference);
     }
     public class FileUploadService:IFileUploadService
     {
@@ -40,6 +42,10 @@ namespace TestUpload.Service
         {
             return  _fileUploadRepository.GetFile(reference);
         }
+        public FileUpload GetById(string reference)
+        {
+            return _fileUploadRepository.GetFileByRef(reference);
+        }
         public FileUpload VerifyDownload(string reference,string password)
         {
             return _fileUploadRepository.GetFile(reference,password);
@@ -48,10 +54,16 @@ namespace TestUpload.Service
         {
             return _fileUploadRepository.Remove(references);
         }
+        public bool DeleteOne(string references)
+        {
+            return _fileUploadRepository.RemoveOne(references);
+        }
+
         public bool VerifyRemove(string reference, string password)
         {
             return _fileUploadRepository.VerifyRemoved(reference, password);
         }
+
 
     }
 }

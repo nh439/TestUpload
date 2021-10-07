@@ -17,6 +17,7 @@ namespace TestUpload.Service
         FileStorage VerifyDownload(string reference, string password);
         int Delete(List<string> references);
         bool VerifyRemove(string reference, string password);
+        Task<FilestorageView> GetViewById(string FileId);
     }
     public class FileStorageService:IFileStorageService
     {
@@ -52,6 +53,15 @@ namespace TestUpload.Service
         public bool VerifyRemove(string reference, string password)
         {
             return _FileStorageRepository.VerifyRemoved(reference, password);
+        }
+        public async Task<FilestorageView> GetViewById(string FileId)
+        {
+            return await _FileStorageRepository.GetById(FileId);
+        }
+        public bool DeleteOne(string reference)
+        {
+            return _FileStorageRepository.RemoveOne(reference);
+            
         }
     }
 

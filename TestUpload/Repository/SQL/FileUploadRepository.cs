@@ -27,6 +27,11 @@ namespace TestUpload.Repository.SQL
         {
             return await _context.fileUploads.Where(x=>x.UserId==user).ToListAsync();
         }
+        public FileUpload GetFileByRef(string reference)
+        {
+            var data = _context.fileUploads.Where(x => x.Id == reference).FirstOrDefault();
+            return data != null ? data : null;
+        }
         public FileUpload GetFile(string reference)
         {
             var data = _context.fileUploads.Where(x => x.Id == reference && string.IsNullOrEmpty(x.pass)).FirstOrDefault();
@@ -49,6 +54,16 @@ namespace TestUpload.Repository.SQL
                 }
              }
             return _context.SaveChanges();
+        }
+        public bool RemoveOne(string reference)
+        {
+            var item = _context.fileUploads.FirstOrDefault();
+            
+                _context.fileUploads.Attach(item);
+                _context.fileUploads.Remove(item);
+            
+            return _context.SaveChanges() > 0 ? true : false;
+
         }
         public bool VerifyRemoved(string reference,string password)
         {
