@@ -36,9 +36,8 @@
                 <th onclick="sortTable(2)">Filename</th>
                 <th onclick="sortTable(3)">Filesize</th>
                 <th onclick="sortTable(4)">Date Created</th>
-                <th onclick="sortTable(5)">Date Updated</th>
-                <th onclick="sortTable(6)">Stored Type</th>
-                <th onclick="sortTable(7)">Password</th>
+                <th onclick="sortTable(5)">Stored Type</th>
+                <th onclick="sortTable(6)">Password</th>
                 <th>action</th>
 
             </tr>
@@ -63,7 +62,6 @@
                     <td>@file.Filename@file.FileExtension</td>
                     <td>@file.FileSize</td>
                     <td>@file.AddDate.ToLongDateString()</td>
-                    <td>@file.LastUpdate.ToLongDateString()</td>
                     <td>File</td>
                     <td>
                         @if (!string.IsNullOrEmpty(file.pass))
@@ -108,7 +106,6 @@
                     <td>@file.Filename@file.FileExtension</td>
                     <td>@file.FileSize</td>
                     <td>@file.AddDate.ToLongDateString()</td>
-                    <td>@file.LastUpdate.ToLongDateString()</td>
                     <td>Blob Storage</td>
                     <td>
                         @if (file.HasPassword)
@@ -195,12 +192,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="inputGroup-sizing-default">File Extension</span>
                             </div>
-                            <select class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                                <option value="0">All Extension</option>
-                                <option value="1">.php</option>
-                                <option value="2">.py</option>
-                                <option value="3">.cs</option>
-                            </select>
+                            <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                         </div>
 
                         <div class="form-group row">

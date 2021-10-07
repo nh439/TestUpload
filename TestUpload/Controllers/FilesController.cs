@@ -206,39 +206,53 @@ namespace TestUpload.Controllers
         [HttpPost("/Files/Download")]
         public async Task<IActionResult> Downloading()
         {
-            string FileId = Request.Form["id"].ToString();
-            long.TryParse(HttpContext.Session.GetString("uid"), out long user);
-            FileUpload fileUpload = IfileUploadService.Download(FileId);
-            var filepath = Iconfiguration.GetSection("att").Value;
-            filepath = filepath + "\\" + user + "\\" + fileUpload.Id;
-            MemoryStream ms = new MemoryStream();
-            FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
-            await stream.CopyToAsync(ms);
-            stream.Close();
-            ms.Position = 0;
-            return File(ms,fileUpload.FileType,fileUpload.Filename+fileUpload.FileExtension);
+            try
+            {
+                string FileId = Request.Form["id"].ToString();
+                long.TryParse(HttpContext.Session.GetString("uid"), out long user);
+                FileUpload fileUpload = IfileUploadService.Download(FileId);
+                var filepath = Iconfiguration.GetSection("att").Value;
+                filepath = filepath + "\\" + user + "\\" + fileUpload.Id;
+                MemoryStream ms = new MemoryStream();
+                FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+                await stream.CopyToAsync(ms);
+                stream.Close();
+                ms.Position = 0;
+                return File(ms, fileUpload.FileType, fileUpload.Filename + fileUpload.FileExtension);
+            }
+            catch
+            {
+                return Content("Something Went Wrong");
+            }
         }
         [HttpPost("/Files/DownloadV")]
         public async Task<IActionResult> DownloadVerify()
         {
-            PasswordHash hash = new PasswordHash();
-            string FileId = Request.Form["id"].ToString();
-            string password = Request.Form["pass"].ToString();
-            password = hash.CreateEncrypted(FileId, password);
-            long.TryParse(HttpContext.Session.GetString("uid"), out long user);
-            FileUpload fileUpload = IfileUploadService.VerifyDownload(FileId,password);
-            if(fileUpload==null)
+            try
             {
-                return View();
+                PasswordHash hash = new PasswordHash();
+                string FileId = Request.Form["id"].ToString();
+                string password = Request.Form["pass"].ToString();
+                password = hash.CreateEncrypted(FileId, password);
+                long.TryParse(HttpContext.Session.GetString("uid"), out long user);
+                FileUpload fileUpload = IfileUploadService.VerifyDownload(FileId, password);
+                if (fileUpload == null)
+                {
+                    return View();
+                }
+                var filepath = Iconfiguration.GetSection("att").Value;
+                filepath = filepath + "\\" + user + "\\" + fileUpload.Id;
+                MemoryStream ms = new MemoryStream();
+                FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+                await stream.CopyToAsync(ms);
+                stream.Close();
+                ms.Position = 0;
+                return File(ms, fileUpload.FileType, fileUpload.Filename + fileUpload.FileExtension);
             }
-            var filepath = Iconfiguration.GetSection("att").Value;
-            filepath = filepath + "\\" + user + "\\" + fileUpload.Id;
-            MemoryStream ms = new MemoryStream();
-            FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
-            await stream.CopyToAsync(ms);
-            stream.Close();
-            ms.Position = 0;
-            return File(ms, fileUpload.FileType, fileUpload.Filename + fileUpload.FileExtension);
+            catch
+            {
+                return Content("Something Went Wrong");
+            }
         }
 
         [HttpGet("/Files/Remove/{id}")]
@@ -248,11 +262,20 @@ namespace TestUpload.Controllers
             if(!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId==long.Parse(HttpContext.Session.GetString("uid")))
             {
                 var user = long.Parse(HttpContext.Session.GetString("uid"));
-                var filepath = Iconfiguration.GetSection("att").Value;
-                filepath = filepath + "\\" + user + "\\" + fileUpload.Id;
-                System.IO.File.Delete(filepath);
-                IfileUploadService.DeleteOne(id);
-                return Redirect("/Files");
+                try
+                {
+                    var filepath = Iconfiguration.GetSection("att").Value;
+                    filepath = filepath + "\\" + user + "\\" + fileUpload.Id;
+                    System.IO.File.Delete(filepath);
+                    IfileUploadService.DeleteOne(id);
+                    service.CreateSuccessHistory("Upload Files", "Deleted File Successful", fileUpload.Filename + fileUpload.FileExtension, user);
+                    return Redirect("/Files");
+                }
+                catch (Exception x)
+                {
+                    service.CreateErrorHistory("Upload Files", "Deleted File Failed", "", user, x.Message, x.InnerException.Message);
+                    return Content("Delete Error");
+                }
             }
             return Redirect("/Home/Restricted");
         }
@@ -270,20 +293,32 @@ namespace TestUpload.Controllers
         [HttpPost("/Files/Verifyremove")]
         public IActionResult RemoveVerify()
         {
-            PasswordHash hash = new PasswordHash();
-            string Id = Request.Form["id"].ToString();
-            string password = Request.Form["pass"].ToString();
-            password = hash.CreateEncrypted(Id,password);
-            var res = IfileUploadService.VerifyRemove(Id, password);
-            if (res)
+            var user = long.Parse(HttpContext.Session.GetString("uid"));
+            try
             {
-                var user = long.Parse(HttpContext.Session.GetString("uid"));
-                var filepath = Iconfiguration.GetSection("att").Value;
-                filepath = filepath + "\\" + user + "\\" + Id;
-                System.IO.File.Delete(filepath);
-                return Redirect("/Files");
+                PasswordHash hash = new PasswordHash();
+                string Id = Request.Form["id"].ToString();
+                string password = Request.Form["pass"].ToString();
+                password = hash.CreateEncrypted(Id, password);
+                var i = IfileUploadService.GetById(Id);
+                var res = IfileUploadService.VerifyRemove(Id, password);
+                if (res)
+                {
+
+                    
+                    var filepath = Iconfiguration.GetSection("att").Value;
+                    filepath = filepath + "\\" + user + "\\" + Id;
+                    System.IO.File.Delete(filepath);
+                    service.CreateSuccessHistory("Upload Files", "Deleted File Failed", i.Filename + i.FileExtension, user);
+                    return Redirect("/Files");
+                }
+                return View();
             }
-            return View();
+            catch(Exception x)
+            {
+                service.CreateErrorHistory("Upload Files", "Deleted File Successful","", user,x.Message,x.InnerException.Message);
+                return Content("Delete Error");
+            }
 
         }
 
