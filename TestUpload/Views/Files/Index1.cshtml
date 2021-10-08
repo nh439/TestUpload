@@ -3,9 +3,11 @@
 *@
 @{ List<FileUpload> files = ViewBag.files;
     List<FilestorageView> storage = ViewBag.storage;
+    Filecriteria filecriteria = ViewBag.CR;
 }
 @using TestUpload.Models.Entity;
 @using TestUpload.Models.View;
+@using TestUpload.Models.criteria;
 <div class="document">
     <center>
         <h1><b>My Files</b></h1>
@@ -142,7 +144,7 @@
             @if ((files == null || files.Count == 0) && (storage == null || storage.Count == 0))
             {
             <td colspan="9"> No Uploaded Files</td>
-        }
+            }
 
 
             </tbody>
@@ -173,13 +175,27 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
                             </div>
-                            <input type="date" name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                            @if (filecriteria.AddDateStarts.HasValue)
+                            {
+                                <input type="date" value="@filecriteria.AddDateStarts.Value.ToString("YYYY-MM-DD")" name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"  >
+                            }
+                            else
+                            {
+                                <input type="date"  name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="dd-mm-yyyy">
+                            }
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="inputGroup-sizing-default">End</span>
                             </div>
-                            <input type="date" name="dateend" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                            @if (filecriteria.AddDateEnd.HasValue)
+                            {
+                                <input type="date" value="@filecriteria.AddDateEnd.Value.ToString("YYYY-MM-DD")" name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" >
+                            }
+                            else
+                            {
+                                <input type="date" name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder="dd-mm-yyyy">
+                            }
                         </div>
 
                         <h1>File Type</h1>
@@ -190,10 +206,19 @@
                                 <span class="input-group-text" id="inputGroup-sizing-default">Content Type</span>
                             </div>
                             <select name="content" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                                <option value="">All Type</option>
-                                @foreach (var i in ViewBag.Ctype)
-                                {
-                                    <option value="@i">@i</option>
+                                <option value="">All Extension</option>
+                                @{
+                                    foreach (var i in ViewBag.Ctype)
+                                    {
+                                        if (i == filecriteria.Contentype)
+                                        {
+                                            <option selected value="@i">@i</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    }
                                 }
                             </select>
                         </div>
@@ -205,10 +230,22 @@
                             </div>
                             <select name="ext" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                                 <option value="">All Extension</option>
-                                @foreach (var i in ViewBag.Extension)
-                                {
-                                    <option value="@i">@i</option>
+                                @{
+                                    foreach (var i in ViewBag.Extension)
+                                    {
+                                        if (i == filecriteria.FileExtension)
+                                        {
+                                            <option selected value="@i">@i</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    }
                                 }
+
+                                }
+
                             </select>
                         </div>
 
@@ -217,16 +254,29 @@
                                 <span class="input-group-text" id="inputGroup-sizing-default">Storage Type</span>
                             </div>
                             <select name="mode" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                                <option value="0">All Type</option>
-                                <option value="1">Files</option>
-                                <option value="2">Blobs</option>
+                                @{ string[] res = { "All Type", "Files", "Blobs" };
+
+
+                                    for (int i = 0; i < res.Length; i++)
+                                    {
+                                        if (i == filecriteria.FileMode)
+                                        {
+                                            <option selected value="@i">@res[i]</option>
+                                        }
+                                        else 
+                                        { 
+                                            <option value="@i">@res[i]</option>
+                                        }
+                                    }
+
+                                }                              
                             </select>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-8">
                                 <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input name="Hpass" id="checkbox1_0" type="checkbox" class="custom-control-input" value="1">
+                                    <input name="Hpass" id="checkbox1_0" type="checkbox" class="custom-control-input" value="1" checked="@filecriteria.HasPassword">
                                     <label for="checkbox1_0" class="custom-control-label">Has Password</label>
                                 </div>
                             </div>

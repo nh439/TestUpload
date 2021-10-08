@@ -17,7 +17,6 @@ namespace TestUpload.Models.Entity
         public decimal FileSize { get; set; }
         public string FileType { get; set; }
         public DateTime AddDate { get; set; }
-        public DateTime LastUpdate { get; set; }
         [StringLength(255)]
         public string pass { get; set; }
         public string Comment { get; set; }

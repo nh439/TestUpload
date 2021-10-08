@@ -31,10 +31,10 @@ namespace TestUpload.Repository.SQL
                             storage.FileExtension,
                             storage.FileSize,
                             storage.AddDate,
-                            storage.LastUpdate,
                             storage.pass,
                             storage.Comment,
-                            storage.UserId
+                            storage.UserId,
+                            storage.FileType
                         }
                       ).ToListAsync();
             foreach(var i in data)
@@ -48,8 +48,8 @@ namespace TestUpload.Repository.SQL
                     FileSize = i.FileSize,
                     HasPassword = !string.IsNullOrEmpty(i.pass) ? true : false,
                     Id=i.Id,
-                    LastUpdate=i.LastUpdate,
-                    UserId=i.UserId
+                    UserId=i.UserId,
+                    FileType=i.FileType
 
                 });
             }
@@ -65,10 +65,10 @@ namespace TestUpload.Repository.SQL
                                   storage.FileExtension,
                                   storage.FileSize,
                                   storage.AddDate,
-                                  storage.LastUpdate,
                                   storage.pass,
                                   storage.Comment,
-                                  storage.UserId
+                                  storage.UserId,
+                                  storage.FileType
                               }
                      ).FirstOrDefaultAsync();
            var views = new FilestorageView
@@ -80,8 +80,8 @@ namespace TestUpload.Repository.SQL
                 FileSize = i.FileSize,
                 HasPassword = !string.IsNullOrEmpty(i.pass) ? true : false,
                 Id = i.Id,
-                LastUpdate = i.LastUpdate,
-                UserId = i.UserId
+                UserId = i.UserId,
+                FileType=i.FileType
 
             };
             return views;
@@ -97,10 +97,10 @@ namespace TestUpload.Repository.SQL
                                   storage.FileExtension,
                                   storage.FileSize,
                                   storage.AddDate,
-                                  storage.LastUpdate,
                                   storage.pass,
                                   storage.Comment,
-                                  storage.UserId
+                                  storage.UserId,
+                                  storage.FileType
                               }
                       ).ToListAsync();
             foreach (var i in data)
@@ -114,8 +114,8 @@ namespace TestUpload.Repository.SQL
                     FileSize = i.FileSize,
                     HasPassword = !string.IsNullOrEmpty(i.pass) ? true : false,
                     Id = i.Id,
-                    LastUpdate = i.LastUpdate,
-                    UserId = i.UserId
+                    UserId = i.UserId,
+                    FileType = i.FileType
 
                 });
             }

@@ -16,5 +16,6 @@ namespace TestUpload.Models.View
         public DateTime LastUpdate { get; set; }
         public bool HasPassword { get; set; }
         public string Comment { get; set; }
+        public string FileType { get; set; }
     }
 }

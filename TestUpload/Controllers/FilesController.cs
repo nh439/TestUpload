@@ -11,16 +11,19 @@ using TestUpload.Models.View;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using TestUpload.Securities;
+using TestUpload.Models.criteria;
+using System.Globalization;
 
 namespace TestUpload.Controllers
 {
     public class FilesController : Controller
     {
-        private readonly IFileUploadService IfileUploadService ;
+        private readonly IFileUploadService IfileUploadService;
         private readonly IFileStorageService IfileStorageService;
         private readonly IConfiguration Iconfiguration;
         private readonly IhistoryLogService service;
-        public FilesController(IFileUploadService fileUploadService,IFileStorageService fileStorageService,IConfiguration configuration,IhistoryLogService ihistory)
+        CultureInfo THinfo = new CultureInfo("th-TH");
+        public FilesController(IFileUploadService fileUploadService, IFileStorageService fileStorageService, IConfiguration configuration, IhistoryLogService ihistory)
         {
             IfileUploadService = fileUploadService;
             IfileStorageService = fileStorageService;
@@ -39,6 +42,22 @@ namespace TestUpload.Controllers
                 ViewBag.files = files;
                 List<FilestorageView> storage = IfileStorageService.GetFilesByUserAsync(user).GetAwaiter().GetResult();
                 ViewBag.storage = storage;
+                var da = (from f in files
+                          select new
+                          {
+                              Extension = f.FileExtension,
+                              ContentType = f.FileType
+                          }).ToList();
+                var db = (from f in storage
+                          select new
+                          {
+                              Extension = f.FileExtension,
+                              ContentType = f.FileType
+                          }).ToList();
+
+                var dc = da.Union(db);
+                ViewBag.Extension = dc.Select(x => x.Extension).Distinct().ToList();
+                ViewBag.Ctype = dc.Select(x => x.ContentType).Distinct().ToList();
                 var j = files.Select(x => x.FileSize).Sum() + storage.Select(x => x.FileSize).Sum();
                 if (j <= 1024)
                 {
@@ -46,11 +65,11 @@ namespace TestUpload.Controllers
                 }
                 else if (j <= (1024 * 1024))
                 {
-                    ViewBag.space = (j/1024).ToString("0.00") + " KB";
+                    ViewBag.space = (j / 1024).ToString("0.00") + " KB";
                 }
-                else if (j <= (1024 * 1024*1024))
+                else if (j <= (1024 * 1024 * 1024))
                 {
-                    ViewBag.space = (j / (1024*1024)).ToString("0.00") + " MB";
+                    ViewBag.space = (j / (1024 * 1024)).ToString("0.00") + " MB";
                 }
                 else
                 {
@@ -60,6 +79,67 @@ namespace TestUpload.Controllers
             }
             return Redirect("/");
         }
+        [HttpPost("/Files")]
+        public IActionResult Index1()
+        {
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            {
+                Filecriteria filecriteria = new Filecriteria
+                {
+                    AddDateEnd = !string.IsNullOrEmpty(Request.Form["dateend"].ToString()) ? DateTime.Parse(Request.Form["dateend"].ToString(),THinfo) : null,
+                    AddDateStarts = !string.IsNullOrEmpty(Request.Form["datestart"].ToString()) ? DateTime.Parse(Request.Form["datestart"].ToString(),THinfo) : null,
+                    Contentype = Request.Form["content"].ToString(),
+                    FileExtension = Request.Form["ext"].ToString(),
+                    FileMode = int.Parse(Request.Form["mode"].ToString()),
+                    HasPassword = Request.Form["Hpass"].ToString() == "1" ? true:false 
+                };
+                ViewBag.CR = filecriteria;
+                long user = long.Parse(HttpContext.Session.GetString("uid"));
+                List<FileUpload> files = IfileUploadService.GetFilescriteria(user, filecriteria).GetAwaiter().GetResult();
+                ViewBag.files = files;
+                List<FilestorageView> storage = IfileStorageService.GetFilescriteria(user, filecriteria).GetAwaiter().GetResult();
+                ViewBag.storage = storage;
+                List<FileUpload> filesA = IfileUploadService.GetFilesByUserAsync(user).GetAwaiter().GetResult();
+                List<FilestorageView> storageA = IfileStorageService.GetFilesByUserAsync(user).GetAwaiter().GetResult();
+                var da = (from f in filesA
+                          select new
+                          {
+                              Extension = f.FileExtension,
+                              ContentType = f.FileType
+                          }).ToList();
+                var db = (from f in storageA
+                          select new
+                          {
+                              Extension = f.FileExtension,
+                              ContentType = f.FileType
+                          }).ToList();
+
+                var dc = da.Union(db);
+                ViewBag.Extension = dc.Select(x => x.Extension).Distinct().ToList();
+                ViewBag.Ctype = dc.Select(x => x.ContentType).Distinct().ToList();
+                var j = files.Select(x => x.FileSize).Sum() + storage.Select(x => x.FileSize).Sum();
+                if (j <= 1024)
+                {
+                    ViewBag.space = j.ToString("0.00") + " Bytes";
+                }
+                else if (j <= (1024 * 1024))
+                {
+                    ViewBag.space = (j / 1024).ToString("0.00") + " KB";
+                }
+                else if (j <= (1024 * 1024 * 1024))
+                {
+                    ViewBag.space = (j / (1024 * 1024)).ToString("0.00") + " MB";
+                }
+                else
+                {
+                    ViewBag.space = (j / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
+                }
+                return View();
+            }
+            return Redirect("/");
+        }
+
+
         [HttpGet("/Files/Uploads")]
         public IActionResult Uploads()
         {
@@ -71,7 +151,7 @@ namespace TestUpload.Controllers
         }
         [HttpPost("/Files/Uploads")]
         public async Task<IActionResult> Uploaded(List<IFormFile> Files)
-        { 
+        {
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
             {
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
@@ -79,7 +159,7 @@ namespace TestUpload.Controllers
                 {
                     bool blob = int.Parse(Request.Form["Storage"].ToString()) == 1 ? true : false;
                     var filepath = Iconfiguration.GetSection("att").Value;
-                    
+
 
                     PasswordHash passwordHash = new PasswordHash();
                     if (blob)
@@ -94,7 +174,6 @@ namespace TestUpload.Controllers
                                 FileExtension = Path.GetExtension(att.FileName),
                                 Filename = Path.GetFileNameWithoutExtension(att.FileName),
                                 FileSize = att.Length,
-                                LastUpdate = DateTime.Now,
                                 FileType = att.ContentType,
 
                                 UserId = user
@@ -128,7 +207,6 @@ namespace TestUpload.Controllers
                                 FileExtension = Path.GetExtension(att.FileName),
                                 Filename = Path.GetFileNameWithoutExtension(att.FileName),
                                 FileSize = att.Length,
-                                LastUpdate = DateTime.Now,
                                 FileType = att.ContentType,
 
                                 UserId = user
@@ -161,10 +239,10 @@ namespace TestUpload.Controllers
 
                     return Ok();
                 }
-                catch(Exception x)
+                catch (Exception x)
                 {
                     ViewBag.Issuccess = false;
-                    service.CreateErrorHistory("Upload Files", "Upload File Unsuccessful", "",user, x.Message, x.InnerException.Message);
+                    service.CreateErrorHistory("Upload Files", "Upload File Unsuccessful", "", user, x.Message, x.InnerException.Message);
                     return View();
                 }
             }
@@ -201,7 +279,7 @@ namespace TestUpload.Controllers
                 }
             }
             return Redirect("/Home/Restricted");
-                
+
         }
         [HttpPost("/Files/Download")]
         public async Task<IActionResult> Downloading()
@@ -259,7 +337,7 @@ namespace TestUpload.Controllers
         public IActionResult RemoveFile(string id)
         {
             FileUpload fileUpload = IfileUploadService.GetById(id);
-            if(!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId==long.Parse(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId == long.Parse(HttpContext.Session.GetString("uid")))
             {
                 var user = long.Parse(HttpContext.Session.GetString("uid"));
                 try
@@ -284,7 +362,7 @@ namespace TestUpload.Controllers
         {
             FileUpload fileUpload = IfileUploadService.GetById(Id);
             if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId == long.Parse(HttpContext.Session.GetString("uid")))
-            {             
+            {
                 ViewBag.file = fileUpload;
                 return View();
             }
@@ -305,7 +383,7 @@ namespace TestUpload.Controllers
                 if (res)
                 {
 
-                    
+
                     var filepath = Iconfiguration.GetSection("att").Value;
                     filepath = filepath + "\\" + user + "\\" + Id;
                     System.IO.File.Delete(filepath);
@@ -314,9 +392,9 @@ namespace TestUpload.Controllers
                 }
                 return View();
             }
-            catch(Exception x)
+            catch (Exception x)
             {
-                service.CreateErrorHistory("Upload Files", "Deleted File Successful","", user,x.Message,x.InnerException.Message);
+                service.CreateErrorHistory("Upload Files", "Deleted File Successful", "", user, x.Message, x.InnerException.Message);
                 return Content("Delete Error");
             }
 
@@ -356,14 +434,14 @@ namespace TestUpload.Controllers
 
         }
 
-       
+
 
         [HttpPost("/Blob/Download")]
         public IActionResult DownloadingB()
         {
             string FileId = Request.Form["id"].ToString();
             long.TryParse(HttpContext.Session.GetString("uid"), out long user);
-            FileStorage Storage = IfileStorageService.Download(FileId);    
+            FileStorage Storage = IfileStorageService.Download(FileId);
             MemoryStream ms = new MemoryStream(Storage.RawData);
             ms.Position = 0;
             return File(ms, Storage.FileType, Storage.Filename + Storage.FileExtension);
@@ -380,8 +458,8 @@ namespace TestUpload.Controllers
             if (Storage == null)
             {
                 return View();
-            }   
-            MemoryStream ms = new MemoryStream(Storage.RawData);           
+            }
+            MemoryStream ms = new MemoryStream(Storage.RawData);
             ms.Position = 0;
             return File(ms, Storage.FileType, Storage.Filename + Storage.FileExtension);
         }
@@ -394,7 +472,7 @@ namespace TestUpload.Controllers
             {
                 var user = long.Parse(HttpContext.Session.GetString("uid"));
                 try
-                {             
+                {
                     IfileStorageService.DeleteOne(id);
                     service.CreateSuccessHistory("Upload Files", "Deleted File Successful", StorageView.Filename + StorageView.FileExtension, user);
                     return Redirect("/Files");
@@ -433,7 +511,7 @@ namespace TestUpload.Controllers
                 var res = IfileStorageService.VerifyRemove(Id, password);
                 if (res)
                 {
-                    service.CreateSuccessHistory("Upload Files", "Deleted File Successful", i.Filename + i.FileExtension, user );
+                    service.CreateSuccessHistory("Upload Files", "Deleted File Successful", i.Filename + i.FileExtension, user);
                     return Redirect("/Files");
                 }
                 return View();

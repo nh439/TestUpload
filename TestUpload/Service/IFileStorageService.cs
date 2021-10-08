@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestUpload.Models.criteria;
 using TestUpload.Models.Entity;
 using TestUpload.Models.View;
 using TestUpload.Repository.SQL;
@@ -13,6 +14,7 @@ namespace TestUpload.Service
         Task<int> CreateAsync(List<FileStorage> files);
         Task<List<FilestorageView>> GetAllFileStoragesAsync();
         Task<List<FilestorageView>> GetFilesByUserAsync(long user);
+        Task<List<FilestorageView>> GetFilescriteria(long user, Filecriteria filecriteria);
         FileStorage Download(string reference);
         FileStorage VerifyDownload(string reference, string password);
         int Delete(List<string> references);
@@ -63,6 +65,36 @@ namespace TestUpload.Service
         {
             return _FileStorageRepository.RemoveOne(reference);
             
+        }
+
+        public async Task<List<FilestorageView>> GetFilescriteria(long user, Filecriteria filecriteria)
+        {
+            var data = await _FileStorageRepository.GetByUser(user);
+            if(!string.IsNullOrEmpty(filecriteria.FileExtension))
+            {
+                data = data.Where(x => x.FileExtension == filecriteria.FileExtension).ToList();
+            }
+            if(!string.IsNullOrEmpty(filecriteria.Contentype))
+            {
+                data = data.Where(x => x.FileType == filecriteria.Contentype).ToList();
+            }
+            if(filecriteria.HasPassword)
+            {
+                data = data.Where(x => x.HasPassword).ToList();
+            }
+            if(filecriteria.AddDateStarts.HasValue)
+            {
+                data = data.Where(x => x.AddDate > filecriteria.AddDateStarts.Value.Date).ToList();
+            }
+            if (filecriteria.AddDateEnd.HasValue)
+            {
+                data = data.Where(x => x.AddDate <= filecriteria.AddDateEnd.Value.Date.AddDays(1)).ToList();
+            }
+            if(filecriteria.FileMode==1)
+            {
+                data = new List<FilestorageView>();
+            }
+            return data;
         }
 
     }
