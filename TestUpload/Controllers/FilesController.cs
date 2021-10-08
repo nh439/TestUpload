@@ -22,13 +22,15 @@ namespace TestUpload.Controllers
         private readonly IFileStorageService IfileStorageService;
         private readonly IConfiguration Iconfiguration;
         private readonly IhistoryLogService service;
+        private readonly ILoginService IloginService;
         CultureInfo THinfo = new CultureInfo("th-TH");
-        public FilesController(IFileUploadService fileUploadService, IFileStorageService fileStorageService, IConfiguration configuration, IhistoryLogService ihistory)
+        public FilesController(IFileUploadService fileUploadService, IFileStorageService fileStorageService, IConfiguration configuration, IhistoryLogService ihistory,ILoginService loginService)
         {
             IfileUploadService = fileUploadService;
             IfileStorageService = fileStorageService;
             Iconfiguration = configuration;
             service = ihistory;
+            IloginService = loginService;
         }
 
 
@@ -523,6 +525,41 @@ namespace TestUpload.Controllers
             }
 
         }
+        [HttpPost("/Files/Format")]
+        public async Task<IActionResult> Format()
+        {
+            if(!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            {
+                PasswordHash hash = new PasswordHash();
+                long user = long.Parse(HttpContext.Session.GetString("uid"));
+                string password = Request.Form["pass"].ToString();
+                string username = HttpContext.Session.GetString("un");
+               // password = hash.Create(username, password);
+                var Hasuser = IloginService.GetLogin(username, password);
+                if (Hasuser != null)
+                {
+                    var filepath = Iconfiguration.GetSection("att").Value;
+                    filepath = filepath + "\\" + user;
+                    Directory.Delete(filepath,true);                  
+                        await IfileUploadService.FormatAsync(user);                  
+                        await IfileStorageService.FormatAsync(user); 
+                    return Redirect("/Files");
+                }
+
+                return new JavaScriptResult("alert('Password Incorrect'); window.location.href='/Files'");
+            }
+
+            return Redirect("/Home/Restricted");
+        }
+        public class JavaScriptResult : ContentResult
+        {
+            public JavaScriptResult(string script)
+            {
+                this.Content = script;
+                this.ContentType = "application/javascript";
+            }
+        }
+
 
     }
 }

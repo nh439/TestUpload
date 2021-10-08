@@ -25,7 +25,7 @@
     <br />
     <button class="btn btn-primary" onclick="window.location.href='/Files/Uploads'">Add Files</button>
     &nbsp;&nbsp;
-    <button class="btn btn-danger" onclick="DeleteM()">Remove Selected</button>
+    <button class="btn btn-danger" data-toggle="modal" data-target="#Formatmodal">Format</button>
     <br />
     <br />
     <br />
@@ -37,14 +37,14 @@
     <table class="table table-hover table-bordered" style="text-align:center" id="Myupload">
         <thead class="table-dark">
             <tr>
-                <th></th>
-                <th onclick="sortTable(1)">Id</th>
-                <th onclick="sortTable(2)">Filename</th>
-                <th onclick="sortTable(3)">Filesize</th>
-                <th onclick="sortTable(4)">Date Created</th>
-                <th onclick="sortTable(5)">Content Type</th>
-                <th onclick="sortTable(6)">Stored Type</th>
-                <th onclick="sortTable(7)">Password</th>
+                
+                <th onclick="sortTable(0)">Id</th>
+                <th onclick="sortTable(1)">Filename</th>
+                <th onclick="sortTable(2)">Filesize</th>
+                <th onclick="sortTable(3)">Date Created</th>
+                <th onclick="sortTable(4)">Content Type</th>
+                <th onclick="sortTable(5)">Stored Type</th>
+                <th onclick="sortTable(6)">Password</th>
                 <th>action</th>
 
             </tr>
@@ -53,18 +53,7 @@
         <tbody class="table-success" id="TBL">
             @foreach (FileUpload file in files)
             {
-                <tr>
-                    <td>
-                        @if (!string.IsNullOrEmpty(file.pass))
-                        {
-                            <input type="checkbox" disabled />
-
-                        }
-                        else
-                        {
-                            <input type="checkbox" value="1" />
-                        }
-                    </td>
+                <tr>                   
                     <td>@file.Id</td>
                     <td>@file.Filename@file.FileExtension</td>
                     <td>@file.FileSize</td>
@@ -99,17 +88,7 @@
                 var md = file.Id + "-B";
 
                 <tr>
-                    <td>
-                        @if (file.HasPassword)
-                        {
-                            <input type="checkbox" disabled />
-
-                        }
-                        else
-                        {
-                            <input type="checkbox" value="2"/>
-                        }
-                    </td>
+                    
                     <td>@file.Id</td>
                     <td>@file.Filename@file.FileExtension</td>
                     <td>@file.FileSize</td>
@@ -245,4 +224,58 @@
         </div>
     </div>
 
-   
+    <!-- Modal -->
+    <form method="post">
+        <div class="modal fade" id="Formatmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black;">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete All Files</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h2><b>Are You Sure? Delete All File Required User Password</b></h2>
+                        <br />
+                        <div class="form-group row" id="PSD">
+                            <label for="text" class="col-2 col-form-label">Password</label>
+                            <div class="col-10">
+                                <div class="input-group">
+                                    <input id="pass" name="pass" type="password" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" asp-controller="Files" asp-action="Format" onclick="Formatting()">Format</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="modal fade" id="Formatting" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Formatting</h5>
+                </div>
+                <div class="modal-body">
+                    <center>
+                        <div class="loader"></div>
+                        <br />
+                        <br />
+                        <h1><b>Formatting</b></h1>
+                    </center>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+

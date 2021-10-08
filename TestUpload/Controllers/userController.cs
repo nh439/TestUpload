@@ -48,7 +48,8 @@ namespace TestUpload.Controllers
                 HttpContext.Session.SetString("uid", principal.Id.ToString());
                 HttpContext.Session.SetString("fn", principal.Firstname);
                 HttpContext.Session.SetString("ln", principal.Lastname);
-                if(principal.Admin)
+                HttpContext.Session.SetString("un", username);
+                if (principal.Admin)
                 {
                     HttpContext.Session.SetString("admin","1");
                 }

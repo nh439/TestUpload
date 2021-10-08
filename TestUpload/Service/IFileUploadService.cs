@@ -20,6 +20,7 @@ namespace TestUpload.Service
         bool VerifyRemove(string reference, string password);
         FileUpload GetById(string reference);
         Task<List<FileUpload>> GetFilescriteria(long user, Filecriteria filecriteria);
+        Task<int> FormatAsync(long user);
     }
     public class FileUploadService:IFileUploadService
     {
@@ -94,6 +95,10 @@ namespace TestUpload.Service
                 data = new List<FileUpload>();
             }
             return data;
+        }
+        public async Task<int> FormatAsync(long user)
+        {
+            return await _fileUploadRepository.FormatAsync(user);
         }
 
 

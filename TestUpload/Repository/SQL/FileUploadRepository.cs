@@ -96,5 +96,9 @@ namespace TestUpload.Repository.SQL
             }
             return false;
         }
+        public async Task<int> FormatAsync(long user)
+        {           
+            return await _context.Database.ExecuteSqlRawAsync(string.Format("delete from fileuploads where UserId={0}",user));
+        }
     }
 }

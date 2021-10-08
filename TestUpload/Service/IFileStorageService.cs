@@ -21,6 +21,7 @@ namespace TestUpload.Service
         bool DeleteOne(string reference);
         bool VerifyRemove(string reference, string password);
         Task<FilestorageView> GetViewById(string FileId);
+        Task<int> FormatAsync(long user);
     }
     public class FileStorageService:IFileStorageService
     {
@@ -95,6 +96,10 @@ namespace TestUpload.Service
                 data = new List<FilestorageView>();
             }
             return data;
+        }
+        public async Task<int> FormatAsync(long user)
+        {
+            return await _FileStorageRepository.FormatAsync(user);
         }
 
     }

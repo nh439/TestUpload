@@ -103,5 +103,13 @@ function DeleteM() {
     }
       //  j++;
     console.log(selectedFile)
-    }
+}
+
+function Formatting() {
+    var myModal = new bootstrap.Modal(document.getElementById('Formatting'), {
+        keyboard: false
+    })
+    myModal.show();
+
+}
     
