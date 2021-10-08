@@ -86,8 +86,8 @@ namespace TestUpload.Controllers
             {
                 Filecriteria filecriteria = new Filecriteria
                 {
-                    AddDateEnd = !string.IsNullOrEmpty(Request.Form["dateend"].ToString()) ? DateTime.Parse(Request.Form["dateend"].ToString(),THinfo) : null,
-                    AddDateStarts = !string.IsNullOrEmpty(Request.Form["datestart"].ToString()) ? DateTime.Parse(Request.Form["datestart"].ToString(),THinfo) : null,
+                    AddDateEnd = !string.IsNullOrEmpty(Request.Form["dateend"].ToString()) ? DateConvert.GetBuddhist_era( DateTime.Parse(Request.Form["dateend"].ToString())) : null,
+                    AddDateStarts = !string.IsNullOrEmpty(Request.Form["datestart"].ToString()) ? DateConvert.GetBuddhist_era( DateTime.Parse(Request.Form["datestart"].ToString())) : null,
                     Contentype = Request.Form["content"].ToString(),
                     FileExtension = Request.Form["ext"].ToString(),
                     FileMode = int.Parse(Request.Form["mode"].ToString()),
