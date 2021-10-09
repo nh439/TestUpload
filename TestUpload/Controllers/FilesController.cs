@@ -165,6 +165,7 @@ namespace TestUpload.Controllers
 
                     PasswordHash passwordHash = new PasswordHash();
                     if (blob)
+                    
                     {
                         List<FileStorage> uploads = new List<FileStorage>();
                         foreach (var att in Files)
@@ -540,13 +541,16 @@ namespace TestUpload.Controllers
                 {
                     var filepath = Iconfiguration.GetSection("att").Value;
                     filepath = filepath + "\\" + user;
-                    Directory.Delete(filepath,true);                  
-                        await IfileUploadService.FormatAsync(user);                  
-                        await IfileStorageService.FormatAsync(user); 
+                    if (Directory.Exists(Path.GetDirectoryName(filepath)))
+                    {
+                        Directory.Delete(filepath, true);               
+                    }
+                    await IfileUploadService.FormatAsync(user);                  
+                    await IfileStorageService.FormatAsync(user); 
                     return Redirect("/Files");
                 }
 
-                return new JavaScriptResult("alert('Password Incorrect'); window.location.href='/Files'");
+                return View();
             }
 
             return Redirect("/Home/Restricted");
