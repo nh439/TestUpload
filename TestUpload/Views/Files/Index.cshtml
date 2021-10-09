@@ -3,9 +3,11 @@
 *@
 @{ List<FileUpload> files = ViewBag.files;
     List<FilestorageView> storage = ViewBag.storage;
+    CultureInfo THinfo = new CultureInfo("th-TH");
 }
 @using TestUpload.Models.Entity;
 @using TestUpload.Models.View;
+@using System.Globalization
 <script src="~/js/FilesIndex.js"></script>
 <link rel="stylesheet" href="~/css/Loading.css" />
 <div class="document">

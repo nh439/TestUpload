@@ -23,7 +23,7 @@ namespace TestUpload.Controllers
         private readonly IConfiguration Iconfiguration;
         private readonly IhistoryLogService service;
         private readonly ILoginService IloginService;
-        CultureInfo THinfo = new CultureInfo("th-TH");
+        CultureInfo THinfo = new CultureInfo("en-GB");
         public FilesController(IFileUploadService fileUploadService, IFileStorageService fileStorageService, IConfiguration configuration, IhistoryLogService ihistory,ILoginService loginService)
         {
             IfileUploadService = fileUploadService;
@@ -88,8 +88,8 @@ namespace TestUpload.Controllers
             {
                 Filecriteria filecriteria = new Filecriteria
                 {
-                    AddDateEnd = !string.IsNullOrEmpty(Request.Form["dateend"].ToString()) ? DateConvert.GetBuddhist_era( DateTime.Parse(Request.Form["dateend"].ToString())) : null,
-                    AddDateStarts = !string.IsNullOrEmpty(Request.Form["datestart"].ToString()) ? DateConvert.GetBuddhist_era( DateTime.Parse(Request.Form["datestart"].ToString())) : null,
+                    AddDateEnd = !string.IsNullOrEmpty(Request.Form["dateend"].ToString()) ?  DateTime.Parse(Request.Form["dateend"].ToString(),THinfo) : null,
+                    AddDateStarts = !string.IsNullOrEmpty(Request.Form["datestart"].ToString()) ?  DateTime.Parse(Request.Form["datestart"].ToString(),THinfo) : null,
                     Contentype = Request.Form["content"].ToString(),
                     FileExtension = Request.Form["ext"].ToString(),
                     FileMode = int.Parse(Request.Form["mode"].ToString()),
@@ -172,7 +172,7 @@ namespace TestUpload.Controllers
                         {
                             FileStorage fileUpload = new FileStorage()
                             {
-                                AddDate = DateTime.Now,
+                                AddDate =DateTime.Now,
                                 Comment = Request.Form["com"].ToString(),
                                 FileExtension = Path.GetExtension(att.FileName),
                                 Filename = Path.GetFileNameWithoutExtension(att.FileName),
