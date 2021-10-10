@@ -13,6 +13,7 @@ using Microsoft.Extensions.FileProviders;
 using TestUpload.Securities;
 using TestUpload.Models.criteria;
 using System.Globalization;
+using Microsoft.Extensions.Logging;
 
 namespace TestUpload.Controllers
 {
@@ -23,14 +24,16 @@ namespace TestUpload.Controllers
         private readonly IConfiguration Iconfiguration;
         private readonly IhistoryLogService service;
         private readonly ILoginService IloginService;
+        private readonly ILogger<FilesController> _logger;
         CultureInfo THinfo = new CultureInfo("en-GB");
-        public FilesController(IFileUploadService fileUploadService, IFileStorageService fileStorageService, IConfiguration configuration, IhistoryLogService ihistory,ILoginService loginService)
+        public FilesController(IFileUploadService fileUploadService, IFileStorageService fileStorageService, IConfiguration configuration, IhistoryLogService ihistory,ILoginService loginService, ILogger<FilesController> logger)
         {
             IfileUploadService = fileUploadService;
             IfileStorageService = fileStorageService;
             Iconfiguration = configuration;
             service = ihistory;
             IloginService = loginService;
+            _logger = logger;
         }
 
 
@@ -244,6 +247,7 @@ namespace TestUpload.Controllers
                 }
                 catch (Exception x)
                 {
+                    _logger.LogError(x.Message);
                     ViewBag.Issuccess = false;
                     service.CreateErrorHistory("Upload Files", "Upload File Unsuccessful", "", user, x.Message, x.InnerException.Message);
                     return View();
@@ -301,9 +305,10 @@ namespace TestUpload.Controllers
                 ms.Position = 0;
                 return File(ms, fileUpload.FileType, fileUpload.Filename + fileUpload.FileExtension);
             }
-            catch
+            catch(Exception x)
             {
-                return Content("Something Went Wrong");
+                _logger.LogError(x.Message);
+                return StatusCode(500,x.Message);
             }
         }
         [HttpPost("/Files/DownloadV")]
@@ -330,9 +335,10 @@ namespace TestUpload.Controllers
                 ms.Position = 0;
                 return File(ms, fileUpload.FileType, fileUpload.Filename + fileUpload.FileExtension);
             }
-            catch
+            catch(Exception x)
             {
-                return Content("Something Went Wrong");
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
             }
         }
 
@@ -355,7 +361,8 @@ namespace TestUpload.Controllers
                 catch (Exception x)
                 {
                     service.CreateErrorHistory("Upload Files", "Deleted File Failed", "", user, x.Message, x.InnerException.Message);
-                    return Content("Delete Error");
+                    _logger.LogError(x.Message);
+                    return StatusCode(500, x.Message);
                 }
             }
             return Redirect("/Home/Restricted");
@@ -398,7 +405,8 @@ namespace TestUpload.Controllers
             catch (Exception x)
             {
                 service.CreateErrorHistory("Upload Files", "Deleted File Successful", "", user, x.Message, x.InnerException.Message);
-                return Content("Delete Error");
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
             }
 
         }
@@ -422,45 +430,53 @@ namespace TestUpload.Controllers
         [HttpPost("Files/Resetpass")]
         public IActionResult Resetpass()
         {
-            bool blob = bool.Parse(Request.Form["Blob"].ToString());
-            string Id = Request.Form["id"].ToString();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            try
             {
-                string pass = Request.Form["upass"].ToString();
-                string username = HttpContext.Session.GetString("un");
-                long user = long.Parse(HttpContext.Session.GetString("uid"));
-                var userVerify = IloginService.GetLogin(username, pass);
-                if(userVerify != null)
+                bool blob = bool.Parse(Request.Form["Blob"].ToString());
+                string Id = Request.Form["id"].ToString();
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
                 {
-                    if (blob)
+                    string pass = Request.Form["upass"].ToString();
+                    string username = HttpContext.Session.GetString("un");
+                    long user = long.Parse(HttpContext.Session.GetString("uid"));
+                    var userVerify = IloginService.GetLogin(username, pass);
+                    if (userVerify != null)
                     {
-                        var datacheck = IfileStorageService.GetViewById(Id).GetAwaiter().GetResult();
-                        if (datacheck.UserId == user)
+                        if (blob)
                         {
-                            string newpass = Request.Form["newpass"].ToString();
-                            IfileStorageService.Setpassword(Id, newpass);
-                            return Redirect("/Files");
+                            var datacheck = IfileStorageService.GetViewById(Id).GetAwaiter().GetResult();
+                            if (datacheck.UserId == user)
+                            {
+                                string newpass = Request.Form["newpass"].ToString();
+                                IfileStorageService.Setpassword(Id, newpass);
+                                return Redirect("/Files");
+                            }
+                            return Redirect("/Home/Restricted");
                         }
-                        return Redirect("/Home/Restricted");
-                    }
-                    else
-                    {
-                        var datacheck = IfileUploadService.GetById(Id);
-                        if (datacheck.UserId == user)
+                        else
                         {
-                            string newpass = Request.Form["newpass"].ToString();
-                            IfileUploadService.Setpassword(Id, newpass);
-                            return Redirect("/Files");
+                            var datacheck = IfileUploadService.GetById(Id);
+                            if (datacheck.UserId == user)
+                            {
+                                string newpass = Request.Form["newpass"].ToString();
+                                IfileUploadService.Setpassword(Id, newpass);
+                                return Redirect("/Files");
+                            }
+                            return Redirect("/Home/Restricted");
                         }
-                        return Redirect("/Home/Restricted");
-                    }
 
+                    }
+                    ViewBag.Id = Id;
+                    ViewBag.Blob = blob;
+                    return View();
                 }
-                ViewBag.Id = Id;
-                ViewBag.Blob = blob;
-                return View();
+                return Redirect("/Home/Restricted");
             }
-            return Redirect("/Home/Restricted");
+            catch(Exception x)
+            {
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
+            }
         }
 
 
@@ -504,29 +520,45 @@ namespace TestUpload.Controllers
         [HttpPost("/Blob/Download")]
         public IActionResult DownloadingB()
         {
-            string FileId = Request.Form["id"].ToString();
-            long.TryParse(HttpContext.Session.GetString("uid"), out long user);
-            FileStorage Storage = IfileStorageService.Download(FileId);
-            MemoryStream ms = new MemoryStream(Storage.RawData);
-            ms.Position = 0;
-            return File(ms, Storage.FileType, Storage.Filename + Storage.FileExtension);
+            try
+            {
+                string FileId = Request.Form["id"].ToString();
+                long.TryParse(HttpContext.Session.GetString("uid"), out long user);
+                FileStorage Storage = IfileStorageService.Download(FileId);
+                MemoryStream ms = new MemoryStream(Storage.RawData);
+                ms.Position = 0;
+                return File(ms, Storage.FileType, Storage.Filename + Storage.FileExtension);
+            }
+            catch(Exception x)
+            {
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
+            }
         }
         [HttpPost("/Blob/DownloadV")]
         public IActionResult DownloadVerifyB()
         {
-            PasswordHash hash = new PasswordHash();
-            string FileId = Request.Form["id"].ToString();
-            string password = Request.Form["pass"].ToString();
-            password = hash.CreateEncrypted(FileId, password);
-            long.TryParse(HttpContext.Session.GetString("uid"), out long user);
-            FileStorage Storage = IfileStorageService.VerifyDownload(FileId, password);
-            if (Storage == null)
+            try
             {
-                return View();
+                PasswordHash hash = new PasswordHash();
+                string FileId = Request.Form["id"].ToString();
+                string password = Request.Form["pass"].ToString();
+                password = hash.CreateEncrypted(FileId, password);
+                long.TryParse(HttpContext.Session.GetString("uid"), out long user);
+                FileStorage Storage = IfileStorageService.VerifyDownload(FileId, password);
+                if (Storage == null)
+                {
+                    return View();
+                }
+                MemoryStream ms = new MemoryStream(Storage.RawData);
+                ms.Position = 0;
+                return File(ms, Storage.FileType, Storage.Filename + Storage.FileExtension);
             }
-            MemoryStream ms = new MemoryStream(Storage.RawData);
-            ms.Position = 0;
-            return File(ms, Storage.FileType, Storage.Filename + Storage.FileExtension);
+            catch(Exception x)
+            {
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
+            }
         }
 
         [HttpGet("/Blob/Remove/{id}")]
@@ -545,7 +577,8 @@ namespace TestUpload.Controllers
                 catch (Exception x)
                 {
                     service.CreateErrorHistory("Upload Files", "Deleted File Failed", "", user, x.Message, x.InnerException.Message);
-                    return Content("Delete Error");
+                    _logger.LogError(x.Message);
+                    return StatusCode(500, x.Message);
                 }
             }
             return Redirect("/Home/Restricted");
@@ -584,7 +617,8 @@ namespace TestUpload.Controllers
             catch (Exception x)
             {
                 service.CreateErrorHistory("Upload Files", "Deleted File Unsuccessful", "", user, x.Message, x.InnerException.Message);
-                return Content("Delete Error");
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
             }
 
         }

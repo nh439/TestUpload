@@ -55,11 +55,28 @@
         <tbody class="table-success" id="TBL">
             @foreach (FileUpload file in files)
             {
+             var filesize = string.Empty;
+                if (file.FileSize < 1024)
+                {
+                    filesize = file.FileSize + " Bytes";
+                }
+                else if (file.FileSize < (1024 * 1024))
+                {
+                    filesize = (file.FileSize / 1024).ToString("0.00") + " kB";
+                }
+                else if (file.FileSize < (1024 * 1024 * 1024))
+                {
+                    filesize = (file.FileSize / (1024 * 1024)).ToString("0.00") + " MB";
+                }
+                else
+                {
+                    filesize = (file.FileSize / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
+                }
                 <tr>
 
                     <td>@file.Id</td>
                     <td>@file.Filename@file.FileExtension</td>
-                    <td>@file.FileSize</td>
+                    <td>@filesize</td>
                     <td>@file.AddDate.ToLongDateString()</td>
                     <td>@file.FileType</td>
                     <td>File</td>
@@ -88,13 +105,29 @@
             @foreach (FilestorageView file in storage)
             {
 
-                var md = file.Id + "-B";
+                var filesize = string.Empty;
+                if (file.FileSize < 1024)
+                {
+                    filesize = file.FileSize + " Bytes";
+                }
+                else if (file.FileSize < (1024 * 1024))
+                {
+                    filesize = (file.FileSize / 1024).ToString("0.00") + " kB";
+                }
+                else if (file.FileSize < (1024 * 1024 * 1024))
+                {
+                    filesize = (file.FileSize / (1024 * 1024)).ToString("0.00") + " MB";
+                }
+                else
+                {
+                    filesize = (file.FileSize / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
+                }
 
                 <tr>
 
                     <td>@file.Id</td>
                     <td>@file.Filename@file.FileExtension</td>
-                    <td>@file.FileSize</td>
+                    <td>@filesize</td>
                     <td>@file.AddDate.ToLongDateString()</td>
                     <td>@file.FileType</td>
                     <td>Blob Storage</td>
