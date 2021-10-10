@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TestUpload.Models.criteria;
 using TestUpload.Models.Entity;
 using TestUpload.Repository.SQL;
+using TestUpload.Securities;
 
 namespace TestUpload.Service
 {
@@ -21,6 +22,7 @@ namespace TestUpload.Service
         FileUpload GetById(string reference);
         Task<List<FileUpload>> GetFilescriteria(long user, Filecriteria filecriteria);
         Task<int> FormatAsync(long user);
+        bool Setpassword(string Id, string Newpassword);
     }
     public class FileUploadService:IFileUploadService
     {
@@ -100,7 +102,15 @@ namespace TestUpload.Service
         {
             return await _fileUploadRepository.FormatAsync(user);
         }
-
+        public bool Setpassword(string Id, string Newpassword)
+        {
+            PasswordHash hash = new PasswordHash();
+            if (!string.IsNullOrEmpty(Newpassword))
+            {
+                Newpassword = hash.CreateEncrypted(Id, Newpassword);
+            }
+            return _fileUploadRepository.Setpassword(Id, Newpassword);
+        }
 
     }
 }

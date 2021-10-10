@@ -402,6 +402,68 @@ namespace TestUpload.Controllers
             }
 
         }
+        [HttpPost("Files/Reset")]
+        public IActionResult Setpass()
+        {
+            var data = new
+            {
+                Id = Request.Form["id"].ToString(),
+                Blob = bool.Parse(Request.Form["blob"].ToString())
+            };
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) )
+            {
+                ViewBag.Id = data.Id;
+                ViewBag.Blob = data.Blob ? true:false;
+                return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
+
+        [HttpPost("Files/Resetpass")]
+        public IActionResult Resetpass()
+        {
+            bool blob = bool.Parse(Request.Form["Blob"].ToString());
+            string Id = Request.Form["id"].ToString();
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            {
+                string pass = Request.Form["upass"].ToString();
+                string username = HttpContext.Session.GetString("un");
+                long user = long.Parse(HttpContext.Session.GetString("uid"));
+                var userVerify = IloginService.GetLogin(username, pass);
+                if(userVerify != null)
+                {
+                    if (blob)
+                    {
+                        var datacheck = IfileStorageService.GetViewById(Id).GetAwaiter().GetResult();
+                        if (datacheck.UserId == user)
+                        {
+                            string newpass = Request.Form["newpass"].ToString();
+                            IfileStorageService.Setpassword(Id, newpass);
+                            return Redirect("/Files");
+                        }
+                        return Redirect("/Home/Restricted");
+                    }
+                    else
+                    {
+                        var datacheck = IfileUploadService.GetById(Id);
+                        if (datacheck.UserId == user)
+                        {
+                            string newpass = Request.Form["newpass"].ToString();
+                            IfileUploadService.Setpassword(Id, newpass);
+                            return Redirect("/Files");
+                        }
+                        return Redirect("/Home/Restricted");
+                    }
+
+                }
+                ViewBag.Id = Id;
+                ViewBag.Blob = blob;
+                return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
+
+
 
         [HttpGet("/Blob/Download/{id}")]
         public IActionResult DownloadB(string id)

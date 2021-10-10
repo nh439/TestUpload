@@ -191,5 +191,10 @@ namespace TestUpload.Repository.SQL
             return await _context.Database.ExecuteSqlRawAsync(string.Format("delete from filestorage where UserId={0}", user));
 
         }
+        public bool Setpassword(string ids,string Newpassword)
+        {
+                   
+            return _context.Database.ExecuteSqlRaw(string.Format("update filestorage set pass='{1}' where Id='{0}'",ids,Newpassword)) > 0 ? true : false;
+        }
     }
 }

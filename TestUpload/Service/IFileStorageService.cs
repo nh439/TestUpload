@@ -6,6 +6,7 @@ using TestUpload.Models.criteria;
 using TestUpload.Models.Entity;
 using TestUpload.Models.View;
 using TestUpload.Repository.SQL;
+using TestUpload.Securities;
 
 namespace TestUpload.Service
 {
@@ -22,6 +23,7 @@ namespace TestUpload.Service
         bool VerifyRemove(string reference, string password);
         Task<FilestorageView> GetViewById(string FileId);
         Task<int> FormatAsync(long user);
+        bool Setpassword(string Id, string Newpassword);
     }
     public class FileStorageService:IFileStorageService
     {
@@ -100,6 +102,15 @@ namespace TestUpload.Service
         public async Task<int> FormatAsync(long user)
         {
             return await _FileStorageRepository.FormatAsync(user);
+        }
+        public bool Setpassword(string Id, string Newpassword)
+        {
+            PasswordHash hash = new PasswordHash();
+            if (!string.IsNullOrEmpty(Newpassword))
+            {
+                Newpassword = hash.CreateEncrypted(Id, Newpassword);
+            }
+            return _FileStorageRepository.Setpassword(Id, Newpassword);
         }
 
     }

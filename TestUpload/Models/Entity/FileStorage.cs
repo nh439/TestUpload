@@ -23,9 +23,6 @@ namespace TestUpload.Models.Entity
         [StringLength(255)]
         public string pass { get; set; }
 
-        public string Comment { get; set; }
-
-       
-        
+        public string Comment { get; set; }              
     }
 }

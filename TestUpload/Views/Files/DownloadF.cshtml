@@ -42,15 +42,20 @@
                 </div>
             </div>
         }
+        <input type="hidden" name="blob" value="false" />
         <br />
         <input type="hidden" value="@data.Id" name="id" />
         @if (!string.IsNullOrEmpty(data.pass))
         {
-            <button class="btn btn-outline-success" type="submit" asp-controller="Files" asp-action="DownloadV">Download</button>
+            <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="DownloadV">Download</button>
+            
+            <button class="btn btn-outline-danger mx-1" type="submit" asp-controller="Files" asp-action="Reset">Forgot Password</button>
         }
         else
         {
-            <button class="btn btn-outline-success" type="submit" asp-controller="Files" asp-action="Download">Download</button>
+            <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="Download">Download</button> 
+                    
+            <button class="btn btn-outline-danger mx-1" type="submit" asp-controller="Files" asp-action="Reset">Set Password</button>
         }
 
     </center>

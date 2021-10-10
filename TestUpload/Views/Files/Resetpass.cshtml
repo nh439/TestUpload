@@ -1,0 +1,80 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+
+<center>
+    <div class="alert alert-danger" role="alert" style="width:40%;font-size:x-large">
+        <br />
+        User Password Incorrect
+        <br />
+    </div>
+    <h1> Reset Item Password</h1>
+    <br />
+    <form method="post" style="font-size:x-large">
+        <div class="form-group row">
+            <label for="upass" class="col-2 col-form-label"></label>
+            <div class="col-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Item Id</div>
+                    </div>
+                    <input id="id" name="id" type="text" class="form-control" value="@ViewBag.Id" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="upass" class="col-2 col-form-label"></label>
+            <div class="col-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">User Password</div>
+                    </div>
+                    <input id="upass" name="upass" type="password" class="form-control">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="newpass" class="col-2 col-form-label"></label>
+            <div class="col-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">New Password</div>
+                    </div>
+                    <input id="newpass" name="newpass" type="password" class="form-control"  onkeyup="HE()" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="ret" class="col-2 col-form-label"></label>
+            <div class="col-10">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Retype Password</div>
+                    </div>
+                    <input id="ret" name="ret" type="password" class="form-control" onkeyup="passcheck()">
+
+                </div>
+                <div class="col-10" style="display: none" id="ms1">
+                    <small style="color:red">Confirm Password Incorrect</small>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="blob" value="@ViewBag.Blob.ToString()" />
+        <div class="form-group row">
+            <div class="offset-2 col-10">
+                <button name="submit" id="Sub01" type="submit" class="btn btn-primary" asp-controller="Files" asp-action="Resetpass">Submit</button>
+            </div>
+        </div>
+    </form>
+</center>
+<script src="~/js/Setpassword.js">
+            
+</script>
