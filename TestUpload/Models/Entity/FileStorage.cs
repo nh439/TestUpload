@@ -23,6 +23,10 @@ namespace TestUpload.Models.Entity
         [StringLength(255)]
         public string pass { get; set; }
 
-        public string Comment { get; set; }              
+        public string Comment { get; set; }
+        public string UploadId { get; set; }
+        public string Uploadname { get; set; }
+        public bool Shared { get; set; } = false;
+        public string Token { get; set; } = StrRandom.RandomString(40);
     }
 }

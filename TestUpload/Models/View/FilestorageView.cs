@@ -17,5 +17,9 @@ namespace TestUpload.Models.View
         public bool HasPassword { get; set; }
         public string Comment { get; set; }
         public string FileType { get; set; }
+        public string UploadId { get; set; }
+        public string Uploadname { get; set; }
+        public bool Shared { get; set; } = false;
+        public string Token { get; set; } 
     }
 }

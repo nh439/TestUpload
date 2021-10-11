@@ -32,6 +32,8 @@ namespace TestUpload
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
+            builder.Entity<FileUpload>().HasIndex(x => x.Token).IsUnique();
+            builder.Entity<FileStorage>().HasIndex(x => x.Token).IsUnique();
         }
     }
 }

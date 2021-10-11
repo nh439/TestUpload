@@ -51,18 +51,18 @@ namespace TestUpload.Controllers
                           select new
                           {
                               Extension = f.FileExtension,
-                              ContentType = f.FileType
+                              Contentspace = f.Uploadname
                           }).ToList();
                 var db = (from f in storage
                           select new
                           {
                               Extension = f.FileExtension,
-                              ContentType = f.FileType
+                              Contentspace = f.Uploadname
                           }).ToList();
 
                 var dc = da.Union(db);
                 ViewBag.Extension = dc.Select(x => x.Extension).Distinct().ToList();
-                ViewBag.Ctype = dc.Select(x => x.ContentType).Distinct().ToList();
+                ViewBag.Ctype = dc.Select(x => x.Contentspace).Distinct().ToList();
                 var j = files.Select(x => x.FileSize).Sum() + storage.Select(x => x.FileSize).Sum();
                 if (j <= 1024)
                 {
@@ -93,10 +93,11 @@ namespace TestUpload.Controllers
                 {
                     AddDateEnd = !string.IsNullOrEmpty(Request.Form["dateend"].ToString()) ?  DateTime.Parse(Request.Form["dateend"].ToString(),THinfo) : null,
                     AddDateStarts = !string.IsNullOrEmpty(Request.Form["datestart"].ToString()) ?  DateTime.Parse(Request.Form["datestart"].ToString(),THinfo) : null,
-                    Contentype = Request.Form["content"].ToString(),
+                    FileNamespace = Request.Form["content"].ToString(),
                     FileExtension = Request.Form["ext"].ToString(),
                     FileMode = int.Parse(Request.Form["mode"].ToString()),
-                    HasPassword = Request.Form["Hpass"].ToString() == "1" ? true:false 
+                    HasPassword = Request.Form["Hpass"].ToString() == "1" ? true:false ,
+                    StatusMode=int.Parse(Request.Form["status"].ToString())
                 };
                 ViewBag.CR = filecriteria;
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
@@ -110,18 +111,21 @@ namespace TestUpload.Controllers
                           select new
                           {
                               Extension = f.FileExtension,
-                              ContentType = f.FileType
+                              Contentspace = f.Uploadname
                           }).ToList();
                 var db = (from f in storageA
                           select new
                           {
                               Extension = f.FileExtension,
-                              ContentType = f.FileType
+                              Contentspace = f.Uploadname
                           }).ToList();
 
                 var dc = da.Union(db);
+                var namespaces = dc.Select(x => x.Contentspace).Distinct().ToList();
+                var idx = namespaces.FindIndex(x => string.IsNullOrEmpty(x));
+                namespaces[idx] = "[No Namespaces]";
                 ViewBag.Extension = dc.Select(x => x.Extension).Distinct().ToList();
-                ViewBag.Ctype = dc.Select(x => x.ContentType).Distinct().ToList();
+                ViewBag.Ctype = namespaces;
                 var j = files.Select(x => x.FileSize).Sum() + storage.Select(x => x.FileSize).Sum();
                 if (j <= 1024)
                 {
@@ -164,6 +168,9 @@ namespace TestUpload.Controllers
                 {
                     bool blob = int.Parse(Request.Form["Storage"].ToString()) == 1 ? true : false;
                     var filepath = Iconfiguration.GetSection("att").Value;
+                    string uploadId = Guid.NewGuid().ToString();
+                    bool share = Request.Form["shared"].ToString() == "true" ? true:false;
+                    string nsp = Request.Form["nspec"].ToString();
 
 
                     PasswordHash passwordHash = new PasswordHash();
@@ -181,7 +188,9 @@ namespace TestUpload.Controllers
                                 Filename = Path.GetFileNameWithoutExtension(att.FileName),
                                 FileSize = att.Length,
                                 FileType = att.ContentType,
-
+                                UploadId=uploadId,
+                                Shared=share,
+                                Uploadname=nsp,
                                 UserId = user
                             };
                             fileUpload.pass = !string.IsNullOrEmpty(Request.Form["pass"].ToString()) ? passwordHash.CreateEncrypted(fileUpload.Id, Request.Form["pass"].ToString()) : string.Empty;
@@ -214,7 +223,9 @@ namespace TestUpload.Controllers
                                 Filename = Path.GetFileNameWithoutExtension(att.FileName),
                                 FileSize = att.Length,
                                 FileType = att.ContentType,
-
+                                UploadId=uploadId,
+                                Shared=share,
+                                Uploadname=nsp,
                                 UserId = user
                             };
                             fileUpload.pass = !string.IsNullOrEmpty(Request.Form["pass"].ToString()) ? passwordHash.CreateEncrypted(fileUpload.Id, Request.Form["pass"].ToString()) : string.Empty;
@@ -650,6 +661,48 @@ namespace TestUpload.Controllers
             }
 
             return Redirect("/Home/Restricted");
+        }
+        [HttpPost("/Files/Setting")]
+        public IActionResult Setting()
+        {
+            try
+            {
+                string namespaces = Request.Form["nspec"].ToString();
+                string reference = Request.Form["id"].ToString();
+                bool shared = Request.Form["Shared"].ToString()=="true" ? true:false;
+                bool blob = bool.Parse(Request.Form["Blob"].ToString());
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+                {
+                    long user = long.Parse(HttpContext.Session.GetString("uid"));
+                    if(blob)
+                    {
+                        var checkdata = IfileStorageService.GetViewById(reference).GetAwaiter().GetResult();
+                        if(checkdata.UserId==user)
+                        {
+                            IfileStorageService.SetnamespaceAndShared(reference, namespaces, shared);
+                            return Redirect("/Files");
+                        }
+                    }
+                    else
+                    {
+                        var checkdata = IfileUploadService.GetById(reference);
+                        if (checkdata.UserId == user)
+                        {
+                            IfileUploadService.SetnamespaceAndShared(reference, namespaces, shared);
+                            return Redirect("/Files");
+                        }
+                    }
+
+                }
+                return Redirect("/Home/Restricted");
+            }
+            catch (Exception x)
+            {
+              //  service.CreateErrorHistory("Upload Files", "Set Me Unsuccessful", "", user, x.Message, x.InnerException.Message);
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
+            }
+
         }
         public class JavaScriptResult : ContentResult
         {

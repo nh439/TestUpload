@@ -8,7 +8,7 @@
       FileUpload data = ViewBag.data;
 }
 @using TestUpload.Models.Entity;
-<form method="post">
+<form method="post" style="font-size:x-large">
     <center>
         <h1><b>@data.Filename@data.FileExtension</b></h1>
         <hr />
@@ -48,15 +48,56 @@
         @if (!string.IsNullOrEmpty(data.pass))
         {
             <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="DownloadV">Download</button>
-            
+
             <button class="btn btn-outline-danger mx-1" type="submit" asp-controller="Files" asp-action="Reset">Forgot Password</button>
         }
         else
         {
-            <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="Download">Download</button> 
-                    
+            <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="Download">Download</button>
+
             <button class="btn btn-outline-danger mx-1" type="submit" asp-controller="Files" asp-action="Reset">Set Password</button>
         }
 
+    </center>
+    <br />
+    <h1>Namespace and Sharing</h1>
+    <hr />
+    <div class="form-group row">
+        <label class="col-2"></label>
+        <div class="col-10">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">File namespace</div>
+                </div>
+                <input id="nspec" name="nspec" type="text" class="form-control" value="@data.Uploadname">
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="form-group row">
+        <div class="col-2"></div>
+        <div class="col-10">
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input name="Shared" id="Shared_0" type="checkbox" checked="@data.Shared" class="custom-control-input" value="true">
+                <label for="Shared_0" class="custom-control-label">Public Share</label>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="form-group row">
+        <label class="col-2"></label>
+        <div class="col-10">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">File Token</div>
+                </div>
+                <input id="Token" name="Token" type="text" class="form-control" value="@data.Token">
+            </div>
+        </div>
+    </div>
+    <br />
+    <input type="hidden" id="Blob" value="false" />
+    <center>
+        <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="Setting">Savechanges</button>
     </center>
 </form>

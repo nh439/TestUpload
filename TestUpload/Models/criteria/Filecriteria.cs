@@ -10,9 +10,10 @@ namespace TestUpload.Models.criteria
         public string FileExtension { get; set; }
         public DateTime? AddDateStarts { get; set; }
         public DateTime? AddDateEnd { get; set; }
-        public string Contentype { get; set; }
+        public string FileNamespace { get; set; }
         public bool HasPassword { get; set; }
         public int FileMode { get; set; }
+        public int StatusMode { get; set; }
 
     }
 }

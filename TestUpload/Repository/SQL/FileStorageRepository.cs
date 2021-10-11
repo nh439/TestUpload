@@ -68,7 +68,11 @@ namespace TestUpload.Repository.SQL
                                   storage.pass,
                                   storage.Comment,
                                   storage.UserId,
-                                  storage.FileType
+                                  storage.FileType,
+                                  storage.Uploadname,
+                                  storage.UploadId,
+                                  storage.Token,
+                                  storage.Shared
                               }
                      ).FirstOrDefaultAsync();
            var views = new FilestorageView
@@ -81,9 +85,13 @@ namespace TestUpload.Repository.SQL
                 HasPassword = !string.IsNullOrEmpty(i.pass) ? true : false,
                 Id = i.Id,
                 UserId = i.UserId,
-                FileType=i.FileType
+                FileType=i.FileType,
+               Token = i.Token,
+               Shared = i.Shared,
+               UploadId = i.UploadId,
+               Uploadname = i.Uploadname
 
-            };
+           };
             return views;
         }
         public async Task<List<FilestorageView>> GetByUser(long user)
@@ -100,7 +108,11 @@ namespace TestUpload.Repository.SQL
                                   storage.pass,
                                   storage.Comment,
                                   storage.UserId,
-                                  storage.FileType
+                                  storage.FileType,
+                                  storage.Uploadname,
+                                  storage.UploadId,
+                                  storage.Token,
+                                  storage.Shared
                               }
                       ).ToListAsync();
             foreach (var i in data)
@@ -115,7 +127,11 @@ namespace TestUpload.Repository.SQL
                     HasPassword = !string.IsNullOrEmpty(i.pass) ? true : false,
                     Id = i.Id,
                     UserId = i.UserId,
-                    FileType = i.FileType
+                    FileType = i.FileType,
+                    Token=i.Token,
+                    Shared=i.Shared,
+                    UploadId=i.UploadId,
+                    Uploadname=i.Uploadname
 
                 });
             }
@@ -196,5 +212,6 @@ namespace TestUpload.Repository.SQL
                    
             return _context.Database.ExecuteSqlRaw(string.Format("update filestorage set pass='{1}' where Id='{0}'",ids,Newpassword)) > 0 ? true : false;
         }
+        
     }
 }

@@ -40,13 +40,15 @@
     <table class="table table-hover table-bordered" style="text-align:center" id="Myupload">
         <thead class="table-dark">
             <tr>
+
                 <th onclick="sortTable(0)">Id</th>
                 <th onclick="sortTable(1)">Filename</th>
                 <th onclick="sortTable(2)">Filesize</th>
                 <th onclick="sortTable(3)">Date Created</th>
-                <th onclick="sortTable(4)">Content Type</th>
+                <th onclick="sortTable(4)">Namespace</th>
                 <th onclick="sortTable(5)">Stored Type</th>
                 <th onclick="sortTable(6)">Password</th>
+                <th onclick="sortTable(7)">Status</th>
                 <th>action</th>
 
             </tr>
@@ -55,7 +57,7 @@
         <tbody class="table-success" id="TBL">
             @foreach (FileUpload file in files)
             {
-             var filesize = string.Empty;
+                var filesize = string.Empty;
                 if (file.FileSize < 1024)
                 {
                     filesize = file.FileSize + " Bytes";
@@ -72,13 +74,13 @@
                 {
                     filesize = (file.FileSize / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
                 }
+                string status = file.Shared ? "Public" : "Private";
                 <tr>
-
                     <td>@file.Id</td>
                     <td>@file.Filename@file.FileExtension</td>
                     <td>@filesize</td>
                     <td>@file.AddDate.ToLongDateString()</td>
-                    <td>@file.FileType</td>
+                    <td>@file.Uploadname </td>
                     <td>File</td>
                     <td>
                         @if (!string.IsNullOrEmpty(file.pass))
@@ -86,7 +88,7 @@
                             <i class="flag icon"></i>
                         }
                     </td>
-
+                    <td>@status</td>
                     <td>
                         <i class="download icon" onclick="window.open('/Files/Download/@file.Id');"></i>
                         @if (!string.IsNullOrEmpty(file.pass))
@@ -122,6 +124,7 @@
                 {
                     filesize = (file.FileSize / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
                 }
+                string status = file.Shared ? "Public" : "Private";
 
                 <tr>
 
@@ -129,7 +132,7 @@
                     <td>@file.Filename@file.FileExtension</td>
                     <td>@filesize</td>
                     <td>@file.AddDate.ToLongDateString()</td>
-                    <td>@file.FileType</td>
+                    <td>@file.Uploadname</td>
                     <td>Blob Storage</td>
                     <td>
                         @if (file.HasPassword)
@@ -137,6 +140,7 @@
                             <i class="flag icon"></i>
                         }
                     </td>
+                    <td>@status</td>
 
                     <td>
 
@@ -169,7 +173,7 @@
 
     </div>
 
-    <!-- Modal -->
+    <!-- AdvancedsearchModal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -221,14 +225,14 @@
 
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-default">Content Type</span>
+                                <span class="input-group-text" id="inputGroup-sizing-default">File Namespace</span>
                             </div>
                             <select name="content" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                                <option value="">All Extension</option>
+                                <option value="">All Namespaces</option>
                                 @{
                                     foreach (var i in ViewBag.Ctype)
                                     {
-                                        if (i == filecriteria.Contentype)
+                                        if (i == filecriteria.FileNamespace)
                                         {
                                             <option selected value="@i">@i</option>
                                         }
@@ -284,6 +288,30 @@
                                         else
                                         {
                                             <option value="@i">@res[i]</option>
+                                        }
+                                    }
+
+                                }
+                            </select>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Status</span>
+                            </div>
+                            <select name="status" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                @{ string[] rs = { "All Type", "Private", "Public" };
+
+
+                                    for (int i = 0; i < rs.Length; i++)
+                                    {
+                                        if (i == filecriteria.StatusMode)
+                                        {
+                                            <option selected value="@i">@rs[i]</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@i">@rs[i]</option>
                                         }
                                     }
 

@@ -23,6 +23,7 @@ namespace TestUpload.Service
         Task<List<FileUpload>> GetFilescriteria(long user, Filecriteria filecriteria);
         Task<int> FormatAsync(long user);
         bool Setpassword(string Id, string Newpassword);
+        bool SetnamespaceAndShared(string reference, string namespaces, bool shared);
     }
     public class FileUploadService:IFileUploadService
     {
@@ -76,10 +77,18 @@ namespace TestUpload.Service
             {
                 data = data.Where(x => x.FileExtension == filecriteria.FileExtension).ToList();
             }
-            if (!string.IsNullOrEmpty(filecriteria.Contentype))
+            if (!string.IsNullOrEmpty(filecriteria.FileNamespace))
             {
-                data = data.Where(x => x.FileType == filecriteria.Contentype).ToList();
+                if (filecriteria.FileNamespace == "[No Namespaces]")
+                {
+                    data = data.Where(x => x.Uploadname == string.Empty).ToList();
+                }
+                else
+                {
+                    data = data.Where(x => x.Uploadname == filecriteria.FileNamespace).ToList();
+                }
             }
+           
             if (filecriteria.HasPassword)
             {
                 data = data.Where(x => !string.IsNullOrEmpty(x.pass)).ToList();
@@ -91,6 +100,14 @@ namespace TestUpload.Service
             if (filecriteria.AddDateEnd.HasValue)
             {
                 data = data.Where(x => x.AddDate <= filecriteria.AddDateEnd.Value.Date.AddDays(1)).ToList();
+            }
+            if(filecriteria.StatusMode==1)
+            {
+                data = data.Where(x => !x.Shared).ToList();
+            }
+            if(filecriteria.StatusMode==2)
+            {
+                data = data.Where(x => x.Shared).ToList();
             }
             if (filecriteria.FileMode == 2)
             {
@@ -110,6 +127,17 @@ namespace TestUpload.Service
                 Newpassword = hash.CreateEncrypted(Id, Newpassword);
             }
             return _fileUploadRepository.Setpassword(Id, Newpassword);
+        }
+        public bool SetnamespaceAndShared(string reference,string namespaces,bool shared)
+        {
+            var item = _fileUploadRepository.GetFileByRef(reference);
+            item.Uploadname = namespaces;
+            item.Shared = shared;
+            if(!string.IsNullOrEmpty(item.pass))
+            {
+                return _fileUploadRepository.VerifyUpdate(item,item.pass);
+            }
+            return _fileUploadRepository.Update(item);
         }
 
     }
