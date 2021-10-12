@@ -8,14 +8,14 @@
     @if (ViewBag.result != "Registerd Successful")
     {
         <div class="alert alert-danger" role="alert">
-            <h1>  @ViewBag.result</h1>
+            <h1>@ViewBag.result</h1>
         </div>
         <meta http-equiv="refresh" content="5; url=/user/register" />
     }
     @if (ViewBag.result == "Registerd Successful")
     {
         <div class="alert alert-success" role="alert">
-            <h1>  @ViewBag.result</h1>
+            <h1>@ViewBag.result</h1>
         </div>
         <meta http-equiv="refresh" content="3; url = /" />
 
