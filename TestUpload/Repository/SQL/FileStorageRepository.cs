@@ -212,6 +212,10 @@ namespace TestUpload.Repository.SQL
                    
             return _context.Database.ExecuteSqlRaw(string.Format("update filestorage set pass='{1}' where Id='{0}'",ids,Newpassword)) > 0 ? true : false;
         }
+        public FileStorage GetByToken(string Token)
+        {
+            return _context.fileStorage.Where(x => x.Token == Token && x.Shared).FirstOrDefault();
+        }
         
     }
 }

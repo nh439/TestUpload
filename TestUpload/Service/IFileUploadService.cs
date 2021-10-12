@@ -24,6 +24,7 @@ namespace TestUpload.Service
         Task<int> FormatAsync(long user);
         bool Setpassword(string Id, string Newpassword);
         bool SetnamespaceAndShared(string reference, string namespaces, bool shared);
+        FileUpload GetByToken(string Token);
     }
     public class FileUploadService:IFileUploadService
     {
@@ -138,6 +139,12 @@ namespace TestUpload.Service
                 return _fileUploadRepository.VerifyUpdate(item,item.pass);
             }
             return _fileUploadRepository.Update(item);
+        }
+        public FileUpload GetByToken(string Token)
+        {
+            PasswordHash hash = new PasswordHash();
+            Token = hash.DecodeFrom64(Token);
+            return _fileUploadRepository.GetByToken(Token);
         }
 
     }

@@ -102,8 +102,11 @@ namespace TestUpload.Repository.SQL
         }
         public bool Setpassword(string ids, string Newpassword)
         {
-
            return _context.Database.ExecuteSqlRaw(string.Format("update fileuploads set pass='{1}' where Id='{0}'", ids, Newpassword)) > 0 ? true : false;
+        }
+        public FileUpload GetByToken(string Token)
+        {
+            return _context.fileUploads.Where(x => x.Token == Token && x.Shared).FirstOrDefault();
         }
     }
 }

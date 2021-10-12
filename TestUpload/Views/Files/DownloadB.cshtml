@@ -6,9 +6,11 @@
 @{
 
     FilestorageView data = ViewBag.data;
+    PasswordHash hash = new PasswordHash();
 }
 @using TestUpload.Models.Entity;
 @using TestUpload.Models.View;
+@using TestUpload.Securities;
 <form method="post" style="font-size:x-large">
     <center>
         <h1><b>@data.Filename@data.FileExtension</b></h1>
@@ -57,46 +59,53 @@
             <button class="btn btn-outline-danger mx-1" type="submit" asp-controller="Files" asp-action="Reset">Set Password</button>
         }
     </center>
-        <br />
-        <h1>Namespace and Sharing</h1>
-        <hr />
-        <div class="form-group row">
-            <div class="col-10">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">File namespace</div>
-                    </div>
-                    <input id="nspec" name="nspec" type="text" class="form-control" value="@data.Uploadname">
+    <br />
+    <h1>Namespace and Sharing</h1>
+    <hr />
+    <div class="form-group row">
+        <div class="col-10">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">File namespace</div>
                 </div>
+                <input id="nspec" name="nspec" type="text" class="form-control" value="@data.Uploadname">
             </div>
         </div>
-        <br />
-        <div class="form-group row">
-            <div class="col-2"></div>
-            <div class="col-10">
-                <div class="custom-control custom-checkbox custom-control-inline">
-                    <input name="Shared" id="Shared_0" type="checkbox" checked="@data.Shared" class="custom-control-input" value="true">
-                    <label for="Shared_0" class="custom-control-label">Public Share</label>
-                </div>
+    </div>
+    <br />
+    <div class="form-group row">
+        <div class="col-10">
+            <div class="custom-control custom-checkbox custom-control-inline">
+                <input name="Shared" id="Shared_0" type="checkbox" checked="@data.Shared" class="custom-control-input" value="true">
+                <label for="Shared_0" class="custom-control-label">Public Share</label>
             </div>
         </div>
-        <br />
-        <div class="form-group row">
-            <label class="col-2"></label>
-            <div class="col-10">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">File Token</div>
-                    </div>
-                    <input id="Token" name="Token" type="text" class="form-control" value="@data.Token">
+    </div>
+    <br />
+    <div class="form-group row">
+        <div class="col-10">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">File Token</div>
                 </div>
+                <input id="Token" name="Token" type="text" class="form-control" value="@data.Token">
             </div>
         </div>
-        <br />
-        <input type="hidden" id="Blob" value="true" />
-        <center>
-            <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="Setting">Savechanges</button>
-        </center>
+    </div>
+    <br />
+    <div class="form-group">
+        <label for="text">Public URL(Public Shared)</label>
+        <div class="input-group">
+            @{
+                var publiclink = "/Share/1/" + hash.EncodeTo64(data.Token);
+            }
+            <a href="@publiclink">@publiclink</a>
+        </div>
+    </div>
+    <input type="hidden" id="Blob" value="true" />
+    <center>
+        <button class="btn btn-outline-success mx-1" type="submit" asp-controller="Files" asp-action="Setting">Savechanges</button>
+    </center>
 
-    
+
 </form>

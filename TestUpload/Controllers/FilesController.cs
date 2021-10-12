@@ -123,7 +123,10 @@ namespace TestUpload.Controllers
                 var dc = da.Union(db);
                 var namespaces = dc.Select(x => x.Contentspace).Distinct().ToList();
                 var idx = namespaces.FindIndex(x => string.IsNullOrEmpty(x));
-                namespaces[idx] = "[No Namespaces]";
+                if (idx >= 0)
+                {
+                    namespaces[idx] = "[No Namespaces]";
+                }
                 ViewBag.Extension = dc.Select(x => x.Extension).Distinct().ToList();
                 ViewBag.Ctype = namespaces;
                 var j = files.Select(x => x.FileSize).Sum() + storage.Select(x => x.FileSize).Sum();
@@ -704,15 +707,116 @@ namespace TestUpload.Controllers
             }
 
         }
-        public class JavaScriptResult : ContentResult
+        [HttpGet("Share/{B}/{Token}")]
+        public IActionResult PublicDownload(string B,string Token)
         {
-            public JavaScriptResult(string script)
+            try
             {
-                this.Content = script;
-                this.ContentType = "application/javascript";
+                bool blob = int.Parse(B) == 1 ? true : false;
+                if(blob)
+                {
+                    var item = IfileStorageService.GetByToken(Token);                    
+                    if (item != null)
+                    {
+                        if (!string.IsNullOrEmpty(item.pass))
+                        {
+                            ViewBag.Blob = blob ? 1 : 0;
+                            ViewBag.Token = Token;
+                            ViewBag.Id = item.Id;
+                            ViewBag.Filenames = item.Filename + item.FileExtension;
+                            return View();
+                        }
+                        MemoryStream ms = new MemoryStream(item.RawData);
+                        return File(ms, item.FileType, item.Filename + item.FileExtension);
+                    }
+                }
+                else
+                {
+                    var item = IfileUploadService.GetByToken(Token);                 
+                    if (item != null)
+                    {
+                        if (!string.IsNullOrEmpty(item.pass))
+                        {
+                            ViewBag.Blob = blob ? 1:0;
+                            ViewBag.Token = Token;
+                            ViewBag.Id = item.Id;
+                            ViewBag.Filenames = item.Filename + item.FileExtension;
+                            return View();
+                        }
+                        var filepath = Iconfiguration.GetSection("att").Value;
+                        filepath = filepath + "\\" + item.UserId + "\\" + item.Id;
+                        MemoryStream ms = new MemoryStream();
+                        FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+                        stream.CopyTo(ms);
+                        stream.Close();
+                        ms.Position = 0;
+                        return File(ms, item.FileType, item.Filename + item.FileExtension);
+                    }
+
+                }
+                return Content("<h1> File Not Found </h1>");
+            }
+            catch (Exception x)
+            {
+                //  service.CreateErrorHistory("Upload Files", "Set Me Unsuccessful", "", user, x.Message, x.InnerException.Message);
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
+            }                     
+        }
+        [HttpPost("Share/Download")]
+        public IActionResult PublicVerify()
+        {
+            try
+            {
+                bool blob = int.Parse(Request.Form["Blob"].ToString()) == 1 ? true : false;
+                string Token = Request.Form["Token"].ToString();
+                string Id = Request.Form["id"].ToString();
+                string password = Request.Form["filepass"].ToString();
+                PasswordHash hash = new PasswordHash();
+                password = hash.CreateEncrypted(Id, password);
+                if (blob)
+                {
+                    var item = IfileStorageService.GetByToken(Token);
+                    if (password == item.pass)
+                    {
+                        MemoryStream ms = new MemoryStream(item.RawData);
+                        return File(ms, item.FileType, item.Filename + item.FileExtension);
+                    }
+                    ViewBag.Blob = blob ? 1 : 0;
+                    ViewBag.Token = Token;
+                    ViewBag.Id = item.Id;
+                    ViewBag.Filenames = item.Filename + item.FileExtension;
+                    return View();
+                }
+                else
+                {
+                    var item = IfileUploadService.GetByToken(Token);
+                    if (password == item.pass)
+                    {
+                        var filepath = Iconfiguration.GetSection("att").Value;
+                        filepath = filepath + "\\" + item.UserId + "\\" + item.Id;
+                        MemoryStream ms = new MemoryStream();
+                        FileStream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+                        stream.CopyTo(ms);
+                        stream.Close();
+                        ms.Position = 0;
+                        return File(ms, item.FileType, item.Filename + item.FileExtension);
+                    }
+                    ViewBag.Blob = blob ? 1 : 0;
+                    ViewBag.Token = Token;
+                    ViewBag.Id = item.Id;
+                    ViewBag.Filenames = item.Filename + item.FileExtension;
+                    return View();
+                }
+                return Redirect("/Home/Restricted");
+            }
+            catch (Exception x)
+            {
+                //  service.CreateErrorHistory("Upload Files", "Set Me Unsuccessful", "", user, x.Message, x.InnerException.Message);
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
             }
         }
-
 
     }
 }
