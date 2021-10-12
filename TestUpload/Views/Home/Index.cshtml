@@ -135,7 +135,7 @@ else
         </div>
 
         <div class="column">
-            <div id="f06" class="ui icon message" onmouseover="Hoverd('f06')" onmouseout="Unhoverd('f06')" onclick="Registerdseccess()">
+            <div id="f06" class="ui icon message" onmouseover="Hoverd('f06')" onmouseout="Unhoverd('f06')" onclick="Registerdseccess();">
                 <br />
                 <i class="lock icon"></i>
                 <div class="content">
@@ -248,6 +248,15 @@ else
             function Unhoverd(x) {
                 document.getElementById(x).className = "ui icon message";
 
+            }
+
+
+            function Registerdseccess() {
+                Swal.fire(
+                    'Good job!',
+                    'You clicked the button!',
+                    'success'
+                )
             }
         </script>
 

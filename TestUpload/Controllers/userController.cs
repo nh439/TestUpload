@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,12 @@ namespace TestUpload.Controllers
         private readonly IuserService _iuserService ;
         private readonly ILoginService _loginService;
         private readonly IhistoryLogService service;
-        public userController(IuserService iuserService,ILoginService loginService, IhistoryLogService ihistory)
+        private ILogger<userController> _logger;
+        public userController(IuserService iuserService, ILoginService loginService, IhistoryLogService ihistory, ILogger<userController> logger)
         {
             _iuserService = iuserService;
             _loginService = loginService;
+            _logger = logger;
             service = ihistory;
         }
 
@@ -115,9 +118,8 @@ namespace TestUpload.Controllers
                 }
                 catch(Exception x)
                 {
-
-                    var i = service.CreateErrorHistory("User", "Register", null, 0, x.Message, x.InnerException.Message);
-                    ViewBag.result = "Registerd Corruped \n ref: "+i;
+                    _logger.LogError(x.Message);
+                    ViewBag.result = "Registerd Corruped";
                     return View();
                 }
 

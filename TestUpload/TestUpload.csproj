@@ -19,6 +19,7 @@
     <PackageReference Include="MySql.Data.EntityFramework" Version="8.0.26" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Semantic-UI-2.0" Version="2.1.0" />
+    <PackageReference Include="SweetAlert" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
