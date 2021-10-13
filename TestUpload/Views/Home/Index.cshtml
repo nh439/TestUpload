@@ -23,31 +23,33 @@ else
 
     </div>
 }
+<!--Large Screen-->
+<div class="d-none d-sm-block">
 
-<div class="ui three column grid">
-    <div class="column ">
-        <div class="ui segment bg-primary">
-            <h1><b>Total Users</b></h1>
-            <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.Totaluser</div>
+    <div class="ui three column grid">
+        <div class="column ">
+            <div class="ui segment bg-primary">
+                <h1><b>Total Users</b></h1>
+                <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.Totaluser</div>
+            </div>
+
         </div>
+        <div class="column ">
+            <div class="ui segment bg-danger">
+                <h1><b>Total Files</b></h1>
+                <div style="text-align: right; font-size: xx-large; font-weight: bold ">@ViewBag.TotalFiles</div>
+            </div>
 
-    </div>
-    <div class="column ">
-        <div class="ui segment bg-danger">
-            <h1><b>Total Files</b></h1>
-            <div style="text-align: right; font-size: xx-large; font-weight: bold ">@ViewBag.TotalFiles</div>
         </div>
+        <div class="column ">
+            <div class="ui segment bg-success">
+                <h1><b>Total Blob</b></h1>
+                <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.TotalBlobs</div>
+            </div>
 
-    </div>
-    <div class="column ">
-        <div class="ui segment bg-success">
-            <h1><b>Total Blob</b></h1>
-            <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.TotalBlobs</div>
         </div>
-
     </div>
-</div>
-@if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
+    @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
 {
     <h1><b>My Storage</b></h1>
     <hr />
@@ -74,7 +76,7 @@ else
 
     </div>
     <h1><b>Services</b></h1>
-    <div class="ui three column grid">
+    <div class="ui three column grid ">
         <div class="column">
             <div id="f01" class="ui icon message" onmouseover="Hoverd('f01')" onmouseout="Unhoverd('f01')" onclick="window.location.href = '/files';">
                 <br />
@@ -132,18 +134,7 @@ else
                 </div>
                 <br />
             </div>
-        </div>
-
-        <div class="column">
-            <div id="f06" class="ui icon message" onmouseover="Hoverd('f06')" onmouseout="Unhoverd('f06')" onclick="Registerdseccess();">
-                <br />
-                <i class="lock icon"></i>
-                <div class="content">
-                    <h1>Account Authencation</h1>
-                </div>
-                <br />
-            </div>
-        </div>
+        </div>      
 
         <div class="column">
             <div id="f09" class="ui icon message" onmouseover="Hoverd('f09')" onmouseout="Unhoverd('f09')" onclick="window.location.href = '/user/logout';">
@@ -188,7 +179,7 @@ else
     </div>
 }
 
-@if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("admin")))
+    @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("admin")))
 {
     <h1><b>Admin Tools</b></h1>
     <hr />
@@ -238,6 +229,169 @@ else
 
     </div>
         }
+</div>
+
+
+<!--Mobile Only-->
+<div class="d-block d-sm-none">
+
+    <div class="ui segment bg-primary">
+        <h1><b>Total Users</b></h1>
+        <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.Totaluser</div>
+    </div>
+
+
+
+    <div class="ui segment bg-danger">
+        <h1><b>Total Files</b></h1>
+        <div style="text-align: right; font-size: xx-large; font-weight: bold ">@ViewBag.TotalFiles</div>
+    </div>
+
+
+
+    <div class="ui segment bg-success">
+        <h1><b>Total Blob</b></h1>
+        <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.TotalBlobs</div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
+    {
+    <h1><b>My Storage</b></h1>
+    <hr />
+
+    <div class="ui segment bg-info">
+        <h1><b>Files</b></h1>
+        <div style="text-align: right; font-size: xx-large; font-weight: bold ">@ViewBag.Files</div>
+    </div>
+    <div class="ui segment bg-warning" style="color:black">
+        <h1><b>Blob</b></h1>
+        <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.Storage</div>
+    </div>
+    <div class="ui segment bg-warning" style="color:black">
+        <h1><b>Data Useage</b></h1>
+        <div style="text-align: right; font-size: xx-large; font-weight: bold">@ViewBag.space</div>
+    </div>
+    <hr />
+    <h1><b>Services</b></h1>
+    <hr />
+    <div id="f01M" class="ui icon message" onmouseover="Hoverd('f01M')" onmouseout="Unhoverd('f01M')" onclick="window.location.href = '/files';">
+        <br />
+        <i class="archive icon"></i>
+        <div class="content">
+            <h1>My Uploads</h1>
+        </div>
+        <br />
+    </div>
+    <div id="f02M" class="ui icon message" onmouseover="Hoverd('f02M')" onmouseout="Unhoverd('f02M')" onclick="window.location.href = '/Files/Uploads';">
+        <br />
+        <i class="file icon"></i>
+        <div class="content">
+            <h1>Upload Files</h1>
+        </div>
+        <br />
+    </div>
+    <div id="f03M" class="ui icon message" onmouseover="Hoverd('f03M')" onmouseout="Unhoverd('f03M')" onclick="window.location.href = '/Files/Uploads';">
+        <br />
+        <i class="server icon"></i>
+        <div class="content">
+            <h1>Upload Blob</h1>
+        </div>
+        <br />
+    </div>
+
+    <div id="f04M" class="ui icon message" onmouseover="Hoverd('f04M')" onmouseout="Unhoverd('f04M')">
+        <br />
+        <i class="user icon"></i>
+        <div class="content">
+            <h1>View Profile</h1>
+        </div>
+        <br />
+    </div>
+
+
+    <div id="f05M" class="ui icon message" onmouseover="Hoverd('f05M')" onmouseout="Unhoverd('f05M')">
+        <br />
+        <i class="key icon"></i>
+        <div class="content">
+            <h1>Change Password</h1>
+        </div>
+        <br />
+    </div>
+
+    <div id="f09M" class="ui icon message" onmouseover="Hoverd('f09M')" onmouseout="Unhoverd('f09M')" onclick="window.location.href = '/user/logout';">
+        <br />
+        <i class="power off icon"></i>
+        <div class="content">
+            <h1>Log Out</h1>
+        </div>
+        <br />
+    </div>
+
+
+
+
+    }
+    else
+    {
+    <div id="f08M" class="ui icon message" onmouseover="Hoverd('f08M')" onmouseout="Unhoverd('f08M')" onclick="window.location.href='/user/login'">
+        <br />
+        <i class="user icon"></i>
+        <div class="content">
+            <h1>Sign In</h1>
+        </div>
+        <br />
+    </div>
+
+    <div id="f07M" class="ui icon message" onmouseover="Hoverd('f07M')" onmouseout="Unhoverd('f07M')" onclick="window.location.href='/user/register'">
+        <i class="registered icon"></i>
+        <div class="content">
+            <h1>Join Us</h1>
+        </div>
+    </div>
+    }
+    @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("admin")))
+{
+    <h1><b>Admin Tools</b></h1>
+    <hr />
+    
+            <div id="f10M" class="ui icon message" onmouseover="Hoverd('f10M')" onmouseout="Unhoverd('f10M')">
+                <br />
+                <i class="address card icon"></i>
+                <div class="content">
+                    <h1>User Management</h1>
+                </div>
+                <br />
+            </div>
+      
+            <div id="f11M" class="ui icon message" onmouseover="Hoverd('f11M')" onmouseout="Unhoverd('f11M')">
+                <br />
+                <i class="upload icon"></i>
+                <div class="content">
+                    <h1>All Uploads</h1>
+                </div>
+                <br />
+            </div>      
+            <div id="f12M" class="ui icon message" onmouseover="Hoverd('f12M')" onmouseout="Unhoverd('f12M')">
+                <br />
+                <i class="stop icon"></i>
+                <div class="content">
+                    <h1>Suspend Accounts</h1>
+                </div>
+                <br />
+            </div>
+            <div id="f13M" class="ui icon message" onmouseover="Hoverd('f13M')" onmouseout="Unhoverd('f13M')" onclick="window.location.href='/user/Getunverify'">
+                <br />
+                <i class="folder icon"></i>
+                <div class="content">
+                    <h1>Verify Accounts</h1>
+                </div>
+                <br />
+            </div>
+        }
+
+
+
+</div>
 
         <script>
             function Hoverd(x) {
