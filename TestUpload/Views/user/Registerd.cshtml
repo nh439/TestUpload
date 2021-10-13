@@ -14,18 +14,18 @@
                text: @ViewBag.result,
            })
        </script>
-        <meta http-equiv="refresh" content="5; url=/user/register" />
+        <meta http-equiv="refresh" content="3; url=/user/register" />
     }
     @if (ViewBag.result == "Registerd Successful")
     {
        <script>
            Swal.fire(
-               'Good job!',
-               'You clicked the button!',
+               'Congratulation',
+               'Registerd Completed',
                'success'
            )
        </script>
-        <meta http-equiv="refresh" content="5; url = /" />
+        <meta http-equiv="refresh" content="3; url = /" />
 
     }
 }

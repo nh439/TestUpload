@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using TestUpload.Models.Entity;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace TestUpload.Repository.SQL
 {
@@ -38,7 +40,34 @@ namespace TestUpload.Repository.SQL
             var data = await _context.User.OrderBy(x => x.Registerd).ToListAsync(); ;
             return data;
         }
-
+        public async  Task<DataTable> GetUsernameandEmailList()
+        {
+            var user = await (from u in _context.User
+                        select new
+                        {
+                            u.Login.Username,
+                            u.Email
+                        }
+                        ).ToListAsync();
+            DataTable table = new DataTable();
+            table.Columns.Add("Username");
+            table.Columns.Add("Email");
+            foreach(var i in user)
+            {
+                table.Rows.Add(i.Username, i.Email);
+            }
+            return table;
+        }
+        public async Task<List<User>> GetUnverifyAccountsAsync()
+        {
+            return await _context.User.Where(x => !x.Login.Verify && !x.Admin).ToListAsync();
+        }
+        public bool Update(User item)
+        {
+            _context.User.Update(item);
+            return _context.SaveChanges() > 0 ? true : false;
+        }
+       
 
     }
 }

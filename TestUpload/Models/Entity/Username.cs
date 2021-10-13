@@ -25,6 +25,8 @@ namespace TestUpload.Models.Entity
         public bool Male { get; set; }
 
         public DateTime BrithDay { get; set; }
+        public DateTime VerifyDate { get; set; }
+        public string VerifyBy { get; set; }
 
     }
     public class Login
@@ -34,5 +36,8 @@ namespace TestUpload.Models.Entity
         [Required]
         [StringLength(514)]
         public string Password { get; set; }
+        public bool Suspend { get; set; } = false;
+        public bool Verify { get; set; } = false;
+        public string Token { get; set; } = StrRandom.RandomString(52);
     }
 }

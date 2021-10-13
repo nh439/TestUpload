@@ -2,7 +2,18 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    DataTable data = ViewBag.user;
+    List<string> User = new List<string>();
+    List<string> Email = new List<string>();
+    foreach(DataRow row in data.Rows)
+    {
+        User.Add(row[0].ToString());
+        Email.Add(row[1].ToString());
+
+    }
+    var datalength = data.Rows.Count;
 }
+@using System.Data;
 <center>
     <form style="width:80%" method="post" id="formContent">
        
@@ -13,7 +24,10 @@
         <div class="form-group row">
             <label for="text" class="col-2 col-form-label">Username</label>
             <div class="col-10">
-                <input id="username" name="username" type="text" class="form-control" required>
+                <input id="username" name="username" type="text" class="form-control" required onchange="">
+            </div>
+            <div class="col-10" style="display: none" id="user_dup">
+                <small style="color:red">Duplicate Username</small>
             </div>
         </div>
         <div class="form-group row">
@@ -64,7 +78,10 @@
         <div class="form-group row">
             <label for="Email" class="col-2 col-form-label">Email</label>
             <div class="col-10">
-                <input id="Email" name="Email" type="email" class="form-control" required="required">
+                <input id="Email" name="Email" type="email" class="form-control" required="required" onchange="">
+            </div>
+            <div class="col-10" style="display: none" id="Email_dup">
+                <small style="color:red">Duplicate Email</small>
             </div>
         </div>
         <div class="form-group row">
@@ -73,7 +90,17 @@
             </div>
         </div>
         <script>
-            function passcheck() {
+            let Username = [];
+            let Email = [];
+           @foreach(var i in User)
+            {
+               @:Username.push("@i");
+            }
+            @foreach(var i in Email)
+            {
+               @:Email.push("@i");
+            }
+           function passcheck() {
                 var i = document.getElementById('pass').value;
                 var j = document.getElementById('ret').value;
                 if (i === j) {
@@ -85,6 +112,44 @@
                     document.getElementById('Sub01').disabled = true;
                 }
             }
+         /*   function Usercheck() {
+                let t = false;
+                var value = document.getElementById("username")
+                for (i = 0; i < Username.length; i++) {
+                    if (value === Username[i]) {
+                        t = true;
+                        break;
+                    }
+                }
+                if (t) {
+                    document.getElementById('user_dup').style.display = " none";
+                    document.getElementById('Sub01').disabled = false;
+                }
+                else {
+                    document.getElementById('user_dup').style.display = " block";
+                    document.getElementById('Sub01').disabled = true;
+                }
+                console.log(t);
+            }
+            function Emailcheck() {
+                let t = false;
+                var value = document.getElementById("Email")
+                for (i = 0; i < Username.length; i++) {
+                    if (value === Username[i]) {
+                        t = true;
+                        break;
+                    }
+                }
+                if (t) {
+                    document.getElementById('Email_dup').style.display = " none";
+                    document.getElementById('Sub01').disabled = false;
+                }
+                else {
+                    document.getElementById('Email_dup').style.display = " block";
+                    document.getElementById('Sub01').disabled = true;
+                }
+                console.log(t);
+            }*/
         </script>
     </form>
 </center>

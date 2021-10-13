@@ -1,0 +1,80 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    List<User> users = ViewBag.data;
+}
+@using TestUpload.Models.Entity;
+
+<center>
+    <h1><b>Account Verification</b></h1>
+    <table class="table table-hover table-bordered border-primary" style="text-align:center">
+        <thead class="table-dark">
+            <tr>
+                <th>Id</th>
+                <th>Prefix</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Registerd Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class="table-warning">
+            @foreach (var i in users)
+            {
+
+                string gender = string.Empty;
+                if (i.Male)
+                {
+                    gender = "Mr.";
+                }
+                else
+                {
+                    gender = "Ms.";
+                }
+                <tr>
+                    <td>@i.Id</td>
+                    <td>@gender</td>
+                    <td>@i.Firstname</td>
+                    <td>@i.Lastname</td>
+                    <td>@i.Registerd</td>
+                    <td>
+                        <form method="post">
+                            <input type="hidden" value="@i.Id" name="id" />
+                    <button type="submit" class="btn btn-primary" asp-controller="user" asp-action="Getunverify">Verify</button>
+                            </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</center>
+<script>
+    @if(ViewBag.res =="Success")
+    {
+        @:VerifyCompleted();
+
+    }
+    if (ViewBag.res =="Unsuccess")
+    {
+         VerifyUncompleted();
+
+    }
+
+    function VerifyCompleted() {
+        Swal.fire(
+            'Good job!',
+            'Account Verify Completed',
+            'success'
+        )
+    }
+    function VerifyUncompleted() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Verify Incompleted',
+
+        })
+    }
+</script>
+

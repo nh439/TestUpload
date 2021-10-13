@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 using TestUpload.Models.Entity;
 using TestUpload.Profile;
 using TestUpload.Service;
-
-
-
+using System.Globalization;
 
 namespace TestUpload.Controllers
 {
@@ -47,6 +45,16 @@ namespace TestUpload.Controllers
             User principal = _loginService.GetLogin(username, password);
             if(principal != null)
             {
+                if(principal.Login.Suspend && !principal.Admin)
+                {
+                    ViewBag.result = "Your account is Suspend Please Contact Admin";
+                    return View();
+                }
+                if(!principal.Login.Verify && !principal.Admin)
+                {
+                    ViewBag.result = "Your account is Unverify Please Contact Admin";
+                    return View();
+                }
                 // System.Web.HttpContext.Current.Session("userId") = principal.Id;
                 HttpContext.Session.SetString("uid", principal.Id.ToString());
                 HttpContext.Session.SetString("fn", principal.Firstname);
@@ -69,8 +77,9 @@ namespace TestUpload.Controllers
             return Redirect("/");
         }
         [HttpGet("user/register")]
-        public IActionResult register()
+        public async Task<IActionResult> register()
         {
+            ViewBag.user = await _iuserService.GetusernameEmailList();
             return View();
         }
         [HttpPost("user/register")]
@@ -92,7 +101,7 @@ namespace TestUpload.Controllers
                     Email = HttpContext.Request.Form["Email"].ToString();
                     username = HttpContext.Request.Form["username"].ToString();
                     male = bool.Parse(HttpContext.Request.Form["Gender"].ToString());
-                    brithday = DateTime.Parse(HttpContext.Request.Form["BR"].ToString());
+                    brithday = DateTime.Parse(HttpContext.Request.Form["BR"].ToString(),new CultureInfo("en-GB"));
                     principal = new User
                     {       
                         BrithDay = brithday,
@@ -127,5 +136,54 @@ namespace TestUpload.Controllers
             ViewBag.result = "Password Retype Incorrect";
             return View();
         }
+        [HttpGet("/user/Getunverify")]
+        public async Task<IActionResult> GetUnverify()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long user);
+            User principal = _iuserService.GetWithoutPassword(user);
+            if(principal.Admin)
+            {
+                List<User> UnverifyUsers = await _iuserService.GetUnverifyAsync();
+                ViewBag.data = UnverifyUsers;
+                return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
+        [HttpPost("/user/Getunverify")]
+        public IActionResult SetUnverify()
+        {
+            try
+            {
+                long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+                long.TryParse(Request.Form["id"].ToString(), out long Verifyuser);
+                User principal = _iuserService.GetWithoutPassword(Adminuser);
+                if (principal.Admin)
+                {
+                    var res = _iuserService.SetVerifyByadmin(Verifyuser);
+                    if (res==1)
+                    {
+                        ViewBag.res = "Success";
+                    }
+                    else if(res==0)
+                    {
+                        ViewBag.res = "Unsuccess";
+                    }
+                    if(res==2)
+                    {
+                        return Redirect("/user/Getunverify");
+                    }
+                    List<User> UnverifyUsers = _iuserService.GetUnverifyAsync().GetAwaiter().GetResult();
+                    ViewBag.data = UnverifyUsers;
+                    return View("Getunverify");
+                }
+                return Redirect("/Home/Restricted");
+            }
+            catch(Exception x)
+            {
+                _logger.LogError(x.Message);
+                return StatusCode(500, x.Message);
+            }
+        }
+
     }
 }

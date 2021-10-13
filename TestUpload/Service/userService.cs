@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using TestUpload.Repository.SQL;
 using TestUpload.Models.Entity;
 using TestUpload.Securities;
+using System.Data;
+using System.Globalization;
 
 namespace TestUpload.Service
 {
@@ -14,6 +16,9 @@ namespace TestUpload.Service
          User GetWithoutPassword(long id);
          User GetByUsername(string Username);
          Task<List<User>> GetallUsersAsync();
+         Task<DataTable> GetusernameEmailList();
+         Task<List<User>> GetUnverifyAsync();
+         int SetVerifyByadmin(long userId);
     }
     public class userService :IuserService
     {
@@ -25,6 +30,7 @@ namespace TestUpload.Service
             _userRepository = userRepository;
             _loginRepository = loginRepository;
             _changepasswordRepository = changepasswordRepository;
+
         }
 
         public bool Register(User item)
@@ -39,7 +45,7 @@ namespace TestUpload.Service
         public User GetWithoutPassword(long id)
         {
             var user = _userRepository.GetById(id);
-            user.Login.Password = "PASSWORD";
+   //         user.Login.Password = "PASSWORD";
             return user;
         }
         public User GetByUsername(string Username)
@@ -53,6 +59,37 @@ namespace TestUpload.Service
             var users = await  _userRepository.GetallAsync();
             
             return users;
+        }
+        public async Task<DataTable> GetusernameEmailList()
+        {
+            return await _userRepository.GetUsernameandEmailList();
+        }
+        public async Task<List<User>> GetUnverifyAsync()
+        {
+            var res = await _userRepository.GetUnverifyAccountsAsync();
+            int h = 0;
+            foreach(var i in res)
+            {
+                var j = _userRepository.GetById(i.Id);
+                res[h].Login = new Login();
+                h++;
+            }
+            return res;
+        }
+        public int SetVerifyByadmin(long userId)
+        {
+            User user = _userRepository.GetById(userId);
+            Login CurrentUser = _loginRepository.GetDataByUserId(userId);
+            if(CurrentUser.Verify)
+            {
+                return 2;
+            }
+            user.VerifyBy = "Admin";
+            user.VerifyDate = DateTime.Parse(DateTime.Now.ToString(), new CultureInfo("en-GB"));
+            _userRepository.Update(user);                    
+            CurrentUser.Verify = true;
+            CurrentUser.Token = string.Empty;
+            return _loginRepository.Update(CurrentUser) ? 1:0;            
         }
 
 
