@@ -90,8 +90,9 @@
                     </td>
                     <td>@status</td>
                     <td>
-                        <i class="download icon" onclick="window.open('/Files/Download/@file.Id');"></i>
-                        @if (!string.IsNullOrEmpty(file.pass))
+                        <div class="d-none d-sm-block">
+                            <i class="download icon" onclick="window.open('/Files/Download/@file.Id');"></i>
+                            @if (!string.IsNullOrEmpty(file.pass))
                         {
                             <i class="trash alternate icon" onclick="window.location.href = '/Files/Verifyremove/@file.Id'"></i>
                         }
@@ -99,6 +100,18 @@
                         {
                             <i class="trash alternate icon" onclick="DeleteF('/Files/Remove/@file.Id')"></i>
                         }
+                        </div>
+                        <div class="d-block d-sm-none">
+                            <button class="btn btn-primary" onclick="window.open('/Files/Download/@file.Id');">Download</button>
+                            @if (!string.IsNullOrEmpty(file.pass))
+                        {
+                        <button class="btn btn-danger" onclick="window.location.href = '/Files/Verifyremove/@file.Id'">Delete</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-danger" onclick="DeleteF('/Files/Remove/@file.Id')">Delete</button>
+                        }
+                        </div>
                     </td>
 
                 </tr>
@@ -144,8 +157,9 @@
 
                     <td>
 
-                        <i class="download icon" onclick="window.open('/Blob/Download/@file.Id');"></i>
-                        @if (file.HasPassword)
+                        <div class="d-none d-sm-block">
+                            <i class="download icon" onclick="window.open('/Blob/Download/@file.Id');"></i>
+                            @if (file.HasPassword)
                         {
                             <i class="trash alternate icon" onclick="window.location.href = '/Blob/Verifyremove/@file.Id'"></i>
                         }
@@ -153,6 +167,18 @@
                         {
                             <i class="trash alternate icon" onclick="DeleteF('/Blob/Remove/@file.Id')"></i>
                         }
+                        </div>
+                        <div class="d-block d-sm-none">
+                            <button class="btn btn-primary" onclick="window.open('/Blob/Download/@file.Id');">Download</button>
+                            @if (file.HasPassword)
+                        {
+                        <button class="btn btn-danger" onclick="window.location.href = '/Blob/Verifyremove/@file.Id'">Delete</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-danger" onclick="DeleteF('/Blob/Remove/@file.Id')">Delete</button>
+                        }
+                        </div>
 
                     </td>
 

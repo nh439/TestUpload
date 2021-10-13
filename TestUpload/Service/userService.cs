@@ -85,7 +85,7 @@ namespace TestUpload.Service
                 return 2;
             }
             user.VerifyBy = "Admin";
-            user.VerifyDate = DateTime.Parse(DateTime.Now.ToString(), new CultureInfo("en-GB"));
+            user.VerifyDate =DateTime.Now;
             _userRepository.Update(user);                    
             CurrentUser.Verify = true;
             CurrentUser.Token = string.Empty;
