@@ -105,11 +105,11 @@
                             <button class="btn btn-primary" onclick="window.open('/Files/Download/@file.Id');">Download</button>
                             @if (!string.IsNullOrEmpty(file.pass))
                         {
-                        <button class="btn btn-danger" onclick="window.location.href = '/Files/Verifyremove/@file.Id'">Delete</button>
+                        <button class="btn btn-danger mx-1" onclick="window.location.href = '/Files/Verifyremove/@file.Id'">Delete</button>
                         }
                         else
                         {
-                            <button class="btn btn-danger" onclick="DeleteF('/Files/Remove/@file.Id')">Delete</button>
+                            <button class="btn btn-danger mx-1" onclick="DeleteF('/Files/Remove/@file.Id')">Delete</button>
                         }
                         </div>
                     </td>
@@ -172,11 +172,11 @@
                             <button class="btn btn-primary" onclick="window.open('/Blob/Download/@file.Id');">Download</button>
                             @if (file.HasPassword)
                         {
-                        <button class="btn btn-danger" onclick="window.location.href = '/Blob/Verifyremove/@file.Id'">Delete</button>
+                        <button class="btn btn-danger mx-1" onclick="window.location.href = '/Blob/Verifyremove/@file.Id'">Delete</button>
                         }
                         else
                         {
-                            <button class="btn btn-danger" onclick="DeleteF('/Blob/Remove/@file.Id')">Delete</button>
+                            <button class="btn btn-danger mx-1" onclick="DeleteF('/Blob/Remove/@file.Id')">Delete</button>
                         }
                         </div>
 

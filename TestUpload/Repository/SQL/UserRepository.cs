@@ -67,7 +67,19 @@ namespace TestUpload.Repository.SQL
             _context.User.Update(item);
             return _context.SaveChanges() > 0 ? true : false;
         }
-       
+        public async Task<List<User>> GetVerifiedAccountsAsync()
+        {
+            return await _context.User.Where(x => x.Login.Verify && !x.Admin).ToListAsync();
+        }
+        public async Task<List<User>> GetSuspendAccountsAsync()
+        {
+            return await _context.User.Where(x => x.Login.Suspend && !x.Admin).ToListAsync();
+        }
+        public async Task<List<User>> GetUnSuspendAccountsAsync()
+        {
+            return await _context.User.Where(x => !x.Login.Suspend && !x.Admin).ToListAsync();
+        }
+
 
     }
 }

@@ -12,20 +12,23 @@ namespace TestUpload.Service
 {
     public interface IuserService
     {
-         bool Register(User item);
-         User GetWithoutPassword(long id);
-         User GetByUsername(string Username);
-         Task<List<User>> GetallUsersAsync();
-         Task<DataTable> GetusernameEmailList();
-         Task<List<User>> GetUnverifyAsync();
-         int SetVerifyByadmin(long userId);
+        bool Register(User item);
+        User GetWithoutPassword(long id);
+        User GetByUsername(string Username);
+        Task<List<User>> GetallUsersAsync();
+        Task<DataTable> GetusernameEmailList();
+        Task<List<User>> GetUnverifyAsync();
+        Task<List<User>> GetVerifiedAccountsAsync();
+        Task<List<User>> GetSuspendAccountsAsync();
+        Task<List<User>> GetUnSuspendAccountsAsync();
+        int SetVerifyByadmin(long userId);
     }
-    public class userService :IuserService
+    public class userService : IuserService
     {
         private readonly UserRepository _userRepository;
         private readonly LoginRepository _loginRepository;
         private readonly ChangepassRepository _changepasswordRepository;
-        public userService(UserRepository userRepository,LoginRepository loginRepository,ChangepassRepository changepasswordRepository)
+        public userService(UserRepository userRepository, LoginRepository loginRepository, ChangepassRepository changepasswordRepository)
         {
             _userRepository = userRepository;
             _loginRepository = loginRepository;
@@ -38,14 +41,14 @@ namespace TestUpload.Service
             var hash = item.Login.Password;
             var key = item.Login.Username;
             PasswordHash passwordHash = new PasswordHash();
-            var Encypthash = passwordHash.Create(key,hash);
+            var Encypthash = passwordHash.Create(key, hash);
             item.Login.Password = Encypthash;
-            return  _userRepository.Create(item);
+            return _userRepository.Create(item);
         }
         public User GetWithoutPassword(long id)
         {
             var user = _userRepository.GetById(id);
-   //         user.Login.Password = "PASSWORD";
+            //         user.Login.Password = "PASSWORD";
             return user;
         }
         public User GetByUsername(string Username)
@@ -54,10 +57,16 @@ namespace TestUpload.Service
             user.Login.Password = "PASSWORD";
             return user;
         }
-       public async Task<List<User>> GetallUsersAsync()
+        public async Task<List<User>> GetallUsersAsync()
         {
-            var users = await  _userRepository.GetallAsync();
-            
+            var users = await _userRepository.GetallAsync();
+            for (int i = 0; i < users.Count; i++)
+            {
+                users[i].Login = new Login();
+                users[i].Login = _loginRepository.GetDataByUserId(users[i].Id);
+                users[i].Login.Password = "PASSWORD";
+            }
+
             return users;
         }
         public async Task<DataTable> GetusernameEmailList()
@@ -68,7 +77,7 @@ namespace TestUpload.Service
         {
             var res = await _userRepository.GetUnverifyAccountsAsync();
             int h = 0;
-            foreach(var i in res)
+            foreach (var i in res)
             {
                 var j = _userRepository.GetById(i.Id);
                 res[h].Login = new Login();
@@ -80,16 +89,50 @@ namespace TestUpload.Service
         {
             User user = _userRepository.GetById(userId);
             Login CurrentUser = _loginRepository.GetDataByUserId(userId);
-            if(CurrentUser.Verify)
+            if (CurrentUser.Verify)
             {
                 return 2;
             }
             user.VerifyBy = "Admin";
-            user.VerifyDate =DateTime.Now;
-            _userRepository.Update(user);                    
+            user.VerifyDate = DateTime.Now;
+            _userRepository.Update(user);
             CurrentUser.Verify = true;
             CurrentUser.Token = string.Empty;
-            return _loginRepository.Update(CurrentUser) ? 1:0;            
+            return _loginRepository.Update(CurrentUser) ? 1 : 0;
+        }
+        public async Task<List<User>> GetVerifiedAccountsAsync()
+        {
+            var data = await _userRepository.GetVerifiedAccountsAsync();
+            for (int i = 0; i < data.Count; i++)
+            {
+                data[i].Login = new Login();
+                data[i].Login = _loginRepository.GetDataByUserId(data[i].Id);
+            }
+            return data;
+        }
+        public async Task<List<User>> GetSuspendAccountsAsync()
+        {
+            var users = await _userRepository.GetSuspendAccountsAsync();
+            for (int i = 0; i < users.Count; i++)
+            {
+                users[i].Login = new Login();
+                users[i].Login = _loginRepository.GetDataByUserId(users[i].Id);
+                users[i].Login.Password = "PASSWORD";
+            }
+
+            return users;
+        }
+        public async Task<List<User>> GetUnSuspendAccountsAsync()
+        {
+            var users = await _userRepository.GetUnSuspendAccountsAsync();
+            for (int i = 0; i < users.Count; i++)
+            {
+                users[i].Login = new Login();
+                users[i].Login = _loginRepository.GetDataByUserId(users[i].Id);
+                users[i].Login.Password = "PASSWORD";
+            }
+
+            return users;
         }
 
 

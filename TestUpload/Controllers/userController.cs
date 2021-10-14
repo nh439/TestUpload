@@ -184,6 +184,18 @@ namespace TestUpload.Controllers
                 return StatusCode(500, x.Message);
             }
         }
+        [HttpGet("/user/Suspend")]
+        public async Task<IActionResult> Suspend()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal.Admin)
+            {
+                List<User> VerifiedUsers = await _iuserService.GetVerifiedAccountsAsync();
+                return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
 
     }
 }
