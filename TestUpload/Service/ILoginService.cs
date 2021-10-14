@@ -11,6 +11,9 @@ namespace TestUpload.Service
     public interface ILoginService
     {
          User GetLogin(string username, string password);
+        public Login GetDataByUserId(long Id);
+        bool ChangeSuspendStatus(String username);
+        int Changepassword(string username, string NewPassword, string OldPassword);
     }
     public class LoginService :ILoginService
     {
@@ -33,6 +36,33 @@ namespace TestUpload.Service
                 return res;
             }
             return null;
+        }
+        public Login GetDataByUserId(long Id)
+        {
+            return _loginRepository.GetDataByUserId(Id);
+        }
+        public bool ChangeSuspendStatus(String username)
+        {
+            var item = _loginRepository.GetById(username);
+            item.Suspend = !item.Suspend;
+            return _loginRepository.Update(item);
+        }
+        public int Changepassword(string username,string NewPassword,string OldPassword)
+        {
+            var item = _loginRepository.GetById(username);
+            PasswordHash hash = new PasswordHash();
+            OldPassword = hash.Create(username, OldPassword);
+            if(item != null)
+            {
+                if(OldPassword==item.Password)
+                {
+                    NewPassword = hash.Create(username, NewPassword);
+                    item.Password = NewPassword;
+                    return _loginRepository.Update(item) ? 1 : 3;
+                }
+                return 2;
+            }
+            return 0;
         }
     }
 }

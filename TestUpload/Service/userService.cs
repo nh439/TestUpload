@@ -22,6 +22,7 @@ namespace TestUpload.Service
         Task<List<User>> GetSuspendAccountsAsync();
         Task<List<User>> GetUnSuspendAccountsAsync();
         int SetVerifyByadmin(long userId);
+        User GetById(long id);
     }
     public class userService : IuserService
     {
@@ -133,6 +134,13 @@ namespace TestUpload.Service
             }
 
             return users;
+        }
+        public User GetById(long id)
+        {
+            var data = _userRepository.GetById(id);
+            data.Login = _loginRepository.GetDataByUserId(id);
+            data.Login.Password = "PASSWORD";
+            return data;
         }
 
 

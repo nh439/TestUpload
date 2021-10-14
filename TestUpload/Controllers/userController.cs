@@ -14,7 +14,7 @@ namespace TestUpload.Controllers
 {
     public class userController : Controller
     {
-        private readonly IuserService _iuserService ;
+        private readonly IuserService _iuserService;
         private readonly ILoginService _loginService;
         private readonly IhistoryLogService service;
         private ILogger<userController> _logger;
@@ -43,14 +43,14 @@ namespace TestUpload.Controllers
             string username = Request.Form["login"].ToString();
             string password = Request.Form["pass"].ToString();
             User principal = _loginService.GetLogin(username, password);
-            if(principal != null)
+            if (principal != null)
             {
-                if(principal.Login.Suspend && !principal.Admin)
+                if (principal.Login.Suspend && !principal.Admin)
                 {
                     ViewBag.result = "Your account is Suspend Please Contact Admin";
                     return View();
                 }
-                if(!principal.Login.Verify && !principal.Admin)
+                if (!principal.Login.Verify && !principal.Admin)
                 {
                     ViewBag.result = "Your account is Unverify Please Contact Admin";
                     return View();
@@ -62,7 +62,7 @@ namespace TestUpload.Controllers
                 HttpContext.Session.SetString("un", username);
                 if (principal.Admin)
                 {
-                    HttpContext.Session.SetString("admin","1");
+                    HttpContext.Session.SetString("admin", "1");
                 }
                 ViewBag.result = string.Empty;
                 return Redirect("/");
@@ -89,7 +89,7 @@ namespace TestUpload.Controllers
             string password, retype;
             password = HttpContext.Request.Form["pass"].ToString();
             retype = HttpContext.Request.Form["ret"].ToString();
-            if(password==retype)
+            if (password == retype)
             {
                 try
                 {
@@ -101,9 +101,9 @@ namespace TestUpload.Controllers
                     Email = HttpContext.Request.Form["Email"].ToString();
                     username = HttpContext.Request.Form["username"].ToString();
                     male = bool.Parse(HttpContext.Request.Form["Gender"].ToString());
-                    brithday = DateTime.Parse(HttpContext.Request.Form["BR"].ToString(),new CultureInfo("en-GB"));
+                    brithday = DateTime.Parse(HttpContext.Request.Form["BR"].ToString(), new CultureInfo("en-GB"));
                     principal = new User
-                    {       
+                    {
                         BrithDay = brithday,
                         Email = Email,
                         Firstname = fn,
@@ -125,7 +125,7 @@ namespace TestUpload.Controllers
                     ViewBag.result = "Registerd UnSuccessful";
                     return View();
                 }
-                catch(Exception x)
+                catch (Exception x)
                 {
                     _logger.LogError(x.Message);
                     ViewBag.result = "Registerd Corruped";
@@ -136,12 +136,46 @@ namespace TestUpload.Controllers
             ViewBag.result = "Password Retype Incorrect";
             return View();
         }
+
+        [HttpGet("/user/Profile")]
+        public IActionResult Profile()
+        {
+         var Hasuser =   long.TryParse(HttpContext.Session.GetString("uid"), out long user);
+            if(Hasuser)
+            {
+                var currentuser = _iuserService.GetById(user);
+                ViewBag.data = currentuser;
+                return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
+        [HttpGet("/user/Changepassword")]
+        public IActionResult Changepass()
+        {
+            return View();
+        }
+        [HttpPost("/user/Changepassword")]
+        public IActionResult Changingpassres()
+        {
+            string Oldpass = Request.Form["Old"].ToString();
+            string newpass = Request.Form["new"].ToString();
+            string username = HttpContext.Session.GetString("un");
+            if(!string.IsNullOrEmpty(username))
+            {
+                var res = _loginService.Changepassword(username, newpass, Oldpass);
+                ViewBag.res = res;
+                return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
+
+        #region Admin
         [HttpGet("/user/Getunverify")]
         public async Task<IActionResult> GetUnverify()
         {
             long.TryParse(HttpContext.Session.GetString("uid"), out long user);
             User principal = _iuserService.GetWithoutPassword(user);
-            if(principal.Admin)
+            if (principal.Admin)
             {
                 List<User> UnverifyUsers = await _iuserService.GetUnverifyAsync();
                 ViewBag.data = UnverifyUsers;
@@ -160,15 +194,15 @@ namespace TestUpload.Controllers
                 if (principal.Admin)
                 {
                     var res = _iuserService.SetVerifyByadmin(Verifyuser);
-                    if (res==1)
+                    if (res == 1)
                     {
                         ViewBag.res = "Success";
                     }
-                    else if(res==0)
+                    else if (res == 0)
                     {
                         ViewBag.res = "Unsuccess";
                     }
-                    if(res==2)
+                    if (res == 2)
                     {
                         return Redirect("/user/Getunverify");
                     }
@@ -178,7 +212,7 @@ namespace TestUpload.Controllers
                 }
                 return Redirect("/Home/Restricted");
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 _logger.LogError(x.Message);
                 return StatusCode(500, x.Message);
@@ -187,15 +221,44 @@ namespace TestUpload.Controllers
         [HttpGet("/user/Suspend")]
         public async Task<IActionResult> Suspend()
         {
+            try
+            {
+                long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+                User principal = _iuserService.GetWithoutPassword(Adminuser);
+                if (principal.Admin)
+                {
+                    List<User> VerifiedUsers = await _iuserService.GetVerifiedAccountsAsync();
+                    ViewBag.data = VerifiedUsers;
+                    return View();
+                }
+                return Redirect("/Home/Restricted");
+            }
+            catch (Exception x)
+            {
+                _logger.LogError(x.Message);
+                return Redirect("/Home/Restricted");
+            }
+        }
+        [HttpPost("/user/Setsuspend")]
+        public IActionResult SetSuspend()
+        {
             long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
             User principal = _iuserService.GetWithoutPassword(Adminuser);
-            if (principal.Admin)
+            if(principal != null)
             {
-                List<User> VerifiedUsers = await _iuserService.GetVerifiedAccountsAsync();
-                return View();
+                if(principal.Admin)
+                {
+                    long UserId = long.Parse(Request.Form["userId"].ToString());
+                    Login claim = _loginService.GetDataByUserId(UserId);
+                    _loginService.ChangeSuspendStatus(claim.Username);
+                    return Redirect("/user/Suspend");
+                }
             }
             return Redirect("/Home/Restricted");
         }
+        #endregion
+
+
 
     }
 }
