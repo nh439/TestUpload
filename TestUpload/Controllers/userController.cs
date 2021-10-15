@@ -270,6 +270,23 @@ namespace TestUpload.Controllers
             }
             return Redirect("/Home/Restricted");
         }
+
+        [HttpGet("/user/Admin")]
+        public async Task<IActionResult> AdminView()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin)
+                {
+                    var UserList = await _iuserService.GetViewModelAsync();
+                    ViewBag.user = UserList;
+                    return View();
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
         #endregion
 
 

@@ -1,0 +1,68 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<center>
+    <h1><b>Adminstrative Monitoring</b></h1>
+</center>
+<br />
+<div class="ui menu inverted segment">
+    <div class="header item">
+        Adminstrative Tools
+    </div>
+    <a class="item active" id="S1" onclick="Onclick(this.id); ShowPartial('D1');">
+        Users
+    </a>
+    <a class="item" id="S2" onclick="Onclick(this.id); ShowPartial('D2');">
+        History
+    </a>
+    <a class="item" id="S3" onclick="Onclick(this.id);ShowPartial('D3')">
+        All Files
+    </a>
+    <a class="item" id="S4" onclick="Onclick(this.id);ShowPartial('D4')">
+        Sessions
+    </a>
+</div>
+<div id="D1" style="display:block">
+    <partial name="Admin/Users" />
+</div>
+<div id="D2" style="display:none">
+    <partial name="Admin/History" />
+</div>
+<div id="D3" style="display:none">
+</div>
+<div id="D4" style="display:none">
+</div>
+<div id="partial">
+
+</div>
+<script>
+    function Onclick(Eid) {
+        var S1 = document.getElementById('S1');
+        var S2 = document.getElementById('S2');
+        var S3 = document.getElementById('S3');
+        var S4 = document.getElementById('S4');
+        var SC = document.getElementById(Eid);
+        S1.className = 'item';
+        S2.className = 'item';
+        S3.className = 'item';
+        S4.className = 'item';
+        SC.className = 'item active';
+
+    }
+    function ShowPartial(Eid) {
+        var D1 = document.getElementById('D1');
+        var D2 = document.getElementById('D2');
+        var D3 = document.getElementById('D3');
+        var D4 = document.getElementById('D4');
+        var DC = document.getElementById(Eid);
+        D1.style.display = 'none';
+        D2.style.display = 'none';
+        D3.style.display = 'none';
+        D4.style.display = 'none';
+        DC.style.display = '';
+    }
+
+</script>

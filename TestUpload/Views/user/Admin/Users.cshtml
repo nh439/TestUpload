@@ -1,0 +1,47 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+   List<UserView> claims = ViewBag.user;
+}
+@using TestUpload.Models.Entity;
+@using TestUpload.Models.View;
+<script src="~/js/FilesIndex.js"></script>
+<h1>Users</h1>
+<table class="ui  table" style="text-align:center" id="Myuser">
+    <thead class="ui selectable inverted table" style="text-align:center" >
+        <tr>
+            <th onclick="sortTable(0,'Myuser')">Id</th>
+            <th onclick="sortTable(1,'Myuser')">Firstname</th>
+            <th onclick="sortTable(2,'Myuser')">Lastname</th>
+            <th onclick="sortTable(3,'Myuser')">Email</th>
+            <th onclick="sortTable(4,'Myuser')">Registerd</th>
+            <th onclick="sortTable(5,'Myuser')">Brithday</th>
+            <th onclick="sortTable(6,'Myuser')">Username</th>
+            <th onclick="sortTable(7,'Myuser')">Used</th>
+            <th onclick="sortTable(8,'Myuser')">Verify</th>
+            <th onclick="sortTable(9,'Myuser')">By</th>
+            <th onclick="sortTable(10,'Myuser')">Suspend</th>
+
+        </tr>
+    </thead>
+    <tbody class="table-success">
+        @foreach(var i in claims)
+        {
+           
+        <tr>
+            <td>@i.Id</td>
+            <td>@i.Firstname</td>
+            <td>@i.Lastname</td>
+            <td>@i.Email</td>
+            <td>@i.Registerd</td>
+            <td>@i.BrithDay</td>
+            <td>@i.Username</td>
+            <td>@i.Used Bytes</td>
+            <td>@if (i.Verify) {<i class="flag icon"></i> }</td>
+            <td>@i.VerifyBy</td>
+            <td>@if (i.Suspend) { <i class="flag icon"></i>}</td>
+        </tr>
+            }
+    </tbody>
+</table>

@@ -7,6 +7,7 @@ using TestUpload.Models.Entity;
 using TestUpload.Securities;
 using System.Data;
 using System.Globalization;
+using TestUpload.Models.View;
 
 namespace TestUpload.Service
 {
@@ -23,6 +24,7 @@ namespace TestUpload.Service
         Task<List<User>> GetUnSuspendAccountsAsync();
         int SetVerifyByadmin(long userId);
         User GetById(long id);
+        Task<List<UserView>> GetViewModelAsync();
     }
     public class userService : IuserService
     {
@@ -55,7 +57,6 @@ namespace TestUpload.Service
         public User GetByUsername(string Username)
         {
             var user = _userRepository.GetByUsername(Username);
-            user.Login.Password = "PASSWORD";
             return user;
         }
         public async Task<List<User>> GetallUsersAsync()
@@ -65,7 +66,6 @@ namespace TestUpload.Service
             {
                 users[i].Login = new Login();
                 users[i].Login = _loginRepository.GetDataByUserId(users[i].Id);
-                users[i].Login.Password = "PASSWORD";
             }
 
             return users;
@@ -118,7 +118,6 @@ namespace TestUpload.Service
             {
                 users[i].Login = new Login();
                 users[i].Login = _loginRepository.GetDataByUserId(users[i].Id);
-                users[i].Login.Password = "PASSWORD";
             }
 
             return users;
@@ -130,7 +129,6 @@ namespace TestUpload.Service
             {
                 users[i].Login = new Login();
                 users[i].Login = _loginRepository.GetDataByUserId(users[i].Id);
-                users[i].Login.Password = "PASSWORD";
             }
 
             return users;
@@ -139,8 +137,11 @@ namespace TestUpload.Service
         {
             var data = _userRepository.GetById(id);
             data.Login = _loginRepository.GetDataByUserId(id);
-            data.Login.Password = "PASSWORD";
             return data;
+        }
+        public async Task<List<UserView>> GetViewModelAsync()
+        {
+            return await _userRepository.GetViewModelAsync();
         }
 
 

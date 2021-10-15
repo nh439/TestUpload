@@ -34,7 +34,6 @@ namespace TestUpload.Service
             if(t)
             {
                 var res = _userRepository.GetByUsername(username);
-                res.Login.Password = "PASSWORD";
                 return res;
             }
             return null;

@@ -5,19 +5,20 @@
     List<User> users = ViewBag.data;
 }
 @using TestUpload.Models.Entity;
+<script src="~/js/FilesIndex.js"></script>
 <!--Normal Screen-->
 <center>
     <h1><b>Account Verification</b></h1>
     <div class="d-none d-sm-block">
-        <table class="table table-hover table-bordered border-primary" style="text-align:center">
+        <table class="table table-hover table-bordered border-primary" style="text-align:center" id="Unverifylist">
             <thead class="table-dark">
                 <tr>
-                    <th>Id</th>
-                    <th>Prefix</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Email</th>
-                    <th>Registerd Date</th>
+                    <th onclick="sortTable(0,'Unverifylist')">Id</th>
+                    <th onclick="sortTable(1,'Unverifylist')">Prefix</th>
+                    <th onclick="sortTable(2,'Unverifylist')">Firstname</th>
+                    <th onclick="sortTable(3,'Unverifylist')">Lastname</th>
+                    <th onclick="sortTable(4,'Unverifylist')">Email</th>
+                    <th onclick="sortTable(5,'Unverifylist')">Registerd Date</th>
                     <th></th>
                 </tr>
             </thead>

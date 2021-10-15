@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TestUpload.Models.Entity;
 using Microsoft.EntityFrameworkCore.Query;
+using TestUpload.Models.View;
 
 namespace TestUpload.Repository.SQL
 {
@@ -78,6 +79,41 @@ namespace TestUpload.Repository.SQL
         public async Task<List<User>> GetUnSuspendAccountsAsync()
         {
             return await _context.User.Where(x => !x.Login.Suspend && !x.Admin).ToListAsync();
+        }
+        public async Task<List<UserView>> GetViewModelAsync()
+        {
+            var raw = await (from UserProfile in _context.User
+                       join
+UserLogin in _context.login
+on UserProfile.Login.Username equals UserLogin.Username
+                       select new UserView
+                       {
+                           Admin=UserProfile.Admin,
+                           BrithDay=UserProfile.BrithDay,
+                           Email=UserProfile.Email,
+                           Firstname=UserProfile.Firstname,
+                           Id=UserProfile.Id,
+                           Lastname=UserProfile.Lastname,
+                           Male=UserProfile.Male,
+                           Registerd=UserProfile.Registerd,
+                           Suspend=UserLogin.Suspend,
+                          // UsedFile= _context.fileUploads.Where(x=>x.UserId == UserProfile.Id) != null? _context.fileUploads.Where(x => x.UserId == UserProfile.Id).Select(x => x.FileSize).ToList().Sum():0,
+                          // UsedStorage = _context.fileStorage.Where(x => x.UserId == UserProfile.Id) != null? _context.fileStorage.Where(x=>x.UserId==UserProfile.Id).Select(x=>x.FileSize).ToList().Sum() :0,
+                           Username=UserLogin.Username,
+                           Verify=UserLogin.Verify,
+                           VerifyBy=UserProfile.VerifyBy,
+                           VerifyDate=UserProfile.VerifyDate
+                       }
+                      ).ToListAsync();     
+            foreach(var i in raw)
+            {
+                int idx = raw.IndexOf(i);
+                var file = _context.fileUploads.Where(x => x.UserId == i.Id) != null ? _context.fileUploads.Where(x => x.UserId == i.Id).Select(x => x.FileSize).ToList().Sum() : 0;
+                var blob = _context.fileStorage.Where(x => x.UserId == i.Id) != null ? _context.fileStorage.Where(x => x.UserId == i.Id).Select(x => x.FileSize).ToList().Sum() : 0;
+                var used = file + blob;
+                raw[idx].Used = used;
+            }
+            return raw;
         }
 
 
