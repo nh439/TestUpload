@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using TestUpload.Profile;
 using TestUpload.Repository.SQL;
 using TestUpload.Service;
+using TestUpload.Securities;
 
 namespace TestUpload
 {
@@ -54,6 +55,8 @@ namespace TestUpload
             services.AddScoped<ErrorLogRepository>();
             services.AddScoped<FileUploadRepository>();
             services.AddScoped<FileStorageRepository>();
+            services.AddScoped<SessionRepository>();
+            
             #endregion
 
             #region Services
@@ -63,8 +66,10 @@ namespace TestUpload
             services.AddScoped<IhistoryLogService, historyLogService>();
             services.AddScoped<IFileUploadService, FileUploadService>();
             services.AddScoped<IFileStorageService, FileStorageService>();
+            services.AddScoped<ISessionServices, SessionServices>();
             #endregion
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IpAddress>();
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromHours(6);

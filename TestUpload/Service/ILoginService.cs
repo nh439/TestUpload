@@ -19,10 +19,12 @@ namespace TestUpload.Service
     {
         private readonly LoginRepository _loginRepository;
         private readonly UserRepository _userRepository;
-        public LoginService(LoginRepository loginRepository,UserRepository UserRepository)
+        private readonly ChangepassRepository _changepassRepository;
+        public LoginService(LoginRepository loginRepository,UserRepository UserRepository,ChangepassRepository changepassRepository)
         {
             _loginRepository = loginRepository;
             _userRepository = UserRepository;
+            _changepassRepository = changepassRepository;
         }
         public User GetLogin(string username,string password)
         {
@@ -56,9 +58,17 @@ namespace TestUpload.Service
             {
                 if(OldPassword==item.Password)
                 {
+                    long UserId = _userRepository.GetByUsername(username).Id;
                     NewPassword = hash.Create(username, NewPassword);
                     item.Password = NewPassword;
-                    return _loginRepository.Update(item) ? 1 : 3;
+                    var res = _loginRepository.Update(item);
+                    _changepassRepository.Create(new Models.Entity.Changepassword
+                    {
+                        BySystem = false,
+                        ResetPasswordRequire = false,
+                        UserId=UserId
+                    }) ;
+                    return res ? 1 : 3;
                 }
                 return 2;
             }

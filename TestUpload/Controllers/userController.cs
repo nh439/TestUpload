@@ -9,6 +9,7 @@ using TestUpload.Models.Entity;
 using TestUpload.Profile;
 using TestUpload.Service;
 using System.Globalization;
+using TestUpload.Securities;
 
 namespace TestUpload.Controllers
 {
@@ -17,13 +18,24 @@ namespace TestUpload.Controllers
         private readonly IuserService _iuserService;
         private readonly ILoginService _loginService;
         private readonly IhistoryLogService service;
+        private readonly ISessionServices _sessionServices;
         private ILogger<userController> _logger;
-        public userController(IuserService iuserService, ILoginService loginService, IhistoryLogService ihistory, ILogger<userController> logger)
+        private readonly IpAddress _ipAddress;
+        public userController(IuserService iuserService,
+            ILoginService loginService, 
+            IhistoryLogService ihistory,
+            ISessionServices sessionServices, 
+            ILogger<userController> logger,
+            IpAddress ipAddress
+            )
         {
             _iuserService = iuserService;
             _loginService = loginService;
+            _sessionServices = sessionServices;
             _logger = logger;
             service = ihistory;
+            _ipAddress = ipAddress;
+            
         }
 
         [HttpGet("/user")]
@@ -60,6 +72,7 @@ namespace TestUpload.Controllers
                 HttpContext.Session.SetString("fn", principal.Firstname);
                 HttpContext.Session.SetString("ln", principal.Lastname);
                 HttpContext.Session.SetString("un", username);
+                HttpContext.Session.SetString("sid", _sessionServices.Login(principal.Id,_ipAddress.GetIp()));
                 if (principal.Admin)
                 {
                     HttpContext.Session.SetString("admin", "1");
@@ -73,6 +86,7 @@ namespace TestUpload.Controllers
         [HttpGet("user/logout")]
         public IActionResult Logout()
         {
+            _sessionServices.Logout(HttpContext.Session.GetString("sid"));
             HttpContext.Session.Clear();
             return Redirect("/");
         }
@@ -93,7 +107,7 @@ namespace TestUpload.Controllers
             {
                 try
                 {
-                    string fn, ln, Email, Rules, username;
+                    string fn, ln, Email, username;
                     DateTime brithday;
                     bool male;
                     fn = HttpContext.Request.Form["Fn"].ToString();
