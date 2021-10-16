@@ -281,7 +281,9 @@ namespace TestUpload.Controllers
                 if (principal.Admin)
                 {
                     var UserList = await _iuserService.GetViewModelAsync();
+                    var History = await service.Getall();
                     ViewBag.user = UserList;
+                    ViewBag.history = History;
                     return View();
                 }
             }

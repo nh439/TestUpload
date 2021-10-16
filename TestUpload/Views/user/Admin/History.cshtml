@@ -2,5 +2,41 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    List<History> histories = ViewBag.history;
 }
+@using TestUpload.Models.Entity;
+<script src="~/js/FilesIndex.js"></script>
 <h1>History</h1>
+<br />
+<br />
+<table class="ui  table" style="text-align:center" id="Mylog">
+    <thead class="ui selectable inverted table" style="text-align:center">
+        <tr>
+            <th onclick="sortTable(0,'Mylog')">Date</th>
+            <th onclick="sortTable(1,'Mylog')">Section</th>
+            <th onclick="sortTable(2,'Mylog')">Details</th>
+            <th onclick="sortTable(3,'Mylog')">Related File</th>
+            <th onclick="sortTable(4,'Mylog')">UserId</th>
+            <th onclick="sortTable(5,'Mylog')">Success</th>
+            <th onclick="sortTable(6,'Mylog')">Error Reference</th>
+        </tr>
+    </thead>
+    <tbody class="table-success">
+        @foreach(var i in histories)
+            {
+            <tr>
+                <td>@i.Date</td>
+                <td>@i.HistoryMode</td>
+                <td>@i.Detail</td>
+                <td>@i.RelatedFile</td>
+                <td>@i.UserId</td>
+                <td>@if(i.Issuccess)
+                { <i class="flag icon"></i>}
+                </td>
+                <td>@if(i.ErrorLog != null)
+                { @i.ErrorLog.Reference}
+                </td>
+            </tr>
+            }
+        </tbody>
+</table>

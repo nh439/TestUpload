@@ -683,6 +683,7 @@ namespace TestUpload.Controllers
                         if(checkdata.UserId==user)
                         {
                             IfileStorageService.SetnamespaceAndShared(reference, namespaces, shared);
+                            service.CreateSuccessHistory("Setting File ", "Changes Setting", checkdata.Filename + checkdata.FileExtension, user);
                             return Redirect("/Files");
                         }
                     }
@@ -692,6 +693,7 @@ namespace TestUpload.Controllers
                         if (checkdata.UserId == user)
                         {
                             IfileUploadService.SetnamespaceAndShared(reference, namespaces, shared);
+                            service.CreateSuccessHistory("Setting File ", "Changes Setting", checkdata.Filename + checkdata.FileExtension, user);
                             return Redirect("/Files");
                         }
                     }
@@ -701,7 +703,7 @@ namespace TestUpload.Controllers
             }
             catch (Exception x)
             {
-              //  service.CreateErrorHistory("Upload Files", "Set Me Unsuccessful", "", user, x.Message, x.InnerException.Message);
+                service.CreateErrorHistory("Setting File ", "Changes Setting Failed",null,long.TryParse(HttpContext.Session.GetString("uid"),out long UserId) ? UserId:0,x.Message,null);
                 _logger.LogError(x.Message);
                 return StatusCode(500, x.Message);
             }
@@ -758,7 +760,7 @@ namespace TestUpload.Controllers
             }
             catch (Exception x)
             {
-                //  service.CreateErrorHistory("Upload Files", "Set Me Unsuccessful", "", user, x.Message, x.InnerException.Message);
+                // service.CreateErrorHistory("Upload Files", "Set Me Unsuccessful", "", user, x.Message, x.InnerException.Message);
                 _logger.LogError(x.Message);
                 return StatusCode(500, x.Message);
             }                     

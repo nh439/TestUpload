@@ -11,6 +11,7 @@ namespace TestUpload.Service
     {
         public bool CreateSuccessHistory(string Mode, string Details, string? RelatedFiles, long UserId);
         public string CreateErrorHistory(string Mode, string Details, string? RelatedFiles, long UserId, string Exception, string InnerException);
+        Task<List<History>> Getall();
     }
     public class historyLogService :IhistoryLogService
     {
@@ -49,6 +50,10 @@ namespace TestUpload.Service
             history.ErrorLog = log;
             _historyRepository.Create(history);
             return log.Reference;
+        }
+        public async Task<List<History>> Getall()
+        {
+            return await _historyRepository.Getall();
         }
        
 
