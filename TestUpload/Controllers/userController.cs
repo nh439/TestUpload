@@ -279,7 +279,7 @@ namespace TestUpload.Controllers
             return Redirect("/Home/Restricted");
         }
 
-        [HttpGet("/user/Admin")]
+        [HttpGet("/user/Admin/users")]
         public async Task<IActionResult> AdminView()
         {
             long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
@@ -288,16 +288,65 @@ namespace TestUpload.Controllers
             {
                 if (principal.Admin)
                 {
+                    ViewBag.Mode = 1;
                     var UserList = await _iuserService.GetViewModelAsync();
-                    var History = await service.Getall();
-                    ViewBag.user = UserList;
+                    ViewBag.user = UserList;              
+                    return View();
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+        [HttpGet("/user/Admin/history")]
+        public async Task<IActionResult> AdminHistory()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin)
+                {
+                    var History = await service.Getall();                    
                     var vd = await service.GetViewBydate();
                     ViewBag.HistorySummary = vd.Take(10).ToList();
                     ViewBag.history = History;
+                    ViewBag.Mode = 2;
+                    return View("AdminView");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+
+        [HttpGet("/user/Admin/Uploads")]
+        public async Task<IActionResult> AdminUploads()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin)
+                {
                     var allFile = await _ifileTotalServices.GetAsync();
                     ViewBag.Files = allFile;
                     ViewBag.TotalUsed = _ifileStorageService.GetTotalUsedSpace() + _ifileUploadService.GetTotalUsedSpace();
-                    return View();
+                    ViewBag.Mode = 3;
+                    return View("AdminView");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+
+        [HttpGet("/user/Admin/Sessions")]
+        public async Task<IActionResult> AdminSessions()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin)
+                {
+               
+                    ViewBag.Mode = 4;
+                    return View("AdminView");
                 }
             }
             return Redirect("/Home/Restricted");

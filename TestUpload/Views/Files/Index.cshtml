@@ -10,6 +10,7 @@
 @using System.Globalization
 <script src="~/js/FilesIndex.js"></script>
 <link rel="stylesheet" href="~/css/Loading.css" />
+<script src="~/js/CommonSearch.js"></script>
 <div class="document">
     <center>
         <h1><b>My Files</b></h1>
@@ -20,7 +21,7 @@
         <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon3">Search Filenames</span>
         </div>
-        <input type="text" class="form-control" id="KeyInp" aria-describedby="basic-addon3" onkeyup="Commonsearch()">
+        <input type="text" class="form-control" id="KeyInp" aria-describedby="basic-addon3" onkeyup="Serach(this.id,'TBL')">
         <div class="input-group-append">
             <button class="btn btn-warning" type="button" id="button-addon2" data-toggle="modal" data-target="#exampleModal">Advanced Search</button>
         </div>
