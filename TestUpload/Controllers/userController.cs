@@ -291,8 +291,9 @@ namespace TestUpload.Controllers
                     var UserList = await _iuserService.GetViewModelAsync();
                     var History = await service.Getall();
                     ViewBag.user = UserList;
-                    ViewBag.HistorySummary = await service.GetViewBydate();
-                    ViewBag.history = History.Take(10).ToList();
+                    var vd = await service.GetViewBydate();
+                    ViewBag.HistorySummary = vd.Take(10).ToList()
+                    ViewBag.history = History;
                     var allFile = await _ifileTotalServices.GetAsync();
                     ViewBag.Files = allFile;
                     ViewBag.TotalUsed = _ifileStorageService.GetTotalUsedSpace() + _ifileUploadService.GetTotalUsedSpace();
