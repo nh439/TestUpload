@@ -21,12 +21,18 @@ namespace TestUpload.Controllers
         private readonly ISessionServices _sessionServices;
         private ILogger<userController> _logger;
         private readonly IpAddress _ipAddress;
+        private readonly IFileStorageService _ifileStorageService;
+        private readonly IFileUploadService _ifileUploadService;
+        private readonly IFileTotalServices _ifileTotalServices;
         public userController(IuserService iuserService,
             ILoginService loginService, 
             IhistoryLogService ihistory,
             ISessionServices sessionServices, 
             ILogger<userController> logger,
-            IpAddress ipAddress
+            IpAddress ipAddress,
+            IFileUploadService fileUploadService,
+            IFileStorageService fileStorageService,
+            IFileTotalServices fileTotalServices
             )
         {
             _iuserService = iuserService;
@@ -35,7 +41,9 @@ namespace TestUpload.Controllers
             _logger = logger;
             service = ihistory;
             _ipAddress = ipAddress;
-            
+            _ifileStorageService = fileStorageService;
+            _ifileUploadService = fileUploadService;
+            _ifileTotalServices = fileTotalServices;
         }
 
         [HttpGet("/user")]
@@ -283,7 +291,11 @@ namespace TestUpload.Controllers
                     var UserList = await _iuserService.GetViewModelAsync();
                     var History = await service.Getall();
                     ViewBag.user = UserList;
+                    ViewBag.HistorySummary = await service.GetViewBydate();
                     ViewBag.history = History;
+                    var allFile = await _ifileTotalServices.GetAsync();
+                    ViewBag.Files = allFile;
+                    ViewBag.TotalUsed = _ifileStorageService.GetTotalUsedSpace() + _ifileUploadService.GetTotalUsedSpace();
                     return View();
                 }
             }

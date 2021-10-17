@@ -17,6 +17,7 @@ using TestUpload.Profile;
 using TestUpload.Repository.SQL;
 using TestUpload.Service;
 using TestUpload.Securities;
+using TestUpload.Repository;
 
 namespace TestUpload
 {
@@ -56,7 +57,7 @@ namespace TestUpload
             services.AddScoped<FileUploadRepository>();
             services.AddScoped<FileStorageRepository>();
             services.AddScoped<SessionRepository>();
-            
+            services.AddScoped<FileTotalRepository>();
             #endregion
 
             #region Services
@@ -67,6 +68,7 @@ namespace TestUpload
             services.AddScoped<IFileUploadService, FileUploadService>();
             services.AddScoped<IFileStorageService, FileStorageService>();
             services.AddScoped<ISessionServices, SessionServices>();
+            services.AddScoped<IFileTotalServices, FileTotalServices>();
             #endregion
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IpAddress>();

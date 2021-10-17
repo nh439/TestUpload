@@ -108,5 +108,9 @@ namespace TestUpload.Repository.SQL
         {
             return _context.fileUploads.Where(x => x.Token == Token && x.Shared).FirstOrDefault();
         }
+        public decimal GetTotalUsedSpace()
+        {
+            return _context.fileUploads.Sum(x => x.FileSize);
+        }
     }
 }

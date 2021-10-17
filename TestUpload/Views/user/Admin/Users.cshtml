@@ -2,7 +2,28 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-   List<UserView> claims = ViewBag.user;
+    List<UserView> claims = ViewBag.user;
+    string SizeConverter(decimal Total)
+    {
+        var ts = string.Empty;
+        if (Total < 1024)
+        {
+            ts = Total + " Bytes";
+        }
+        else if (Total < (1024 * 1024))
+        {
+            ts = (Total / 1024).ToString("0.00") + " kB";
+        }
+        else if (Total < (1024 * 1024 * 1024))
+        {
+            ts = (Total / (1024 * 1024)).ToString("0.00") + " MB";
+        }
+        else
+        {
+            ts = (Total / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
+        }
+        return ts;
+    }
 }
 @using TestUpload.Models.Entity;
 @using TestUpload.Models.View;
@@ -37,7 +58,7 @@
             <td>@i.Registerd</td>
             <td>@i.BrithDay</td>
             <td>@i.Username</td>
-            <td>@i.Used Bytes</td>
+            <td>@SizeConverter(i.Used.Value)</td>
             <td>@if (i.Verify) {<i class="flag icon"></i> }</td>
             <td>@i.VerifyBy</td>
             <td>@if (i.Suspend) { <i class="flag icon"></i>}</td>

@@ -1,0 +1,92 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using TestUpload.Models.View;
+@using TestUpload.Models.Entity;
+@{
+    List<FileTotal> fileUploads = ViewBag.Files;
+    decimal Totalsize = ViewBag.TotalUsed;
+    var filestorageViews = fileUploads.Where(x => x.FileType == "Blob").Count();
+    var fileUploadsViews = fileUploads.Where(x => x.FileType == "File").Count();
+    string SizeConverter(decimal Total)
+    {
+        var ts = string.Empty;
+        if (Total < 1024)
+        {
+            ts = Total + " Bytes";
+        }
+        else if (Total < (1024 * 1024))
+        {
+            ts = (Total / 1024).ToString("0.00") + " kB";
+        }
+        else if (Total < (1024 * 1024 * 1024))
+        {
+            ts = (Total / (1024 * 1024)).ToString("0.00") + " MB";
+        }
+        else
+        {
+            ts = (Total / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
+        }
+        return ts;
+    }
+
+}
+<script src="~/js/FilesIndex.js"></script>
+<h1>All File Uploads</h1>
+<br />
+All Uploads : @fileUploads.Count() Files
+<br />
+All Files : @fileUploadsViews Files
+<br />
+All Blob : @filestorageViews Files
+<br />
+Space Used : @SizeConverter(Totalsize);
+<br />
+<br />
+@if (fileUploads != null && fileUploads.Count >0)
+{
+    <h1>Files</h1>
+    <table class="ui  table" style="text-align:center" id="Uploads">
+        <thead class="ui selectable inverted table" style="text-align:center">
+            <tr>
+                <th>Filename</th>
+                <th>File Namespace</th>
+                <th>UserId</th>
+                <th>Filesize</th>
+                <th>FileType</th>
+                <th>Add Date</th>
+                <th>Password</th>
+                <th>Shared</th>
+                <th>Upload Id</th>
+            </tr>
+        </thead>
+        <tbody class="table-success">
+            @foreach (var i in fileUploads)
+            {
+                <tr>
+                    <td>@i.Filename</td>
+                    <td>@i.FileNamespace</td>
+                    <td>@i.UserId</td>
+                    <td>@SizeConverter(i.Filesize)</td>
+                    <td>File</td>
+                    <td>@i.AddDate</td>
+                    <td>
+                        @if (i.HasPassword)
+                        {<i class="flag icon"></i>}
+                </td>
+                <td>
+                    @if (i.Shared)
+                    {<i class="flag icon"></i>}
+            </td>
+                    <td>@i.UploadId</td>
+        </tr>
+    }
+         
+
+        </tbody>
+    </table>
+}
+else
+{
+    <h1>No Files or Blob in This Project</h1>
+}

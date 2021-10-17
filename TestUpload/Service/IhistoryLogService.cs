@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TestUpload.Models.Entity;
+using TestUpload.Models.View;
 using TestUpload.Repository.SQL;
 
 namespace TestUpload.Service
@@ -12,6 +13,7 @@ namespace TestUpload.Service
         public bool CreateSuccessHistory(string Mode, string Details, string? RelatedFiles, long UserId);
         public string CreateErrorHistory(string Mode, string Details, string? RelatedFiles, long UserId, string Exception, string InnerException);
         Task<List<History>> Getall();
+        Task<List<HistoryViewBydate>> GetViewBydate();
     }
     public class historyLogService :IhistoryLogService
     {
@@ -55,7 +57,12 @@ namespace TestUpload.Service
         {
             return await _historyRepository.Getall();
         }
-       
+        public async Task<List<HistoryViewBydate>> GetViewBydate()
+        {
+            return await _historyRepository.GetViewBydate();
+        }
+
+
 
 
     }

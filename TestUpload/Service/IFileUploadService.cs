@@ -25,6 +25,7 @@ namespace TestUpload.Service
         bool Setpassword(string Id, string Newpassword);
         bool SetnamespaceAndShared(string reference, string namespaces, bool shared);
         FileUpload GetByToken(string Token);
+        decimal GetTotalUsedSpace();
     }
     public class FileUploadService:IFileUploadService
     {
@@ -145,6 +146,10 @@ namespace TestUpload.Service
             PasswordHash hash = new PasswordHash();
             Token = hash.DecodeFrom64(Token);
             return _fileUploadRepository.GetByToken(Token);
+        }
+       public decimal GetTotalUsedSpace()
+        {
+            return _fileUploadRepository.GetTotalUsedSpace();
         }
 
     }

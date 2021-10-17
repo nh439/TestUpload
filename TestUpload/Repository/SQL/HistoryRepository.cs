@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using TestUpload.Models.Entity;
+using TestUpload.Models.View;
 
 namespace TestUpload.Repository.SQL
 {
@@ -51,6 +52,21 @@ namespace TestUpload.Repository.SQL
         {
             return await _context.History.Where(x => x.UserId==Id).OrderByDescending(x => x.Date).ToListAsync();
         }
+        public async Task<List<HistoryViewBydate>> GetViewBydate()
+        {
+            var data = (from histories in _context.History
+                        group histories by histories.Date.Date
+                       into datefilter
+                        select new HistoryViewBydate
+                        {
+                            Date = datefilter.Key,
+                            Histories = datefilter.Count(),
+                            Success = datefilter.Count(x => x.Issuccess)
+
+                        }
+                       );
+            return await data.OrderByDescending(x => x.Date).ToListAsync();
+        }
 
     }
     public class ErrorLogRepository
@@ -65,6 +81,7 @@ namespace TestUpload.Repository.SQL
             _context.Add(item);
             return _context.SaveChanges() > 0 ? true : false;
         }
-
+       
     }
+
 }
