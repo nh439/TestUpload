@@ -292,7 +292,7 @@ namespace TestUpload.Controllers
                     var History = await service.Getall();
                     ViewBag.user = UserList;
                     ViewBag.HistorySummary = await service.GetViewBydate();
-                    ViewBag.history = History;
+                    ViewBag.history = History.Take(10);
                     var allFile = await _ifileTotalServices.GetAsync();
                     ViewBag.Files = allFile;
                     ViewBag.TotalUsed = _ifileStorageService.GetTotalUsedSpace() + _ifileUploadService.GetTotalUsedSpace();
