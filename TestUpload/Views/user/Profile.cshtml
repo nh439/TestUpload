@@ -3,6 +3,7 @@
 *@
 @{
     User data = ViewBag.data;
+    var Session = ViewBag.CurrentSession;
 }
 @using TestUpload.Models.Entity;
 
@@ -48,7 +49,7 @@
                 }
                 else
                 {
-                    <input name="radio1" id="radio1_1" type="radio" class="custom-control-input" value="0"  disabled>
+                    <input name="radio1" id="radio1_1" type="radio" class="custom-control-input" value="0" disabled>
                 }
 
                 <label for="radio1_1" class="custom-control-label">Female</label>
@@ -65,7 +66,7 @@
     </div>
     <div class="form-group">
         <label for="text6">Brithday</label>
-        <input id="text6" name="text6" type="text" class="form-control"value="@data.BrithDay" readonly>
+        <input id="text6" name="text6" type="text" class="form-control" value="@data.BrithDay" readonly>
     </div>
     <div class="form-group">
         <label for="text5">Registerd Date</label>
@@ -82,5 +83,9 @@
     <div class="form-group">
         <label for="text9">Verify By</label>
         <input id="text9" name="text9" type="text" class="form-control" value="@data.VerifyBy" readonly>
-    </div> 
+    </div>
+    <div class="form-group">
+        <label for="textA">Current Session</label>
+        <input id="textA" name="textA" type="text" class="form-control" value="@Session" readonly>
+    </div>
 </form>

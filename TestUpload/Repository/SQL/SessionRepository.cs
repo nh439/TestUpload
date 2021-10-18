@@ -19,9 +19,9 @@ namespace TestUpload.Repository.SQL
             _context.sessions.Add(item);
             return _context.SaveChanges() > 0 ? true : false;
         }
-        public List<Sessions> Getall()
+        public async Task< List<Sessions>> Getall()
         {
-            return _context.sessions.OrderByDescending(x => x.LoggedIn).ToList();
+            return await _context.sessions.OrderByDescending(x => x.LoggedIn).ToListAsync();
         }
         public List<Sessions> GetByUser(long user)
         {

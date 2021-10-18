@@ -2,4 +2,59 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    List<Sessions> sessions = ViewBag.S;
 }
+@using TestUpload.Models.Entity;
+<script src="~/js/CommonSearch.js"></script>
+<div class="ui labeled input">
+    <div class="ui orange label">
+        CommonSearch
+    </div>
+    <input type="text" id="SearchValue" onkeyup="Serach(this.id, 'Mybody');">
+    <button class="ui blue button">Advanced Search</button>
+</div>
+<br />
+<br />
+<form method="post">
+    <div class="ui labeled input">
+        <div class="ui green label">
+            Clear History
+        </div>
+        <select name="m">
+            <option value="0">All</option>
+            <option value="1">1 Month</option>
+            <option value="3">3 Months</option>
+            <option value="5">5 Months</option>
+            <option value="9">9 Months</option>
+            <option value="12">1 Year</option>
+            <option value="18">1 Year 6 Months</option>
+            <option value="24">2 Years</option>
+        </select>
+        <button class="ui red button">Clear</button>
+    </div>
+    <br />
+    <br />
+    <table class="ui  table" style="text-align:center" id="Session">
+        <thead class="ui selectable inverted table" style="text-align:center">
+            <tr>
+                <th>Id</th>
+                <th>User</th>
+                <th>Login</th>
+                <th>Logout</th>
+                <th>IpAddress</th>
+            </tr>
+        </thead>
+        <tbody class="table-success" id="Mybody">
+            @foreach(var i in sessions)
+            {
+            <tr>
+                <td>@i.Id</td>
+                <td>@i.UserId</td>
+                <td>@i.LoggedIn</td>
+                <td>@i.Loggedout</td>
+                <td>@i.IpAddress</td>
+            </tr>
+            }
+            </tbody>
+    </table>
+</form>

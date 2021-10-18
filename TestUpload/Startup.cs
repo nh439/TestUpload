@@ -18,6 +18,8 @@ using TestUpload.Repository.SQL;
 using TestUpload.Service;
 using TestUpload.Securities;
 using TestUpload.Repository;
+using Hangfire;
+using TestUpload.Middleware;
 
 namespace TestUpload
 {
@@ -44,10 +46,12 @@ namespace TestUpload
                 options.Limits.MaxRequestBodySize = int.MaxValue; // if don't set default value is: 30 MB
             });
 
+
             services.AddControllersWithViews();
             services.AddDbContext<DataContext>(options =>
         options.UseMySQL(Connstring));
-
+            services.AddHangfire(x => x.UseStorage(new Hangfire.MySql.MySqlStorage(Connstring, new Hangfire.MySql.MySqlStorageOptions() { TablesPrefix = "Schedule_" })));
+            services.AddHangfireServer();
             #region Repository
             services.AddScoped<LoginRepository>();
             services.AddScoped<UserRepository>();
@@ -69,6 +73,7 @@ namespace TestUpload
             services.AddScoped<IFileStorageService, FileStorageService>();
             services.AddScoped<ISessionServices, SessionServices>();
             services.AddScoped<IFileTotalServices, FileTotalServices>();
+            services.AddSingleton<ISessionLogoutService, SessionLogoutService>();
             #endregion
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IpAddress>();
@@ -90,7 +95,7 @@ namespace TestUpload
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient client)
         {
             if (env.IsDevelopment())
             {
@@ -107,7 +112,7 @@ namespace TestUpload
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSchedule();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -117,6 +122,8 @@ namespace TestUpload
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
             
+
+
         }
     }
 }

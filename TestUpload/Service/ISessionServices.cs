@@ -12,6 +12,7 @@ namespace TestUpload.Service
     {
         bool Logout(string SessionId);
         string Login(long UserId, string Ip);
+        Task<List<Sessions>> GetallAsync();
 
     }
     public class SessionServices :ISessionServices
@@ -39,6 +40,10 @@ namespace TestUpload.Service
             item.IsLogout = true;
             item.Loggedout = DateTime.Now;
             return _sessionRepository.Update(item);
+        }
+        public async Task<List<Sessions>> GetallAsync()
+        {
+            return await _sessionRepository.Getall();
         }
     }
 }

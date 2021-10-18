@@ -166,7 +166,9 @@ namespace TestUpload.Controllers
             if(Hasuser)
             {
                 var currentuser = _iuserService.GetById(user);
-                ViewBag.data = currentuser;
+                ViewBag.data = currentuser;               
+                var CurrentSession = HttpContext.Session.GetString("sid");
+                ViewBag.CurrentSession = CurrentSession;
                 return View();
             }
             return Redirect("/Home/Restricted");
@@ -344,7 +346,8 @@ namespace TestUpload.Controllers
             {
                 if (principal.Admin)
                 {
-               
+                    var Sessions = await _sessionServices.GetallAsync();
+                    ViewBag.S = Sessions;
                     ViewBag.Mode = 4;
                     return View("AdminView");
                 }
