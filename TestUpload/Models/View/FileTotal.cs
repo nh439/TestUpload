@@ -7,6 +7,7 @@ namespace TestUpload.Models.View
 {
     public class FileTotal
     {
+        public string Id { get; set; }
          public string Filename{get; set;}
          public string FileNamespace{get; set;}
          public long UserId{get; set;}

@@ -58,6 +58,7 @@ Space Used : @SizeConverter(Totalsize);
     <table class="ui  table" style="text-align:center" id="Uploads">
         <thead class="ui selectable inverted table" style="text-align:center">
             <tr>
+                <th>FileId</th>
                 <th>Filename</th>
                 <th>File Namespace</th>
                 <th>UserId</th>
@@ -73,6 +74,7 @@ Space Used : @SizeConverter(Totalsize);
             @foreach (var i in fileUploads)
             {
                 <tr>
+                    <td>@i.Id</td>
                     <td>@i.Filename</td>
                     <td>@i.FileNamespace</td>
                     <td>@i.UserId</td>

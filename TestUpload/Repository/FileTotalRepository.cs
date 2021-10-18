@@ -33,7 +33,8 @@ namespace TestUpload.Repository
                     HasPassword = !string.IsNullOrEmpty(i.pass) ? true : false,
                     Shared = i.Shared,
                     UploadId = i.UploadId,
-                    UserId = i.UserId
+                    UserId = i.UserId,
+                    Id=i.Id
                 });
             }
             foreach(var i in blob)
@@ -48,7 +49,8 @@ namespace TestUpload.Repository
                     HasPassword = i.HasPassword,
                     Shared = i.Shared,
                     UploadId = i.UploadId,
-                    UserId = i.UserId
+                    UserId = i.UserId,
+                    Id=i.Id
                 });
             }
             return fileTotals.OrderBy(x => x.FileNamespace).OrderBy(x => x.UserId).ToList();

@@ -36,7 +36,7 @@
         CommonSearch
     </div>
     <input type="text" id="SearchValue" onkeyup="Serach(this.id, 'Mybody');">
-    <button class="ui blue button">Advanced Search</button>
+    <button class="ui blue button" data-toggle="modal" data-target="#AdvancedSearchModal">Advanced Search</button>
 </div>
 <table class="ui  table" style="text-align:center" id="Myuser">
     <thead class="ui selectable inverted table" style="text-align:center" >
@@ -75,3 +75,111 @@
             }
     </tbody>
 </table>
+
+<div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">User AdvancedSearch</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <center><h1>Advanced Search</h1></center>
+                <br />
+                <h2>Registerd Date</h2>
+                <hr />
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Start</div>
+                        </div>
+                        <input id="text" name="rsd" type="date" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Until</div>
+                        </div>
+                        <input id="text1" name="red" type="date" class="form-control">
+                    </div>
+                </div>
+                <h2>Brithday</h2>
+                <hr />
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Start</div>
+                        </div>
+                        <input id="bsd" name="bsd" type="date" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Until</div>
+                        </div>
+                        <input id="bed" name="bed" type="date" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Gender</div>
+                        </div>
+                        <select id="sex" name="sex" class="form-control">
+                            <option value="true">Male</option>
+                            <option value="false">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Space Usage</div>
+                        </div>
+                        <select id="usage" name="usage" class="form-control">
+                            <option value="0">All</option>
+                            <option value="1">Tiny(Under 0.99MB)</option>
+                            <option value="2">Small(1MB-0.99GB)</option>
+                            <option value="3">Normal(1GB-9.99GB)</option>
+                            <option value="4">Big(10-24.99GB)</option>
+                            <option value="5">Massive(Over 25GB)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Verify Status</div>
+                        </div>
+                        <select id="ver" name="ver" class="form-control">
+                            <option value="0">All</option>
+                            <option value="1">Verified</option>
+                            <option value="2">Unverified</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Suspension</div>
+                        </div>
+                        <select id="sup" name="sup" class="form-control">
+                            <option value="0">All</option>
+                            <option value="1" >Suspended</option>
+                            <option value="2">Unsuspended</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+    </div>
+</div>
