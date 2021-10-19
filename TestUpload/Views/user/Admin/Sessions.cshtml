@@ -3,8 +3,21 @@
 *@
 @{
     List<Sessions> sessions = ViewBag.S;
+    List<UserView> users = ViewBag.user;
+    string Mapuser(long id)
+    {
+        if (id == 0)
+        {
+            return "Guest";
+        }
+        else
+        {
+            return users.Where(x => x.Id == id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
+        }
+    }
 }
 @using TestUpload.Models.Entity;
+@using TestUpload.Models.View;
 <script src="~/js/CommonSearch.js"></script>
 <link rel="stylesheet" href="~/css/Tooltip.css" />
 <div class="ui labeled input">
@@ -51,7 +64,7 @@
             <tr>
                 <td data-bs-toggle="tooltip" data-bs-placement="top" title="@i.Id">@i.Id.Substring(0,30)</td>
                 
-                <td>@i.UserId</td>
+                <td>@Mapuser(i.UserId)</td>
                 <td>@i.LoggedIn</td>
                 <td>@i.Loggedout</td>
                 <td>@i.IpAddress</td>

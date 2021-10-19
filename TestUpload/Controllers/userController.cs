@@ -344,6 +344,8 @@ namespace TestUpload.Controllers
             {
                 if (principal.Admin)
                 {
+                    var UserList = await _iuserService.GetViewModelAsync();
+                    ViewBag.user = UserList;
                     var History = await service.Getall();                    
                     var vd = await service.GetViewBydate();
                     ViewBag.HistorySummary = vd.Take(10).ToList();
@@ -364,6 +366,8 @@ namespace TestUpload.Controllers
             {
                 if (principal.Admin)
                 {
+                    var UserList = await _iuserService.GetViewModelAsync();
+                    ViewBag.user = UserList;
                     var allFile = await _ifileTotalServices.GetAsync();
                     ViewBag.Files = allFile;
                     ViewBag.TotalUsed = _ifileStorageService.GetTotalUsedSpace() + _ifileUploadService.GetTotalUsedSpace();
@@ -383,6 +387,8 @@ namespace TestUpload.Controllers
             {
                 if (principal.Admin)
                 {
+                    var UserList = await _iuserService.GetViewModelAsync();
+                    ViewBag.user = UserList;
                     var Sessions = await _sessionServices.GetallAsync();
                     ViewBag.S = Sessions;
                     ViewBag.Mode = 4;

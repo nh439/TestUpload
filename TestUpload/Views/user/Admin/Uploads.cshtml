@@ -29,6 +29,18 @@
         }
         return ts;
     }
+    List<UserView> users = ViewBag.user;
+    string Mapuser(long id)
+    {
+        if (id == 0)
+        {
+            return "Guest";
+        }
+        else
+        {
+            return users.Where(x => x.Id == id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
+        }
+    }
 
 }
 <script src="~/js/FilesIndex.js"></script>
@@ -61,7 +73,7 @@ Space Used : @SizeConverter(Totalsize);
                 <th>FileId</th>
                 <th>Filename</th>
                 <th>File Namespace</th>
-                <th>UserId</th>
+                <th>Owner</th>
                 <th>Filesize</th>
                 <th>FileType</th>
                 <th>Add Date</th>
@@ -77,7 +89,7 @@ Space Used : @SizeConverter(Totalsize);
                     <td>@i.Id</td>
                     <td>@i.Filename</td>
                     <td>@i.FileNamespace</td>
-                    <td>@i.UserId</td>
+                    <td>@Mapuser(i.UserId)</td>
                     <td>@SizeConverter(i.Filesize)</td>
                     <td>@i.FileType</td>
                     <td>@i.AddDate</td>

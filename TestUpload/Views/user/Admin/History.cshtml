@@ -4,6 +4,18 @@
 @{
     List<History> histories = ViewBag.history;
     List<HistoryViewBydate> Summary = ViewBag.HistorySummary;
+    List<UserView> users = ViewBag.user;
+    string Mapuser(long id)
+    {
+        if (id == 0)
+        {
+            return "Guest";
+        }
+        else
+        {
+            return users.Where(x => x.Id == id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
+        }
+    }
 }
 @using TestUpload.Models.Entity;
 @using TestUpload.Models.View;
@@ -19,27 +31,27 @@
             <th onclick="sortTable(1,'MyDate')">Histories Count</th>
             <th onclick="sortTable(2,'MyDate')">Success</th>
         </tr>
-        </thead>
+    </thead>
     <tbody class="table-success">
-        @foreach(var i in Summary)
-            {
-                <tr>
-                    <td>@i.Date.ToLongDateString()</td>
-                    <td>@i.Histories</td>
-                    <td>@i.Success</td>
-                </tr>
-            }
-        </tbody>
+        @foreach (var i in Summary)
+        {
+            <tr>
+                <td>@i.Date.ToLongDateString()</td>
+                <td>@i.Histories</td>
+                <td>@i.Success</td>
+            </tr>
+        }
+    </tbody>
 </table>
 <br />
-    <h1>Details</h1>
+<h1>Details</h1>
 <br />
 <div class="ui labeled input">
     <div class="ui orange label">
         CommonSearch
     </div>
     <input type="text" id="SearchValue" onkeyup="Serach(this.id, 'Mybody');">
-    <button class="ui blue button">Advanced Search</button>
+    <button class="ui blue button" data-toggle="modal" data-target="#AdvancedSearchModal">Advanced Search</button>
 </div>
 <br />
 <br />
@@ -62,36 +74,123 @@
     </div>
 </form>
 <br />
-    <table class="ui  table" style="text-align:center" id="Mylog">
-        <thead class="ui selectable inverted table" style="text-align:center">
+<table class="ui  table" style="text-align:center" id="Mylog">
+    <thead class="ui selectable inverted table" style="text-align:center">
+        <tr>
+            <th onclick="sortTable(0,'Mylog')">Date</th>
+            <th onclick="sortTable(1,'Mylog')">Section</th>
+            <th onclick="sortTable(2,'Mylog')">Details</th>
+            <th onclick="sortTable(3,'Mylog')">Related File</th>
+            <th onclick="sortTable(4,'Mylog')">User</th>
+            <th onclick="sortTable(5,'Mylog')">Success</th>
+            <th onclick="sortTable(6,'Mylog')">Error Reference</th>
+        </tr>
+    </thead>
+    <tbody class="table-success" id="Mybody">
+        @foreach (var i in histories)
+        {
             <tr>
-                <th onclick="sortTable(0,'Mylog')">Date</th>
-                <th onclick="sortTable(1,'Mylog')">Section</th>
-                <th onclick="sortTable(2,'Mylog')">Details</th>
-                <th onclick="sortTable(3,'Mylog')">Related File</th>
-                <th onclick="sortTable(4,'Mylog')">UserId</th>
-                <th onclick="sortTable(5,'Mylog')">Success</th>
-                <th onclick="sortTable(6,'Mylog')">Error Reference</th>
+                <td>@i.Date</td>
+                <td>@i.HistoryMode</td>
+                <td>@i.Detail</td>
+                <td>@i.RelatedFile</td>
+                <td>@Mapuser(i.UserId)</td>
+                <td>
+                    @if (i.Issuccess)
+                    {<i class="flag icon"></i>}
+                </td>
+                <td>
+                    @if (i.ErrorLog != null)
+                    {@i.ErrorLog.Reference}
+                </td>
             </tr>
-        </thead>
-        <tbody class="table-success" id="Mybody">
-            @foreach (var i in histories)
-            {
-                <tr>
-                    <td>@i.Date</td>
-                    <td>@i.HistoryMode</td>
-                    <td>@i.Detail</td>
-                    <td>@i.RelatedFile</td>
-                    <td>@i.UserId</td>
-                    <td>
-                        @if (i.Issuccess)
-                        {<i class="flag icon"></i>}
-                    </td>
-                    <td>
-                        @if (i.ErrorLog != null)
-                        {@i.ErrorLog.Reference}
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Histories Advanced Search</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <center><h1>Advanced Search</h1></center>
+                <h2>History Date</h2>
+                <hr />
+                <div class="form-group">
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Start</div>
+                        </div>
+                        <input id="sd" name="sd" type="date" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Until</div>
+                        </div>
+                        <input id="ed" name="ed" type="date" class="form-control">
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">Section</div>
+                        </div>
+                        <select id="se" name="se" class="form-control">
+                            <option value="">All</option>
+                            @{
+                                var dataarr = histories.Select(x => x.HistoryMode).Distinct().ToArray();
+                                foreach (var i in dataarr)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">User</div>
+                        </div>
+                        <select id="use" name="use" class="form-control">
+                            <option value="">All Users</option>
+                            @{
+                                
+                                foreach (var i in users)
+                                {
+                                    <option value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">State</div>
+                        </div>
+                        <select id="sec" name="sec" class="form-control">
+                            <option value="0">All State</option>
+                            <option value="1">Successful</option>
+                            <option value="2">Failed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
