@@ -2,6 +2,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    @using TestUpload.Models.criteria;
     List<History> histories = ViewBag.history;
     List<HistoryViewBydate> Summary = ViewBag.HistorySummary;
     List<UserView> users = ViewBag.user;
@@ -15,6 +16,16 @@
         {
             return users.Where(x => x.Id == id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
         }
+    }
+    string DateFormat(DateTime? Indate)
+    {
+        if (Indate.HasValue)
+        {
+            DateTime date = Indate.Value;
+            return date.Year + "-" + (date.Month >= 10 ? date.Month : "0" + date.Month) + "-" + (date.Day >= 10 ? date.Day : "0" + date.Day);
+        }
+        return string.Empty;
+
     }
 }
 @using TestUpload.Models.Entity;
@@ -108,89 +119,215 @@
     </tbody>
 </table>
 
-<div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Histories Advanced Search</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <center><h1>Advanced Search</h1></center>
-                <h2>History Date</h2>
-                <hr />
-                <div class="form-group">
+@if (ViewBag.Criteria != null)
+    {
+        HistoriesCriteria criteria = ViewBag.Criteria;
 
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Start</div>
+        <form method="post">
+            <div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Histories Advanced Search</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <center><h1>Advanced Search</h1></center>
+                        <h2>History Date</h2>
+                        <hr />
+                        <div class="form-group">
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="sd" name="sd" type="date" class="form-control"value="@DateFormat(criteria.Historiesdate.Startdate)">
+                            </div>
                         </div>
-                        <input id="sd" name="sd" type="date" class="form-control">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="ed" name="ed" type="date" class="form-control" value="@DateFormat(criteria.Historiesdate.Enddate)">
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Section</div>
+                                </div>
+                                <select id="se" name="se" class="form-control">
+                                    <option value="">All</option>
+                                    @{
+                                        string[] dataarr = ViewBag.se;
+                                        foreach (var i in dataarr)
+                                        {
+                                            if (criteria.Section == i)
+                                            {
+                                                <option selected value="@i">@i</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">User</div>
+                                </div>
+                                <select id="use" name="use" class="form-control">
+                                    <option value="">All Users</option>
+                                    @{
+
+                                        foreach (var i in users)
+                                        {
+                                            if (i.Id == criteria.Users)
+                                            {
+                                             <option selected value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
+                                            }
+                                            else
+                                            {
+                                            <option value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
+                                                
+                                            }
+                                        }
+                                     }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">State</div>
+                                </div>
+                                <select id="sec" name="sec" class="form-control">
+                                    @{
+                                        string[] arr = { "All State", "Successful", "Failed" };
+                                        for (int i = 0; i < arr.Length; i++)
+                                        {
+                                            if (criteria.State == i)
+                                            {
+                                                <option selected value="@i">@arr[i]</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@arr[i]</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" formaction="/user/Admin/history" class="btn btn-primary">Search</button>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Until</div>
-                        </div>
-                        <input id="ed" name="ed" type="date" class="form-control">
-                    </div>
-                </div>
-                <hr />
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Section</div>
-                        </div>
-                        <select id="se" name="se" class="form-control">
-                            <option value="">All</option>
-                            @{
-                                var dataarr = histories.Select(x => x.HistoryMode).Distinct().ToArray();
-                                foreach (var i in dataarr)
-                                {
-                                    <option value="@i">@i</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">User</div>
-                        </div>
-                        <select id="use" name="use" class="form-control">
-                            <option value="">All Users</option>
-                            @{
-                                
-                                foreach (var i in users)
-                                {
-                                    <option value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">State</div>
-                        </div>
-                        <select id="sec" name="sec" class="form-control">
-                            <option value="0">All State</option>
-                            <option value="1">Successful</option>
-                            <option value="2">Failed</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
-    </div>
-</div>
+    </form>
+}
+else
+{
+    <!--AdvancedSearchModal-->
+    <form method="post">
+        <div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Histories Advanced Search</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <center><h1>Advanced Search</h1></center>
+                        <h2>History Date</h2>
+                        <hr />
+                        <div class="form-group">
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="sd" name="sd" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="ed" name="ed" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Section</div>
+                                </div>
+                                <select id="se" name="se" class="form-control">
+                                    <option value="">All</option>
+                                    @{
+                                        var dataarr = histories.Select(x => x.HistoryMode).Distinct().ToArray();
+                                        foreach (var i in dataarr)
+                                        {
+                                            
+                                            <option value="@i">@i</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">User</div>
+                                </div>
+                                <select id="use" name="use" class="form-control">
+                                    <option value="">All Users</option>
+                                    @{
+
+                                        foreach (var i in users)
+                                        {
+                                            <option value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">State</div>
+                                </div>
+                                <select id="sec" name="sec" class="form-control">
+                                    <option value="0">All State</option>
+                                    <option value="1">Successful</option>
+                                    <option value="2">Failed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" formaction="/user/Admin/history" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
 

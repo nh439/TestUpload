@@ -357,6 +357,43 @@ namespace TestUpload.Controllers
             return Redirect("/Home/Restricted");
         }
 
+        [HttpPost("/user/Admin/history")]
+        public async Task<IActionResult> AdminHistoryP()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin)
+                {
+                    HistoriesCriteria criteria = new HistoriesCriteria
+                    {
+                        Users= int.TryParse(Request.Form["use"].ToString(), out int ts) ? int.Parse(Request.Form["use"].ToString()):0,
+                        Historiesdate= new dt
+                        {
+                            Enddate=!string.IsNullOrEmpty(Request.Form["ed"].ToString())? DateTime.Parse(Request.Form["ed"].ToString(),MainInfo):null,
+                            Startdate= !string.IsNullOrEmpty(Request.Form["sd"].ToString()) ? DateTime.Parse(Request.Form["sd"].ToString(),MainInfo):null
+                        },
+                        Section=Request.Form["se"].ToString(),
+                        State=int.TryParse(Request.Form["sec"].ToString(),out int t) ? int.Parse(Request.Form["sec"].ToString()) :0
+                    };
+                    var UserList = await _iuserService.GetViewModelAsync();
+                    ViewBag.user = UserList;
+                    var History = await service.AdvancedSearch(criteria);
+                    var vd = await service.GetViewBydate();
+                    var sx = await service.Getall();
+                    var se = sx.Select(x => x.HistoryMode).Distinct().ToArray();
+                    ViewBag.se = se;
+                    ViewBag.HistorySummary = vd.Take(10).ToList();
+                    ViewBag.history = History;
+                    ViewBag.Mode = 2;
+                    ViewBag.Criteria = criteria;
+                    return View("AdminView");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+
         [HttpGet("/user/Admin/Uploads")]
         public async Task<IActionResult> AdminUploads()
         {
