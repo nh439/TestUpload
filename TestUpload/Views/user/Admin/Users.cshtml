@@ -1,6 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+
 @{
     List<UserView> claims = ViewBag.user;
     string SizeConverter(decimal Total)
@@ -24,9 +25,20 @@
         }
         return ts;
     }
+    string DateFormat(DateTime? Indate)
+    {
+        if (Indate.HasValue)
+        {
+            DateTime date = Indate.Value;
+            return date.Year + "-" + (date.Month >= 10 ? date.Month : "0" + date.Month) + "-" + (date.Day >= 10 ? date.Day : "0" + date.Day);
+        }
+        return string.Empty;
+
+    }
 }
 @using TestUpload.Models.Entity;
 @using TestUpload.Models.View;
+@using TestUpload.Models.criteria;
 <script src="~/js/FilesIndex.js"></script>
 <script src="~/js/CommonSearch.js"></script>
 <h1>Users</h1>
@@ -39,7 +51,7 @@
     <button class="ui blue button" data-toggle="modal" data-target="#AdvancedSearchModal">Advanced Search</button>
 </div>
 <table class="ui  table" style="text-align:center" id="Myuser">
-    <thead class="ui selectable inverted table" style="text-align:center" >
+    <thead class="ui selectable inverted table" style="text-align:center">
         <tr>
             <th onclick="sortTable(0,'Myuser')">Id</th>
             <th onclick="sortTable(1,'Myuser')">Firstname</th>
@@ -56,130 +68,313 @@
         </tr>
     </thead>
     <tbody class="table-success" id="Mybody">
-        @foreach(var i in claims)
+        @foreach (var i in claims)
         {
-           
-        <tr>
-            <td>@i.Id</td>
-            <td>@i.Firstname</td>
-            <td>@i.Lastname</td>
-            <td>@i.Email</td>
-            <td>@i.Registerd</td>
-            <td>@i.BrithDay</td>
-            <td>@i.Username</td>
-            <td>@SizeConverter(i.Used.Value)</td>
-            <td>@if (i.Verify) {<i class="flag icon"></i> }</td>
-            <td>@i.VerifyBy</td>
-            <td>@if (i.Suspend) { <i class="flag icon"></i>}</td>
-        </tr>
-            }
+
+            <tr>
+                <td>@i.Id</td>
+                <td>@i.Firstname</td>
+                <td>@i.Lastname</td>
+                <td>@i.Email</td>
+                <td>@i.Registerd</td>
+                <td>@i.BrithDay</td>
+                <td>@i.Username</td>
+                <td>@SizeConverter(i.Used.Value)</td>
+                <td>@if (i.Verify)
+                {<i class="flag icon"></i>}</td>
+                <td>@i.VerifyBy</td>
+                <td>@if (i.Suspend)
+                {<i class="flag icon"></i>}</td>
+            </tr>
+        }
     </tbody>
 </table>
 
-<div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">User AdvancedSearch</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <center><h1>Advanced Search</h1></center>
-                <br />
-                <h2>Registerd Date</h2>
-                <hr />
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Start</div>
-                        </div>
-                        <input id="text" name="rsd" type="date" class="form-control">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Until</div>
-                        </div>
-                        <input id="text1" name="red" type="date" class="form-control">
-                    </div>
-                </div>
-                <h2>Brithday</h2>
-                <hr />
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Start</div>
-                        </div>
-                        <input id="bsd" name="bsd" type="date" class="form-control">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Until</div>
-                        </div>
-                        <input id="bed" name="bed" type="date" class="form-control">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Gender</div>
-                        </div>
-                        <select id="sex" name="sex" class="form-control">
-                            <option value="true">Male</option>
-                            <option value="false">Female</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Space Usage</div>
-                        </div>
-                        <select id="usage" name="usage" class="form-control">
-                            <option value="0">All</option>
-                            <option value="1">Tiny(Under 0.99MB)</option>
-                            <option value="2">Small(1MB-0.99GB)</option>
-                            <option value="3">Normal(1GB-9.99GB)</option>
-                            <option value="4">Big(10-24.99GB)</option>
-                            <option value="5">Massive(Over 25GB)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Verify Status</div>
-                        </div>
-                        <select id="ver" name="ver" class="form-control">
-                            <option value="0">All</option>
-                            <option value="1">Verified</option>
-                            <option value="2">Unverified</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Suspension</div>
-                        </div>
-                        <select id="sup" name="sup" class="form-control">
-                            <option value="0">All</option>
-                            <option value="1" >Suspended</option>
-                            <option value="2">Unsuspended</option>
-                        </select>
-                    </div>
-                </div>
+@if (ViewBag.Criteria != null)
+    {
+        UserSearchCriteria criteria = ViewBag.Criteria;
 
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+        //AdvancedSearchModalWithCriteria
+
+        <form method="post">
+            <div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">User AdvancedSearch</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <center><h1>Advanced Search</h1></center>
+                        <br />
+                        <h2>Registerd Date</h2>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="text" name="rsd" type="date" class="form-control" value="@DateFormat(criteria.Registerddate.Startdate)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="text1" name="red" type="date" class="form-control" value="@DateFormat(criteria.Registerddate.Enddate)">
+                            </div>
+                        </div>
+                        <h2>Brithday</h2>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="bsd" name="bsd" type="date" class="form-control" value="@DateFormat(criteria.Brithday.Startdate)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="bed" name="bed" type="date" class="form-control" value="@DateFormat(criteria.Brithday.Enddate)">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Gender</div>
+                                </div>
+                                <select id="sex" name="sex" class="form-control">
+                                    @{
+                                        string[] str = { "All", "Male", "Female" };
+                                        for (int i = 0; i < str.Length; i++)
+                                        {
+                                            if (criteria.male == i)
+                                            {
+                                                <option selected value="@i">@str[i]</option>
+
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@str[i]</option>
+
+                                            }
+                                        }
+
+
+}
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Space Usage</div>
+                                </div>
+                                <select id="usage" name="usage" class="form-control">
+                                    @{
+                                        str = new string[] { "All", "Tiny(Under 0.99MB)","Small(1MB - 0.99GB)", "Normal(1GB-9.99GB)", "Big(10-24.99GB)", "Massive(Over 25GB)" };
+                                        for (int i = 0; i < str.Length; i++)
+                                        {
+                                            if (criteria.Spaces == i)
+                                            {
+                                                <option selected value="@i">@str[i]</option>
+
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@str[i]</option>
+
+                                            }
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Verify Status</div>
+                                </div>
+                                <select id="ver" name="ver" class="form-control">
+                                    @{
+                                        str = new string[] { "All", "Verified", "Unverified" };
+                                        for (int i = 0; i < str.Length; i++)
+                                        {
+                                            if (criteria.Verify == i)
+                                            {
+                                                <option selected value="@i">@str[i]</option>
+
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@str[i]</option>
+
+                                            }
+                                        }
+                                    }                                
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Suspension</div>
+                                </div>
+                                <select id="sup" name="sup" class="form-control">
+                                    @{
+                                        str = new string[] { "All", "Suspended", "Unsuspended" };
+                                        for (int i = 0; i < str.Length; i++)
+                                        {
+                                            if (criteria.Suspension == i)
+                                            {
+                                                <option selected value="@i">@str[i]</option>
+
+                                            }
+                                            else
+                                            {
+                                                <option value="@i">@str[i]</option>
+
+                                            }
+                                        }
+                                    }
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" formaction="/user/Admin/users">Search</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-    </div>
-</div>
+        </div>
+    </form>
+}
+else
+{
+    <!--AdvancedSearchModal-->
+    <form method="post">
+        <div class="modal fade" id="AdvancedSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">User AdvancedSearch</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <center><h1>Advanced Search</h1></center>
+                        <br />
+                        <h2>Registerd Date</h2>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="text" name="rsd" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="text1" name="red" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <h2>Brithday</h2>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="bsd" name="bsd" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="bed" name="bed" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Gender</div>
+                                </div>
+                                <select id="sex" name="sex" class="form-control">
+                                    <option value="0">All</option>
+                                    <option value="1">Male</option>
+                                    <option value="2">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Space Usage</div>
+                                </div>
+                                <select id="usage" name="usage" class="form-control">
+                                    <option value="0">All</option>
+                                    <option value="1">Tiny(Under 0.99MB)</option>
+                                    <option value="2">Small(1MB-0.99GB)</option>
+                                    <option value="3">Normal(1GB-9.99GB)</option>
+                                    <option value="4">Big(10-24.99GB)</option>
+                                    <option value="5">Massive(Over 25GB)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Verify Status</div>
+                                </div>
+                                <select id="ver" name="ver" class="form-control">
+                                    <option value="0">All</option>
+                                    <option value="1">Verified</option>
+                                    <option value="2">Unverified</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Suspension</div>
+                                </div>
+                                <select id="sup" name="sup" class="form-control">
+                                    <option value="0">All</option>
+                                    <option value="1">Suspended</option>
+                                    <option value="2">Unsuspended</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" formaction="/user/Admin/users">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}

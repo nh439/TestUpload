@@ -8,6 +8,7 @@ using TestUpload.Securities;
 using System.Data;
 using System.Globalization;
 using TestUpload.Models.View;
+using TestUpload.Models.criteria;
 
 namespace TestUpload.Service
 {
@@ -25,6 +26,7 @@ namespace TestUpload.Service
         int SetVerifyByadmin(long userId);
         User GetById(long id);
         Task<List<UserView>> GetViewModelAsync();
+        Task<List<UserView>> getViewWithAdvancedSearch(UserSearchCriteria criteria);
     }
     public class userService : IuserService
     {
@@ -142,6 +144,90 @@ namespace TestUpload.Service
         public async Task<List<UserView>> GetViewModelAsync()
         {
             return await _userRepository.GetViewModelAsync();
+        }
+        public async Task<List<UserView>> getViewWithAdvancedSearch(UserSearchCriteria criteria)
+        {
+            var data = await _userRepository.GetViewModelAsync();
+            if(criteria.Brithday.Startdate.HasValue)
+            {
+                data = data.Where(x => x.BrithDay.Date >= criteria.Brithday.Startdate.Value.Date).ToList();
+            }
+            if (criteria.Brithday.Enddate.HasValue)
+            {
+                data = data.Where(x => x.BrithDay.Date < criteria.Brithday.Enddate.Value.AddDays(1).Date).ToList();
+            }
+            if (criteria.Registerddate.Startdate.HasValue)
+            {
+                data = data.Where(x => x.Registerd.Date >= criteria.Registerddate.Startdate.Value.Date).ToList();
+            }
+            if (criteria.Registerddate.Enddate.HasValue)
+            {
+                data = data.Where(x => x.Registerd.Date < criteria.Registerddate.Enddate.Value.AddDays(1).Date).ToList();
+            }
+            if(criteria.Spaces >0)
+            {
+                decimal gb = 1024 * 1024 * 1024;
+                switch (criteria.Spaces)
+                {   
+                    case 1:
+                        data = data.Where(x => x.Used < 1048576).ToList();
+                        break;
+                    case 2:
+                        data = data.Where(x => x.Used >= 1048576 && x.Used < gb).ToList();
+                        break;
+                    case 3:
+                        decimal max = 10737418240;
+                        data = data.Where(x => x.Used >= gb && x.Used < max).ToList();
+                        break;
+                    case 4:                        
+                        decimal min = 10737418240;
+                        decimal mx = 25*gb;
+                        data = data.Where(x => x.Used >= min && x.Used < mx).ToList();
+                        break;
+                    case 5:
+                        gb = 1024 * 1024 * 1024;
+                        mx = 25 * gb;
+                        data = data.Where(x => x.Used >= mx).ToList();
+                        break;
+                }
+            }
+            if(criteria.male > 0)
+            {
+                switch (criteria.male)
+                {
+                    case 1:
+                        data = data.Where(x => x.Male).ToList();
+                        break;
+                    case 2:
+                        data = data.Where(x => !x.Male).ToList();
+                        break;
+                }
+            }
+            if(criteria.Verify >0)
+            {
+                switch (criteria.Verify)
+                {
+                    case 1:
+                        data = data.Where(x => x.Verify).ToList();
+                        break;
+                    case 2:
+                        data = data.Where(x => !x.Verify).ToList();
+                        break;
+                }
+            }
+            if (criteria.Suspension > 0)
+            {
+                switch (criteria.Suspension)
+                {
+                    case 1:
+                        data = data.Where(x => x.Suspend).ToList();
+                        break;
+                    case 2:
+                        data = data.Where(x => !x.Suspend).ToList();
+                        break;
+                }
+            }
+            return data;
         }
 
 

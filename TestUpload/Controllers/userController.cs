@@ -10,6 +10,7 @@ using TestUpload.Profile;
 using TestUpload.Service;
 using System.Globalization;
 using TestUpload.Securities;
+using TestUpload.Models.criteria;
 
 namespace TestUpload.Controllers
 {
@@ -24,6 +25,7 @@ namespace TestUpload.Controllers
         private readonly IFileStorageService _ifileStorageService;
         private readonly IFileUploadService _ifileUploadService;
         private readonly IFileTotalServices _ifileTotalServices;
+        CultureInfo MainInfo = new CultureInfo("en-GB");
         public userController(IuserService iuserService,
             ILoginService loginService, 
             IhistoryLogService ihistory,
@@ -298,6 +300,41 @@ namespace TestUpload.Controllers
             }
             return Redirect("/Home/Restricted");
         }
+
+        [HttpPost("/user/Admin/users")]
+        public async Task<IActionResult> AdminViewS()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin)
+                {
+                    UserSearchCriteria criteria = new UserSearchCriteria()
+                    { Brithday = new dt
+                    { Enddate = !string.IsNullOrEmpty(Request.Form["bed"].ToString()) ? DateTime.Parse(Request.Form["bed"].ToString(), MainInfo) : null,
+                        Startdate = !string.IsNullOrEmpty(Request.Form["bsd"].ToString()) ? DateTime.Parse(Request.Form["bsd"].ToString(), MainInfo) : null
+                    },
+                        male = int.Parse(Request.Form["sex"].ToString()),
+                        Registerddate = new dt
+                        {
+                            Enddate = !string.IsNullOrEmpty(Request.Form["red"].ToString()) ? DateTime.Parse(Request.Form["red"].ToString(), MainInfo) : null,
+                            Startdate = !string.IsNullOrEmpty(Request.Form["rsd"].ToString()) ? DateTime.Parse(Request.Form["rsd"].ToString(), MainInfo) : null
+                        },
+                        Spaces = int.Parse(Request.Form["usage"].ToString()),
+                        Suspension = int.Parse(Request.Form["sup"].ToString()),
+                        Verify  = int.Parse(Request.Form["ver"].ToString()),
+                    };
+                    ViewBag.Mode = 1;
+                    var UserList = await _iuserService.getViewWithAdvancedSearch(criteria);
+                    ViewBag.user = UserList;
+                    ViewBag.Criteria = criteria;
+                    return View("AdminView");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+
         [HttpGet("/user/Admin/history")]
         public async Task<IActionResult> AdminHistory()
         {
