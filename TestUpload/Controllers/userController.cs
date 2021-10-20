@@ -165,7 +165,7 @@ namespace TestUpload.Controllers
         public IActionResult Profile()
         {
          var Hasuser =   long.TryParse(HttpContext.Session.GetString("uid"), out long user);
-            if(Hasuser)
+            if(Hasuser && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 var userhis = service.GetbyUserAsync(user).GetAwaiter().GetResult();
                 ViewBag.h = userhis;
@@ -173,7 +173,20 @@ namespace TestUpload.Controllers
                 ViewBag.data = currentuser;               
                 var CurrentSession = HttpContext.Session.GetString("sid");
                 ViewBag.CurrentSession = CurrentSession;
+                var allsession = _sessionServices.GetByUser(user);
+                ViewBag.a = allsession;
                 return View();
+            }
+            return Redirect("/Home/Restricted");
+        }
+        [HttpPost("/user/ForcedLogout")]
+        public IActionResult ForcedLogout()
+        {
+            var Hasuser = long.TryParse(HttpContext.Session.GetString("uid"), out long user);
+            if (Hasuser && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
+            {
+                _sessionServices.ForcedClear(user, HttpContext.Session.GetString("sid"));
+                return Redirect("/user/Profile");
             }
             return Redirect("/Home/Restricted");
         }
@@ -203,7 +216,7 @@ namespace TestUpload.Controllers
         {
             long.TryParse(HttpContext.Session.GetString("uid"), out long user);
             User principal = _iuserService.GetWithoutPassword(user);
-            if (principal.Admin)
+            if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 List<User> UnverifyUsers = await _iuserService.GetUnverifyAsync();
                 ViewBag.data = UnverifyUsers;
@@ -219,7 +232,7 @@ namespace TestUpload.Controllers
                 long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
                 long.TryParse(Request.Form["id"].ToString(), out long Verifyuser);
                 User principal = _iuserService.GetWithoutPassword(Adminuser);
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     var res = _iuserService.SetVerifyByadmin(Verifyuser);
                     if (res == 1)
@@ -253,7 +266,7 @@ namespace TestUpload.Controllers
             {
                 long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
                 User principal = _iuserService.GetWithoutPassword(Adminuser);
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     List<User> VerifiedUsers = await _iuserService.GetVerifiedAccountsAsync();
                     ViewBag.data = VerifiedUsers;
@@ -274,7 +287,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if(principal != null)
             {
-                if(principal.Admin)
+                if(principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     long UserId = long.Parse(Request.Form["userId"].ToString());
                     Login claim = _loginService.GetDataByUserId(UserId);
@@ -292,7 +305,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if (principal != null)
             {
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     ViewBag.Mode = 1;
                     var UserList = await _iuserService.GetViewModelAsync();
@@ -310,7 +323,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if (principal != null)
             {
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     UserSearchCriteria criteria = new UserSearchCriteria()
                     { Brithday = new dt
@@ -344,7 +357,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if (principal != null)
             {
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     var UserList = await _iuserService.GetViewModelAsync();
                     ViewBag.user = UserList;
@@ -366,7 +379,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if (principal != null)
             {
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     HistoriesCriteria criteria = new HistoriesCriteria
                     {
@@ -402,7 +415,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if (principal != null)
             {
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     int month = int.Parse(Request.Form["m"].ToString());
                     int res = await service.Clear(month);
@@ -419,7 +432,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if (principal != null)
             {
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     var UserList = await _iuserService.GetViewModelAsync();
                     ViewBag.user = UserList;
@@ -440,7 +453,7 @@ namespace TestUpload.Controllers
             User principal = _iuserService.GetWithoutPassword(Adminuser);
             if (principal != null)
             {
-                if (principal.Admin)
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     var UserList = await _iuserService.GetViewModelAsync();
                     ViewBag.user = UserList;

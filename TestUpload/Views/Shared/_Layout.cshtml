@@ -20,6 +20,11 @@
     @using Microsoft.AspNetCore.Http
     @using Microsoft.AspNetCore.Mvc
     @inject IHttpContextAccessor HttpContextAccessor
+    @using TestUpload.Service;
+    @inject ISessionServices SessionServices
+    @{
+       // bool sessioncheck = SessionServices.Sessioncheck((HttpContextAccessor.HttpContext.Session.GetString("sid")));
+    }
 
 </head>
 <body >
@@ -39,10 +44,10 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")))
+                        @if (!string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("uid")) && SessionServices.Sessioncheck((HttpContextAccessor.HttpContext.Session.GetString("sid"))))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="" asp-action="">Profile</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="user" asp-action="profile">Profile</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Files" asp-action="">Uploads</a>

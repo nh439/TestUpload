@@ -13,6 +13,9 @@ namespace TestUpload.Service
         bool Logout(string SessionId);
         string Login(long UserId, string Ip);
         Task<List<Sessions>> GetallAsync();
+        List<Sessions> GetByUser(long user);
+        bool Sessioncheck(string SessionId);
+        int ForcedClear(long user, string ExceptSessionId);
 
     }
     public class SessionServices :ISessionServices
@@ -44,6 +47,18 @@ namespace TestUpload.Service
         public async Task<List<Sessions>> GetallAsync()
         {
             return await _sessionRepository.Getall();
+        }
+        public List<Sessions> GetByUser(long user)
+        {
+            return _sessionRepository.GetByUser(user);
+        }
+        public int ForcedClear(long user, string ExceptSessionId)
+        {
+            return _sessionRepository.ForcedClear(user, ExceptSessionId);
+        }
+        public bool Sessioncheck(string SessionId)
+        {
+            return _sessionRepository.Sessioncheck(SessionId);
         }
     }
 }

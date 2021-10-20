@@ -44,6 +44,28 @@ namespace TestUpload.Repository.SQL
         {
             return _context.sessions.Where(x => x.Id == Id).FirstOrDefault();
         }
+        public int ForcedClear(long user, string ExceptSessionId)
+        {
+            var clear = _context.sessions.Where(x => !x.IsLogout && x.UserId == user && x.Id != ExceptSessionId).ToArray();
+            for(int i =0;i<clear.Length;i++)
+            {
+                clear[i].IsLogout = true;
+                clear[i].Loggedout = DateTime.Now;
+                _context.sessions.Update(clear[i]);
+            }
+            return _context.SaveChanges();
+
+        }
+        public bool Sessioncheck(string SessionId)
+        {
+            var item = _context.sessions.Where(x => x.Id == SessionId && x.Loggedout == null).FirstOrDefault();
+            if(item!=null)
+            {
+                return true;
+            }
+            return false;
+
+        }
     }
 }
  

@@ -5,6 +5,8 @@
     User data = ViewBag.data;
     var Session = ViewBag.CurrentSession;
     List<History> histories = ViewBag.h;
+    List<Sessions> sessions = ViewBag.a;
+    int Unloggouted = sessions.Where(x => !x.Loggedout.HasValue).Count();
 }
 @using TestUpload.Models.Entity;
 
@@ -90,6 +92,42 @@
         <input id="textA" name="textA" type="text" class="form-control" value="@Session" readonly>
     </div>
 </form>
+<form method="post">
+    <center><h1>My Session(@(Unloggouted-1) Unlogged Out Sessions)</h1></center>
+    <br />
+    <button type="submit" asp-controller="user" asp-action="ForcedLogout" class="btn btn-primary">Force Logout</button>
+    <br />
+</form>
+<table class="ui  table" style="text-align:center" id="MySession">
+    <thead class="ui selectable inverted table" style="text-align:center">
+        <tr>
+            <th>Id</th>
+            <th>Login</th>
+            <th>Logout</th>
+            <th>IpAddress</th>
+        </tr>
+
+    </thead>
+    <tbody class="table-success">
+        @{ int ih = 0;}
+            @foreach (var i in sessions)
+            {
+
+            <tr>
+                <td data-bs-toggle="tooltip" data-bs-placement="top" title="@i.Id ">@i.Id.Substring(0, 30)@if (i.Id == Session)
+                                {<i class="mouse pointer icon"></i>} </td>
+                <td>@i.LoggedIn</td>
+                <td>@i.Loggedout</td>
+                <td>@i.IpAddress</td>
+            </tr>
+                if(ih>=30 && i.Loggedout.HasValue)
+                {
+                    break;
+                }
+                ih++;
+            }
+    </tbody>
+</table>
 
 <center><h1>My History</h1></center>
 <table class="ui  table" style="text-align:center" id="Mylog">
@@ -103,18 +141,18 @@
         </tr>
     </thead>
     <tbody class="table-success" id="Mybody">
-        @foreach(var i in histories)
-            {
-                <tr>
-                    <td>@i.Date</td>
-                    <td>@i.HistoryMode</td>
-                    <td>@i.Detail</td>
-                    <td>@i.RelatedFile</td>
-                    <td>
-                        @if (i.Issuccess)
-                        {<i class="flag icon"></i>}
-                    </td>
-                </tr>
-            }
-</tbody>
+        @foreach (var i in histories)
+        {
+            <tr>
+                <td>@i.Date</td>
+                <td>@i.HistoryMode</td>
+                <td>@i.Detail</td>
+                <td>@i.RelatedFile</td>
+                <td>
+                    @if (i.Issuccess)
+                    {<i class="flag icon"></i>}
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
