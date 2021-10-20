@@ -57,7 +57,6 @@ namespace TestUpload
             services.AddScoped<UserRepository>();
             services.AddScoped<ChangepassRepository>();
             services.AddScoped<HistoryRepository>();
-            services.AddScoped<ErrorLogRepository>();
             services.AddScoped<FileUploadRepository>();
             services.AddScoped<FileStorageRepository>();
             services.AddScoped<SessionRepository>();

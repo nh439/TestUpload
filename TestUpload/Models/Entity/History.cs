@@ -16,14 +16,8 @@ namespace TestUpload.Models.Entity
         public long UserId { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
         public bool Issuccess { get; set; }
-        public virtual ErrorLog ErrorLog { get; set; }
+        public string ErrorLog { get; set; }
         
     }
-    public class ErrorLog
-    {
-        [Key]
-        public string Reference { get; set; } = Guid.NewGuid().ToString();
-        public string ExceptionMessage { get; set; }
-        public string InnerException { get; set; }
-    }
+
 }

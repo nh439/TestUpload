@@ -23,7 +23,6 @@ namespace TestUpload
         public DbSet<Sessions> sessions { get; set; }
         public DbSet<Changepassword> changepassword { get; set; }
         public DbSet<History> History { get; set; }
-        public DbSet<ErrorLog> errorLog { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

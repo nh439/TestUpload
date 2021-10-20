@@ -4,11 +4,12 @@
 @{
     User data = ViewBag.data;
     var Session = ViewBag.CurrentSession;
+    List<History> histories = ViewBag.h;
 }
 @using TestUpload.Models.Entity;
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
+<script src="/js/FilesIndex.js"></script>
 <br />
 <center>
     <h1><b>Profiles</b></h1>
@@ -89,3 +90,31 @@
         <input id="textA" name="textA" type="text" class="form-control" value="@Session" readonly>
     </div>
 </form>
+
+<center><h1>My History</h1></center>
+<table class="ui  table" style="text-align:center" id="Mylog">
+    <thead class="ui selectable inverted table" style="text-align:center">
+        <tr>
+            <th onclick="sortTable(0,'Mylog')">Date</th>
+            <th onclick="sortTable(1,'Mylog')">Section</th>
+            <th onclick="sortTable(2,'Mylog')">Details</th>
+            <th onclick="sortTable(3,'Mylog')">Related File</th>
+            <th onclick="sortTable(4,'Mylog')">Success</th>
+        </tr>
+    </thead>
+    <tbody class="table-success" id="Mybody">
+        @foreach(var i in histories)
+            {
+                <tr>
+                    <td>@i.Date</td>
+                    <td>@i.HistoryMode</td>
+                    <td>@i.Detail</td>
+                    <td>@i.RelatedFile</td>
+                    <td>
+                        @if (i.Issuccess)
+                        {<i class="flag icon"></i>}
+                    </td>
+                </tr>
+            }
+</tbody>
+</table>

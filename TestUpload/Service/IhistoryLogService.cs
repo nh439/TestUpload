@@ -16,15 +16,16 @@ namespace TestUpload.Service
         Task<List<History>> Getall();
         Task<List<HistoryViewBydate>> GetViewBydate();
         Task<List<History>> AdvancedSearch(HistoriesCriteria criteria);
+        Task<int> Clear(int Month);
+        Task<int> Clear();
+        Task<List<History>> GetbyUserAsync(long Id);
     }
     public class historyLogService :IhistoryLogService
     {
         private readonly HistoryRepository _historyRepository;
-        private readonly ErrorLogRepository _errorLogRepository;
-        public historyLogService(HistoryRepository historyRepository,ErrorLogRepository errorLogRepository)
+        public historyLogService(HistoryRepository historyRepository)
         {
             _historyRepository = historyRepository;
-            _errorLogRepository = errorLogRepository;
         }
         public bool CreateSuccessHistory(string Mode,string Details,string? RelatedFiles,long UserId)
         {
@@ -47,13 +48,13 @@ namespace TestUpload.Service
                 HistoryMode = Mode,
                 Issuccess = false,
                 RelatedFile = !string.IsNullOrEmpty(RelatedFiles) ? RelatedFiles : null,
-                UserId = UserId
+                UserId = UserId,
+                ErrorLog=Exception
                 
-            };
-            ErrorLog log = new ErrorLog { ExceptionMessage = Exception, InnerException = InnerException };
-            history.ErrorLog = log;
+            };        
+
             _historyRepository.Create(history);
-            return log.Reference;
+            return Exception;
         }
         public async Task<List<History>> Getall()
         {
@@ -94,6 +95,18 @@ namespace TestUpload.Service
                 data = data.Where(x => x.UserId == criteria.Users).ToList();               
             }
             return data;
+        }
+        public async Task<int> Clear(int Month)
+        {
+            return await _historyRepository.Clear(Month);
+        }
+        public async Task<int> Clear()
+        {
+            return await _historyRepository.Clear();
+        }
+        public async Task<List<History>> GetbyUserAsync(long Id)
+        {
+            return await _historyRepository.GetByUsername(Id);
         }
 
 

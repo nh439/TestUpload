@@ -81,7 +81,7 @@
             <option value="18">1 Year 6 Months</option>
             <option value="24">2 Years</option>
         </select>
-        <button class="ui red button">Clear</button>
+        <button class="ui red button" asp-controller="Admin" asp-action="DeletedHistory">Clear</button>
     </div>
 </form>
 <br />
@@ -94,7 +94,7 @@
             <th onclick="sortTable(3,'Mylog')">Related File</th>
             <th onclick="sortTable(4,'Mylog')">User</th>
             <th onclick="sortTable(5,'Mylog')">Success</th>
-            <th onclick="sortTable(6,'Mylog')">Error Reference</th>
+            <th onclick="sortTable(6,'Mylog')">Error Message</th>
         </tr>
     </thead>
     <tbody class="table-success" id="Mybody">
@@ -112,7 +112,7 @@
                 </td>
                 <td>
                     @if (i.ErrorLog != null)
-                    {@i.ErrorLog.Reference}
+                    {@i.ErrorLog}
                 </td>
             </tr>
         }

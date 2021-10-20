@@ -167,6 +167,8 @@ namespace TestUpload.Controllers
          var Hasuser =   long.TryParse(HttpContext.Session.GetString("uid"), out long user);
             if(Hasuser)
             {
+                var userhis = service.GetbyUserAsync(user).GetAwaiter().GetResult();
+                ViewBag.h = userhis;
                 var currentuser = _iuserService.GetById(user);
                 ViewBag.data = currentuser;               
                 var CurrentSession = HttpContext.Session.GetString("sid");
@@ -389,6 +391,22 @@ namespace TestUpload.Controllers
                     ViewBag.Mode = 2;
                     ViewBag.Criteria = criteria;
                     return View("AdminView");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+        [HttpPost("/Admin/DeletedHistory")]
+        public async Task<IActionResult> Clearhis()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin)
+                {
+                    int month = int.Parse(Request.Form["m"].ToString());
+                    int res = await service.Clear(month);
+                    return Redirect("/user/Admin/history");
                 }
             }
             return Redirect("/Home/Restricted");

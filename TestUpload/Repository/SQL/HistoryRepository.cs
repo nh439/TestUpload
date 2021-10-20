@@ -22,19 +22,12 @@ namespace TestUpload.Repository.SQL
             var res = _context.SaveChanges();
             return res != 0 ? true : false;
         }
-        public async Task<Dictionary<string,int>> Clear()
+        public async Task<int> Clear()
         {
-            Dictionary<string, int> res = new Dictionary<string, int>();
             await _context.Database.BeginTransactionAsync();
-            var errorlog =   await _context.Database.ExecuteSqlRawAsync("delete from errorlog");
             var history =  await  _context.Database.ExecuteSqlRawAsync("delete from history");
             await _context.Database.CommitTransactionAsync();
-            res.Add("errors", errorlog);
-            res.Add("history", history);
-            return res;
-          
-
-
+            return history;       
         }
         public async Task<List<History> > Getall()
         {
@@ -67,21 +60,12 @@ namespace TestUpload.Repository.SQL
                        );
             return await data.OrderByDescending(x => x.Date).ToListAsync();
         }
+        public async Task<int> Clear(int Month)
+        { 
+           return await _context.Database.ExecuteSqlRawAsync(string.Format( "delete from history where TIMESTAMPDIFF(month,date,current_timestamp())>= {0}",Month));
+        }
 
     }
-    public class ErrorLogRepository
-    {
-        private readonly DataContext _context;
-        public ErrorLogRepository(DataContext context)
-        {
-            _context = context;
-        }
-        public bool create(ErrorLog item)
-        {
-            _context.Add(item);
-            return _context.SaveChanges() > 0 ? true : false;
-        }
-       
-    }
+    
 
 }
