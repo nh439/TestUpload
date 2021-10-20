@@ -51,6 +51,7 @@ namespace TestUpload.Controllers
                 if (!t)
                 {
                     HttpContext.Session.Clear();
+                    return Redirect("/");
                 }
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
                 var Myfile = await _ifileUploadService.GetFilesByUserAsync(user);
