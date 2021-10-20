@@ -18,17 +18,20 @@ namespace TestUpload.Controllers
         private readonly IuserService _iuserService;
         private readonly IFileUploadService _ifileUploadService;
         private readonly IFileStorageService _ifileStorageService;
+        private readonly ISessionServices _isessionServices;
 
         public HomeController(ILogger<HomeController> logger,
             IuserService iuserService,
             IFileStorageService fileStorageService,
-            IFileUploadService fileUploadService
+            IFileUploadService fileUploadService,
+            ISessionServices sessionServices
             )
         {
             _logger = logger;
             _iuserService = iuserService;
             _ifileStorageService = fileStorageService;
             _ifileUploadService = fileUploadService;
+            _isessionServices = sessionServices;
         }
 
         public async Task<IActionResult> Index()
@@ -40,8 +43,15 @@ namespace TestUpload.Controllers
             ViewBag.Totaluser = i.Count;
             ViewBag.TotalFiles = f.Count;
             ViewBag.TotalBlobs = s.Count;
+           
             if(!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
             {
+                var session = HttpContext.Session.GetString("sid");
+                var t = _isessionServices.Sessioncheck(session);
+                if (!t)
+                {
+                    HttpContext.Session.Clear();
+                }
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
                 var Myfile = await _ifileUploadService.GetFilesByUserAsync(user);
                 var Mystorage = await _ifileStorageService.GetFilesByUserAsync(user);
