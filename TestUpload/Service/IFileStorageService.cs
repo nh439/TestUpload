@@ -15,7 +15,7 @@ namespace TestUpload.Service
         Task<int> CreateAsync(List<FileStorage> files);
         Task<List<FilestorageView>> GetAllFileStoragesAsync();
         Task<List<FilestorageView>> GetFilesByUserAsync(long user);
-        Task<List<FilestorageView>> GetFilescriteria(long user, Filecriteria filecriteria);
+        Task<List<FilestorageView>> GetFilescriteriaByUser(long user, Filecriteria filecriteria);
         FileStorage Download(string reference);
         FileStorage VerifyDownload(string reference, string password);
         int Delete(List<string> references);
@@ -73,7 +73,7 @@ namespace TestUpload.Service
             
         }
 
-        public async Task<List<FilestorageView>> GetFilescriteria(long user, Filecriteria filecriteria)
+        public async Task<List<FilestorageView>> GetFilescriteriaByUser(long user, Filecriteria filecriteria)
         {
             var data = await _FileStorageRepository.GetByUser(user);
             if(!string.IsNullOrEmpty(filecriteria.FileExtension))
@@ -118,6 +118,7 @@ namespace TestUpload.Service
             }
             return data;
         }
+
         public async Task<int> FormatAsync(long user)
         {
             return await _FileStorageRepository.FormatAsync(user);

@@ -101,9 +101,9 @@ namespace TestUpload.Controllers
                 };
                 ViewBag.CR = filecriteria;
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
-                List<FileUpload> files = IfileUploadService.GetFilescriteria(user, filecriteria).GetAwaiter().GetResult();
+                List<FileUpload> files = IfileUploadService.GetFilescriteriaByUser(user, filecriteria).GetAwaiter().GetResult();
                 ViewBag.files = files;
-                List<FilestorageView> storage = IfileStorageService.GetFilescriteria(user, filecriteria).GetAwaiter().GetResult();
+                List<FilestorageView> storage = IfileStorageService.GetFilescriteriaByUser(user, filecriteria).GetAwaiter().GetResult();
                 ViewBag.storage = storage;
                 List<FileUpload> filesA = IfileUploadService.GetFilesByUserAsync(user).GetAwaiter().GetResult();
                 List<FilestorageView> storageA = IfileStorageService.GetFilesByUserAsync(user).GetAwaiter().GetResult();

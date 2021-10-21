@@ -9,6 +9,7 @@ namespace TestUpload.Models.View
     {
         public string Id { get; set; }
          public string Filename{get; set;}
+         public string FileExtension { get; set; }
          public string FileNamespace{get; set;}
          public long UserId{get; set;}
          public decimal Filesize{get; set;}

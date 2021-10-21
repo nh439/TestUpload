@@ -440,6 +440,10 @@ namespace TestUpload.Controllers
                     ViewBag.Files = allFile;
                     ViewBag.TotalUsed = _ifileStorageService.GetTotalUsedSpace() + _ifileUploadService.GetTotalUsedSpace();
                     ViewBag.Mode = 3;
+                    var ext = allFile.Select(x => x.FileExtension).Distinct().ToList();
+                    var namespaces = allFile.Select(x => x.FileNamespace).Distinct().ToList();
+                    ViewBag.ext = ext;
+                    ViewBag.nspaces = namespaces;
                     return View("AdminView");
                 }
             }

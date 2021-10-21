@@ -20,7 +20,7 @@ namespace TestUpload.Service
         bool DeleteOne(string references);
         bool VerifyRemove(string reference, string password);
         FileUpload GetById(string reference);
-        Task<List<FileUpload>> GetFilescriteria(long user, Filecriteria filecriteria);
+        Task<List<FileUpload>> GetFilescriteriaByUser(long user, Filecriteria filecriteria);
         Task<int> FormatAsync(long user);
         bool Setpassword(string Id, string Newpassword);
         bool SetnamespaceAndShared(string reference, string namespaces, bool shared);
@@ -72,7 +72,7 @@ namespace TestUpload.Service
             return _fileUploadRepository.VerifyRemoved(reference, password);
         }
 
-        public async Task<List<FileUpload>> GetFilescriteria(long user, Filecriteria filecriteria)
+        public async Task<List<FileUpload>> GetFilescriteriaByUser(long user, Filecriteria filecriteria)
         {
             var data = await _fileUploadRepository.GetByUser(user);
             if (!string.IsNullOrEmpty(filecriteria.FileExtension))

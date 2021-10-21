@@ -26,7 +26,8 @@ namespace TestUpload.Repository
                 fileTotals.Add(new FileTotal
                 {
                     AddDate = i.AddDate,
-                    Filename = i.Filename + i.FileExtension,
+                    Filename = i.Filename ,
+                    FileExtension = i.FileExtension,
                     FileNamespace = i.Uploadname,
                     Filesize = i.FileSize,
                     FileType = "File",
@@ -42,7 +43,8 @@ namespace TestUpload.Repository
                 fileTotals.Add(new FileTotal
                 {
                     AddDate = i.AddDate,
-                    Filename = i.Filename + i.FileExtension,
+                    Filename = i.Filename,
+                    FileExtension = i.FileExtension,
                     FileNamespace = i.Uploadname,
                     Filesize = i.FileSize,
                     FileType = "Blob",
