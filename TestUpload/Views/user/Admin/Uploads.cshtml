@@ -3,6 +3,7 @@
 *@
 @using TestUpload.Models.View;
 @using TestUpload.Models.Entity;
+@using TestUpload.Models.criteria;
 @{
     List<FileTotal> fileUploads = ViewBag.Files;
     decimal Totalsize = ViewBag.TotalUsed;
@@ -41,7 +42,17 @@
             return users.Where(x => x.Id == id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
         }
     }
+    string Dateformat(DateTime? dateTime)
+    {
+        if (dateTime.HasValue)
+        {
+            DateTime date = dateTime.Value;
+            string dateformat = date.Year + "-" + (date.Month >= 10 ? date.Month : "0" + date.Month) + "-" + (date.Day >= 10 ? date.Day : "0" + date.Day);
+            return dateformat;
+        }
+        return string.Empty;
 
+    }
 }
 <script src="~/js/FilesIndex.js"></script>
 <h1>All File Uploads</h1>
@@ -114,124 +125,278 @@ else
     <h1>No Files or Blob in This Project</h1>
 }
 
+@if (ViewBag.C != null)
+{
+    Filecriteria Criteria = ViewBag.C;
+    <!--AdvancedSearch Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Advanced Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+
+                        <h1>Add Date</h1>
+                        <hr />
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
+                            </div>
+                            <input type="date" value="@(Criteria.AddDateStarts.HasValue ? Dateformat(Criteria.AddDateStarts.Value) : null)" name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">End</span>
+                            </div>
+                            <input type="date" value="@(Criteria.AddDateStarts.HasValue ? Dateformat(Criteria.AddDateEnd.Value) : null)" name="dateend" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <h1>User</h1>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">User</span>
+                            </div>
+                            <select name="user" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="0">All Users</option>
+                                @foreach (var i in users)
+                                {
+                                    if (Criteria.UserId == i.Id)
+                                    {
+                                        <option selected value="@i.Id">@(i.Firstname + " " + i.Lastname)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i.Id">@(i.Firstname + " " + i.Lastname)</option>
+                                    }
+
+                                }
+                            </select>
+                        </div>
+
+                        <h1>File Type</h1>
+                        <hr />
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">File Namespace</span>
+                            </div>
+                            <select name="content" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="">All Namespaces</option>
+                                @if (Criteria.FileNamespace == "[No Namespaces]")
+                                {
+                                    <option selected value="[No Namespaces]">[No Namespaces]</option>
+                                }
+                                else
+                                {
+                                    <option value="[No Namespaces]">[No Namespaces]</option>
+                                }
+                                @foreach (string i in ViewBag.nspaces)
+                                {
+                                    if (!string.IsNullOrEmpty(i))
+                                    {
+                                        if (Criteria.FileNamespace == i)
+                                        {
+                                            <option selected value="@i">@i</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
 
 
-<!--AdvancedSearch Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Advanced Search</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">File Extension</span>
+                            </div>
+                            <select name="ext" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="">All Extension</option>
+                                @foreach (string i in ViewBag.ext)
+                                {
+                                    @if (Criteria.FileExtension == i)
+                                    {
+                                        <option selected value="@i">@i</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Storage Type</span>
+                            </div>
+                            <select name="mode" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option selected="@(Criteria.FileMode==0 ? true : false)" value="0">All Type</option>
+                                <option selected="@(Criteria.FileMode==1 ? true : false)" value="1">Files</option>
+                                <option selected="@(Criteria.FileMode==2 ? true : false)" value="2">Blobs</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Status</span>
+                            </div>
+                            <select name="status" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option selected="@(Criteria.StatusMode==0 ? true : false)" value="0">All Type</option>
+                                <option selected="@(Criteria.StatusMode==1 ? true : false)" value="1">Private</option>
+                                <option selected="@(Criteria.StatusMode==2 ? true : false)" value="2">Public</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-8">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input name="Hpass" id="checkbox1_0" type="checkbox" class="custom-control-input" value="1" checked="@Criteria.HasPassword">
+                                    <label for="checkbox1_0" class="custom-control-label">Has Password</label>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" formaction="/user/Admin/Uploads">Search</button>
+                    </div>
+                </form>
             </div>
-            <form method="post">
-                <div class="modal-body">
+        </div>
+    </div>
+}
+else
+{
 
-                    <h1>Add Date</h1>
-                    <hr />
+    <!--AdvancedSearch Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Advanced Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
 
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
-                        </div>
-                        <input type="date" name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">End</span>
-                        </div>
-                        <input type="date" name="dateend" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                    </div>
-                    <h1>User</h1>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">User</span>
-                        </div>
-                        <select name="user" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                            <option value="0">All Users</option>
-                            @foreach (var i in users)
-                            {
-                                <option value="@i.Id">@(i.Firstname+" "+i.Lastname)</option>
-                            }
-                        </select>
-                    </div>
+                        <h1>Add Date</h1>
+                        <hr />
 
-                    <h1>File Type</h1>
-                    <hr />
-
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">File Namespace</span>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Start</span>
+                            </div>
+                            <input type="date" name="datestart" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                         </div>
-                        <select name="content" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                            <option value="">All Namespaces</option>
-                            <option value="[No Namespaces]">[No Namespaces]</option>
-                            @foreach (string i in ViewBag.nspaces)
-                            {
-                                if (!string.IsNullOrEmpty(i))
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">End</span>
+                            </div>
+                            <input type="date" name="dateend" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        </div>
+                        <h1>User</h1>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">User</span>
+                            </div>
+                            <select name="user" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="0">All Users</option>
+                                @foreach (var i in users)
+                                {
+                                    <option value="@i.Id">@(i.Firstname + " " + i.Lastname)</option>
+                                }
+                            </select>
+                        </div>
+
+                        <h1>File Type</h1>
+                        <hr />
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">File Namespace</span>
+                            </div>
+                            <select name="content" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="">All Namespaces</option>
+                                <option value="[No Namespaces]">[No Namespaces]</option>
+                                @foreach (string i in ViewBag.nspaces)
+                                {
+                                    if (!string.IsNullOrEmpty(i))
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">File Extension</span>
+                            </div>
+                            <select name="ext" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="">All Extension</option>
+                                @foreach (string i in ViewBag.ext)
                                 {
                                     <option value="@i">@i</option>
                                 }
-                            }
-                        </select>
-                    </div>
-
-
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">File Extension</span>
-                        </div>
-                        <select name="ext" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                            <option value="">All Extension</option>
-                            @foreach (string i in ViewBag.ext)
-            {
-                <option value="@i">@i</option>
-            }
                             </select>
-                    </div>
-
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Storage Type</span>
                         </div>
-                        <select name="mode" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                            <option value="0">All Type</option>
-                            <option value="1">Files</option>
-                            <option value="2">Blobs</option>
-                        </select>
-                    </div>
 
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Status</span>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Storage Type</span>
+                            </div>
+                            <select name="mode" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="0">All Type</option>
+                                <option value="1">Files</option>
+                                <option value="2">Blobs</option>
+                            </select>
                         </div>
-                        <select name="status" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                            <option value="0">All Type</option>
-                            <option value="1">Private</option>
-                            <option value="2">Public</option>
-                        </select>
-                    </div>
 
-                    <div class="form-group row">
-                        <div class="col-8">
-                            <div class="custom-control custom-checkbox custom-control-inline">
-                                <input name="Hpass" id="checkbox1_0" type="checkbox" class="custom-control-input" value="1">
-                                <label for="checkbox1_0" class="custom-control-label">Has Password</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Status</span>
+                            </div>
+                            <select name="status" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                                <option value="0">All Type</option>
+                                <option value="1">Private</option>
+                                <option value="2">Public</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-8">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input name="Hpass" id="checkbox1_0" type="checkbox" class="custom-control-input" value="1">
+                                    <label for="checkbox1_0" class="custom-control-label">Has Password</label>
+                                </div>
                             </div>
                         </div>
+
+
+
+
                     </div>
-
-
-
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" formaction="/user/Admin/Uploads">Search</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" formaction="/user/Admin/Uploads">Search</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+}

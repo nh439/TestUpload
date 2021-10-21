@@ -469,7 +469,7 @@ namespace TestUpload.Controllers
                    filecriteria.HasPassword = Request.Form["Hpass"].ToString() == "1" ? true : false;
                    filecriteria.StatusMode = int.Parse(Request.Form["status"].ToString());
                    filecriteria.UserId = long.Parse(Request.Form["user"].ToString());
-                    
+                    ViewBag.C = filecriteria;
                     var selectedFiles = await _ifileTotalServices.GetByAdvancedSearch(filecriteria);
                     var UserList = await _iuserService.GetViewModelAsync();
                     ViewBag.user = UserList;

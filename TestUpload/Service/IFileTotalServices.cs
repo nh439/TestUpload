@@ -27,6 +27,10 @@ namespace TestUpload.Service
         public async Task<List<FileTotal>> GetByAdvancedSearch(Filecriteria filecriteria)
         {
             var data = await _fileTotalRepository.GetFileTotalsAsync();
+            if(filecriteria.UserId > 0)
+            {
+                data = data.Where(x => x.UserId == filecriteria.UserId).ToList();
+            }
             if (!string.IsNullOrEmpty(filecriteria.FileExtension))
             {
                 data = data.Where(x => x.FileExtension == filecriteria.FileExtension).ToList();
