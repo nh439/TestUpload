@@ -14,7 +14,7 @@ namespace TestUpload.Models.criteria
         public bool HasPassword { get; set; }
         public int FileMode { get; set; }
         public int StatusMode { get; set; }
-        public int? UserId { get; set; }
+        public long? UserId { get; set; }
 
     }
 }

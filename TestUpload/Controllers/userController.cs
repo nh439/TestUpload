@@ -450,6 +450,43 @@ namespace TestUpload.Controllers
             return Redirect("/Home/Restricted");
         }
 
+        [HttpPost("/user/Admin/Uploads")]
+        public async Task<IActionResult> AdminUploadsP()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
+                {
+                    Filecriteria filecriteria = new Filecriteria();
+
+                   filecriteria.AddDateEnd = !string.IsNullOrEmpty(Request.Form["dateend"].ToString()) ? DateTime.Parse(Request.Form["dateend"].ToString(), MainInfo) : null;
+                   filecriteria.AddDateStarts = !string.IsNullOrEmpty(Request.Form["datestart"].ToString()) ? DateTime.Parse(Request.Form["datestart"].ToString(), MainInfo) : null;
+                   filecriteria.FileNamespace = Request.Form["content"].ToString();
+                   filecriteria.FileExtension = Request.Form["ext"].ToString();
+                   filecriteria.FileMode = int.Parse(Request.Form["mode"].ToString());
+                   filecriteria.HasPassword = Request.Form["Hpass"].ToString() == "1" ? true : false;
+                   filecriteria.StatusMode = int.Parse(Request.Form["status"].ToString());
+                   filecriteria.UserId = long.Parse(Request.Form["user"].ToString());
+                    
+                    var selectedFiles = await _ifileTotalServices.GetByAdvancedSearch(filecriteria);
+                    var UserList = await _iuserService.GetViewModelAsync();
+                    ViewBag.user = UserList;
+                    var allFile = await _ifileTotalServices.GetAsync();
+                    ViewBag.Files = selectedFiles;
+                    ViewBag.TotalUsed = _ifileStorageService.GetTotalUsedSpace() + _ifileUploadService.GetTotalUsedSpace();
+                    ViewBag.Mode = 3;
+                    var ext = allFile.Select(x => x.FileExtension).Distinct().ToList();
+                    var namespaces = allFile.Select(x => x.FileNamespace).Distinct().ToList();
+                    ViewBag.ext = ext;
+                    ViewBag.nspaces = namespaces;
+                    return View("AdminView");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+
         [HttpGet("/user/Admin/Sessions")]
         public async Task<IActionResult> AdminSessions()
         {

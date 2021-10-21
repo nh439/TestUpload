@@ -11,6 +11,7 @@ namespace TestUpload.Service
     public interface IFileTotalServices
     {
         Task<List<FileTotal>> GetAsync();
+        Task<List<FileTotal>> GetByAdvancedSearch(Filecriteria filecriteria);
     }
     public class FileTotalServices:IFileTotalServices
     {
@@ -23,7 +24,7 @@ namespace TestUpload.Service
         {
             return await _fileTotalRepository.GetFileTotalsAsync();
         }
-        public async Task<List<FileTotal>> GrtByAdvancedSearch(Filecriteria filecriteria)
+        public async Task<List<FileTotal>> GetByAdvancedSearch(Filecriteria filecriteria)
         {
             var data = await _fileTotalRepository.GetFileTotalsAsync();
             if (!string.IsNullOrEmpty(filecriteria.FileExtension))

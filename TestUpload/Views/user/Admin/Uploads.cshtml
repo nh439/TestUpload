@@ -150,7 +150,7 @@ else
                             <span class="input-group-text" id="inputGroup-sizing-default">User</span>
                         </div>
                         <select name="user" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                            <option value="">All Users</option>
+                            <option value="0">All Users</option>
                             @foreach (var i in users)
                             {
                                 <option value="@i.Id">@(i.Firstname+" "+i.Lastname)</option>
@@ -229,7 +229,7 @@ else
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" asp-action="" asp-controller="Files">Search</button>
+                    <button type="submit" class="btn btn-primary" formaction="/user/Admin/Uploads">Search</button>
                 </div>
             </form>
         </div>
