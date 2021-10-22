@@ -17,6 +17,8 @@ namespace TestUpload.Service
         List<Sessions> GetByUser(long user);
         bool Sessioncheck(string SessionId);
         int ForcedCheckout(long user, string ExceptSessionId);
+        Task<List<Sessions>> AdvancedSearch(SessionCriteria criteria);
+        Task<int> clear(int month);
 
     }
     public class SessionServices :ISessionServices
@@ -90,10 +92,14 @@ namespace TestUpload.Service
             }
             if(criteria.LogoutState==2)
             {
-                data.Where(x => !x.IsLogout).ToList();
+              data=  data.Where(x => !x.IsLogout).ToList();
             }
             return data;
 
+        }
+        public async Task<int> clear(int month)
+        {
+            return await _sessionRepository.RemoveOverXMonth(month);
         }
     }
 }

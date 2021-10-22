@@ -506,6 +506,59 @@ namespace TestUpload.Controllers
             }
             return Redirect("/Home/Restricted");
         }
+
+        [HttpPost("/user/Admin/Sessions")]
+        public async Task<IActionResult> AdminSessionsS()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
+                {
+                    SessionCriteria criteria = new SessionCriteria()
+                    {
+                        LoggedIn = new dt
+                        {
+                            Enddate = !string.IsNullOrEmpty(Request.Form["lne"].ToString()) ? DateTime.Parse(Request.Form["lne"].ToString(), MainInfo):null,
+                            Startdate=!string.IsNullOrEmpty(Request.Form["lns"].ToString()) ? DateTime.Parse(Request.Form["lns"].ToString(),MainInfo):null
+                    },
+                        LoggedOut= new dt
+                        {
+                            Enddate =  !string.IsNullOrEmpty(Request.Form["loe"].ToString()) ? DateTime.Parse(Request.Form["loe"].ToString(), MainInfo) : null,
+                            Startdate = !string.IsNullOrEmpty(Request.Form["los"].ToString()) ? DateTime.Parse(Request.Form["los"].ToString(), MainInfo) : null
+                        },
+                    LogoutState=int.Parse(Request.Form["lst"].ToString()),
+                    UserId=int.Parse(Request.Form["user"].ToString())
+                    };
+                    var SelectedSessions = await _sessionServices.AdvancedSearch(criteria);
+                    var UserList = await _iuserService.GetViewModelAsync();
+                    ViewBag.user = UserList;
+                    var Sessions = await _sessionServices.GetallAsync();
+                    ViewBag.S = SelectedSessions;
+                    ViewBag.Mode = 4;
+                    ViewBag.C = criteria;
+                    return View("AdminView");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
+        [HttpPost("/Admin/SessionsRemove")]
+        public async Task<IActionResult> Removesession()
+        {
+            long.TryParse(HttpContext.Session.GetString("uid"), out long Adminuser);
+            User principal = _iuserService.GetWithoutPassword(Adminuser);
+            if (principal != null)
+            {
+                if (principal.Admin && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
+                {
+                    int month = int.Parse(Request.Form["m"].ToString());
+                    await _sessionServices.clear(month);
+                    return Redirect("/user/Admin/Sessions");
+                }
+            }
+            return Redirect("/Home/Restricted");
+        }
         #endregion
 
 

@@ -14,10 +14,23 @@
         {
             return users.Where(x => x.Id == id).Select(x => x.Firstname + " " + x.Lastname).FirstOrDefault();
         }
+
+    }
+    string Dateformat(DateTime? dateTime)
+    {
+        if (dateTime.HasValue)
+        {
+            DateTime date = dateTime.Value;
+            string dateformat = date.Year + "-" + (date.Month >= 10 ? date.Month : "0" + date.Month) + "-" + (date.Day >= 10 ? date.Day : "0" + date.Day);
+            return dateformat;
+        }
+        return string.Empty;
+
     }
 }
 @using TestUpload.Models.Entity;
 @using TestUpload.Models.View;
+@using TestUpload.Models.criteria;
 <script src="~/js/CommonSearch.js"></script>
 <link rel="stylesheet" href="~/css/Tooltip.css" />
 <div class="ui labeled input">
@@ -44,7 +57,7 @@
             <option value="18">1 Year 6 Months</option>
             <option value="24">2 Years</option>
         </select>
-        <button class="ui red button">Clear</button>
+        <button class="ui red button" type="submit" asp-controller="Admin" asp-action="SessionsRemove">Clear</button>
     </div>
     <br />
     <br />
@@ -74,92 +87,185 @@
     </table>
 </form>
 
+@if (ViewBag.C == null)
+{
+    <!--AdvancedSearch Modal -->
+    <form method="post">
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Sessions Advanced Search</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h1 style="text-align:center">Advanced Search</h1>
+                        <br />
+                        <h2>Logged In Date</h2>
+                        <hr />
+                        <div class="form-group">
 
-<!--AdvancedSearch Modal -->
-<form method="post">
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Sessions Advanced Search</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h1 style="text-align:center">Advanced Search</h1>
-                    <br />
-                    <h2>Logged In Date</h2>
-                    <hr />
-                    <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="lns" name="lns" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="lne" name="lne" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <h2>Logged Out Date</h2>
+                        <hr />
+                        <div class="form-group">
 
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">Start</div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="los" name="los" type="date" class="form-control">
                             </div>
-                            <input id="lns" name="lns" type="date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="loe" name="loe" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">User</div>
+                                </div>
+                                <select id="user" name="user" class="form-control">
+                                    <option value="0">All</option>
+                                    @foreach (var i in users)
+                                    {
+                                        <option value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Logged Out</div>
+                                </div>
+                                <select id="lst" name="lst" class="form-control">
+                                    <option value="0">All</option>
+                                    <option value="1">Yes</option>
+                                    <option value="2">No</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">Until</div>
-                            </div>
-                            <input id="lne" name="lne" type="date" class="form-control">
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Search</button>
                     </div>
-                    <h2>Logged Out Date</h2>
-                    <hr />
-                    <div class="form-group">
-
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">Start</div>
-                            </div>
-                            <input id="los" name="los" type="date" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">Until</div>
-                            </div>
-                            <input id="loe" name="loe" type="date" class="form-control">
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">User</div>
-                            </div>
-                            <select id="user" name="user" class="form-control">
-                                <option value="0">All</option>
-                                @foreach (var i in users)
-                                {
-                                    <option value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">Logged Out</div>
-                            </div>
-                            <select id="user" name="user" class="form-control">
-                                <option value="0">All</option>
-                                <option value="1">Yes</option>
-                                <option value="2">No</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Search</button>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+}
+else
+{
+    SessionCriteria criteria = ViewBag.C;
+    <form method="post">
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Sessions Advanced Search</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h1 style="text-align:center">Advanced Search</h1>
+                        <br />
+                        <h2>Logged In Date</h2>
+                        <hr />
+                        <div class="form-group">
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="lns" value="@(criteria.LoggedIn.Startdate.HasValue ? Dateformat(criteria.LoggedIn.Startdate.Value) : null)" name="lns" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="lne"  value="@(criteria.LoggedIn.Enddate.HasValue ? Dateformat(criteria.LoggedIn.Enddate.Value) : null)"name="lne" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <h2>Logged Out Date</h2>
+                        <hr />
+                        <div class="form-group">
+
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Start</div>
+                                </div>
+                                <input id="los" name="los" value="@(criteria.LoggedOut.Startdate.HasValue ? Dateformat(criteria.LoggedOut.Startdate.Value) : null)" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Until</div>
+                                </div>
+                                <input id="loe" name="loe" value="@(criteria.LoggedOut.Enddate.HasValue ? Dateformat(criteria.LoggedOut.Enddate.Value) : null)" type="date" class="form-control">
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">User</div>
+                                </div>
+                                <select id="user" name="user" class="form-control">
+                                    <option value="0">All</option>
+                                    @foreach (var i in users)
+                                    {
+                                        <option value="@i.Id" selected="@(criteria.UserId==i.Id ? true:false)">@i.Firstname&nbsp;@i.Lastname</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">Logged Out</div>
+                                </div>
+                                <select id="lst" name="lst" class="form-control">
+                                    <option selected="@(criteria.LogoutState==0? true:false)" value="0">All</option>
+                                    <option selected="@(criteria.LogoutState==1? true:false)" value="1">Yes</option>
+                                    <option selected="@(criteria.LogoutState==2? true:false)" value="2">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}

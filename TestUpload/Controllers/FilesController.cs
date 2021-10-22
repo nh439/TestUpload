@@ -25,8 +25,15 @@ namespace TestUpload.Controllers
         private readonly IhistoryLogService service;
         private readonly ILoginService IloginService;
         private readonly ILogger<FilesController> _logger;
+        private readonly ISessionServices _sessionServices;
         CultureInfo THinfo = new CultureInfo("en-GB");
-        public FilesController(IFileUploadService fileUploadService, IFileStorageService fileStorageService, IConfiguration configuration, IhistoryLogService ihistory,ILoginService loginService, ILogger<FilesController> logger)
+        public FilesController(IFileUploadService fileUploadService, 
+            IFileStorageService fileStorageService, 
+            IConfiguration configuration, 
+            IhistoryLogService ihistory,
+            ILoginService loginService, 
+            ILogger<FilesController> logger,
+            ISessionServices sessionServices)
         {
             IfileUploadService = fileUploadService;
             IfileStorageService = fileStorageService;
@@ -34,13 +41,14 @@ namespace TestUpload.Controllers
             service = ihistory;
             IloginService = loginService;
             _logger = logger;
+            _sessionServices = sessionServices;
         }
 
 
         [HttpGet("/Files")]
         public IActionResult Index()
         {
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
                 List<FileUpload> files = IfileUploadService.GetFilesByUserAsync(user).GetAwaiter().GetResult();
@@ -87,7 +95,7 @@ namespace TestUpload.Controllers
         [HttpPost("/Files")]
         public IActionResult Index1()
         {
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 Filecriteria filecriteria = new Filecriteria
                 {
@@ -155,7 +163,7 @@ namespace TestUpload.Controllers
         [HttpGet("/Files/Uploads")]
         public IActionResult Uploads()
         {
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 return View();
             }
@@ -272,7 +280,7 @@ namespace TestUpload.Controllers
         [HttpGet("/Files/Download/{id}")]
         public IActionResult DownloadF(string id)
         {
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
                 FileUpload data = IfileUploadService.GetById(id);
@@ -360,7 +368,7 @@ namespace TestUpload.Controllers
         public IActionResult RemoveFile(string id)
         {
             FileUpload fileUpload = IfileUploadService.GetById(id);
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId == long.Parse(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId == long.Parse(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 var user = long.Parse(HttpContext.Session.GetString("uid"));
                 try
@@ -385,7 +393,7 @@ namespace TestUpload.Controllers
         public IActionResult Verifyremoved(string Id)
         {
             FileUpload fileUpload = IfileUploadService.GetById(Id);
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId == long.Parse(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && fileUpload.UserId == long.Parse(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 ViewBag.file = fileUpload;
                 return View();
@@ -395,7 +403,7 @@ namespace TestUpload.Controllers
         [HttpPost("/Files/Verifyremove")]
         public IActionResult RemoveVerify()
         {
-            var user = long.Parse(HttpContext.Session.GetString("uid"));
+            var user = long.Parse(HttpContext.Session.GetString("uid") && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")));
             try
             {
                 PasswordHash hash = new PasswordHash();
@@ -432,7 +440,7 @@ namespace TestUpload.Controllers
                 Id = Request.Form["id"].ToString(),
                 Blob = bool.Parse(Request.Form["blob"].ToString())
             };
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) )
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 ViewBag.Id = data.Id;
                 ViewBag.Blob = data.Blob ? true:false;
@@ -448,7 +456,7 @@ namespace TestUpload.Controllers
             {
                 bool blob = bool.Parse(Request.Form["Blob"].ToString());
                 string Id = Request.Form["id"].ToString();
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     string pass = Request.Form["upass"].ToString();
                     string username = HttpContext.Session.GetString("un");
@@ -498,7 +506,7 @@ namespace TestUpload.Controllers
         [HttpGet("/Blob/Download/{id}")]
         public IActionResult DownloadB(string id)
         {
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
                 FilestorageView data = IfileStorageService.GetViewById(id).GetAwaiter().GetResult();
@@ -579,7 +587,7 @@ namespace TestUpload.Controllers
         public IActionResult RemoveBlob(string id)
         {
             FilestorageView StorageView = IfileStorageService.GetViewById(id).GetAwaiter().GetResult();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && StorageView.UserId == long.Parse(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && StorageView.UserId == long.Parse(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 var user = long.Parse(HttpContext.Session.GetString("uid"));
                 try
@@ -602,7 +610,7 @@ namespace TestUpload.Controllers
         public IActionResult VerifyremovedB(string Id)
         {
             FilestorageView StorageView = IfileStorageService.GetViewById(Id).GetAwaiter().GetResult();
-            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && StorageView.UserId == long.Parse(HttpContext.Session.GetString("uid")))
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && StorageView.UserId == long.Parse(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 ViewBag.file = StorageView;
                 return View();
@@ -639,7 +647,7 @@ namespace TestUpload.Controllers
         [HttpPost("/Files/Format")]
         public async Task<IActionResult> Format()
         {
-            if(!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+            if(!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
                 PasswordHash hash = new PasswordHash();
                 long user = long.Parse(HttpContext.Session.GetString("uid"));
@@ -674,7 +682,7 @@ namespace TestUpload.Controllers
                 string reference = Request.Form["id"].ToString();
                 bool shared = Request.Form["Shared"].ToString()=="true" ? true:false;
                 bool blob = bool.Parse(Request.Form["Blob"].ToString());
-                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")))
+                if (!string.IsNullOrEmpty(HttpContext.Session.GetString("uid")) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
                 {
                     long user = long.Parse(HttpContext.Session.GetString("uid"));
                     if(blob)

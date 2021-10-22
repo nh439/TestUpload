@@ -38,7 +38,7 @@ namespace TestUpload.Repository.SQL
         }
         public async Task<int> RemoveOverXMonth(int month)
         {
-            return await _context.Database.ExecuteSqlRawAsync(string.Format("delete from sessions where timestampdiff(month,LoggedIn,current_timestamp) > {0};",month));
+            return await _context.Database.ExecuteSqlRawAsync(string.Format("delete from sessions where timestampdiff(month,LoggedIn,current_timestamp) >= {0} and Loggedout is not null;", month));
         }
         public Sessions GetById(string Id)
         {
