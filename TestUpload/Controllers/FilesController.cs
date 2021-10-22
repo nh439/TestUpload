@@ -403,7 +403,7 @@ namespace TestUpload.Controllers
         [HttpPost("/Files/Verifyremove")]
         public IActionResult RemoveVerify()
         {
-            var user = long.Parse(HttpContext.Session.GetString("uid") && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")));
+            var user = long.Parse(HttpContext.Session.GetString("uid") );
             try
             {
                 PasswordHash hash = new PasswordHash();
@@ -411,7 +411,7 @@ namespace TestUpload.Controllers
                 string password = Request.Form["pass"].ToString();
                 password = hash.CreateEncrypted(Id, password);
                 var i = IfileUploadService.GetById(Id);
-                var res = IfileUploadService.VerifyRemove(Id, password);
+                var res = IfileUploadService.VerifyRemove(Id, password) && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid"));
                 if (res)
                 {
 
