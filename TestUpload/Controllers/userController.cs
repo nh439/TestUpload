@@ -185,7 +185,7 @@ namespace TestUpload.Controllers
             var Hasuser = long.TryParse(HttpContext.Session.GetString("uid"), out long user);
             if (Hasuser && _sessionServices.Sessioncheck(HttpContext.Session.GetString("sid")))
             {
-                _sessionServices.ForcedClear(user, HttpContext.Session.GetString("sid"));
+                _sessionServices.ForcedCheckout(user, HttpContext.Session.GetString("sid"));
                 return Redirect("/user/Profile");
             }
             return Redirect("/Home/Restricted");

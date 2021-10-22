@@ -30,7 +30,6 @@ namespace TestUpload.Service
             {
                 string query = "update sessions set Loggedout=current_timestamp(),IsLogout=1  where timestampdiff(day,LoggedIn,current_timestamp()) >=1 and Loggedout is null;";
                 var i= _context.Database.ExecuteSqlRaw(query);
-                Console.WriteLine(i);
             }
             catch(Exception x)
             {

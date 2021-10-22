@@ -25,7 +25,7 @@
         CommonSearch
     </div>
     <input type="text" id="SearchValue" onkeyup="Serach(this.id, 'Mybody');">
-    <button class="ui blue button">Advanced Search</button>
+    <button class="ui blue button" data-toggle="modal" data-target="#exampleModal">Advanced Search</button>
 </div>
 <br />
 <br />
@@ -59,17 +59,107 @@
             </tr>
         </thead>
         <tbody class="table-success" id="Mybody">
-            @foreach(var i in sessions)
+            @foreach (var i in sessions)
             {
-            <tr>
-                <td data-bs-toggle="tooltip" data-bs-placement="top" title="@i.Id">@i.Id.Substring(0,30)</td>
-                
-                <td>@Mapuser(i.UserId)</td>
-                <td>@i.LoggedIn</td>
-                <td>@i.Loggedout</td>
-                <td>@i.IpAddress</td>
-            </tr>
+                <tr>
+                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="@i.Id">@i.Id.Substring(0, 30)</td>
+
+                    <td>@Mapuser(i.UserId)</td>
+                    <td>@i.LoggedIn</td>
+                    <td>@i.Loggedout</td>
+                    <td>@i.IpAddress</td>
+                </tr>
             }
-            </tbody>
+        </tbody>
     </table>
+</form>
+
+
+<!--AdvancedSearch Modal -->
+<form method="post">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="color:black">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Sessions Advanced Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h1 style="text-align:center">Advanced Search</h1>
+                    <br />
+                    <h2>Logged In Date</h2>
+                    <hr />
+                    <div class="form-group">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">Start</div>
+                            </div>
+                            <input id="lns" name="lns" type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">Until</div>
+                            </div>
+                            <input id="lne" name="lne" type="date" class="form-control">
+                        </div>
+                    </div>
+                    <h2>Logged Out Date</h2>
+                    <hr />
+                    <div class="form-group">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">Start</div>
+                            </div>
+                            <input id="los" name="los" type="date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">Until</div>
+                            </div>
+                            <input id="loe" name="loe" type="date" class="form-control">
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">User</div>
+                            </div>
+                            <select id="user" name="user" class="form-control">
+                                <option value="0">All</option>
+                                @foreach (var i in users)
+                                {
+                                    <option value="@i.Id">@i.Firstname&nbsp;@i.Lastname</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">Logged Out</div>
+                            </div>
+                            <select id="user" name="user" class="form-control">
+                                <option value="0">All</option>
+                                <option value="1">Yes</option>
+                                <option value="2">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>

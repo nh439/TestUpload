@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestUpload.Models.criteria;
 using TestUpload.Models.Entity;
 using TestUpload.Repository.SQL;
 using TestUpload.Securities;
@@ -15,7 +16,7 @@ namespace TestUpload.Service
         Task<List<Sessions>> GetallAsync();
         List<Sessions> GetByUser(long user);
         bool Sessioncheck(string SessionId);
-        int ForcedClear(long user, string ExceptSessionId);
+        int ForcedCheckout(long user, string ExceptSessionId);
 
     }
     public class SessionServices :ISessionServices
@@ -52,13 +53,47 @@ namespace TestUpload.Service
         {
             return _sessionRepository.GetByUser(user);
         }
-        public int ForcedClear(long user, string ExceptSessionId)
+        public int ForcedCheckout(long user, string ExceptSessionId)
         {
             return _sessionRepository.ForcedClear(user, ExceptSessionId);
         }
         public bool Sessioncheck(string SessionId)
         {
             return _sessionRepository.Sessioncheck(SessionId);
+        }
+        public async Task<List<Sessions>> AdvancedSearch(SessionCriteria criteria)
+        {
+            var data = await _sessionRepository.Getall();
+            if(criteria.LoggedIn.Startdate.HasValue)
+            {
+                data = data.Where(x => x.LoggedIn >= criteria.LoggedIn.Startdate.Value.Date).ToList();
+            }
+            if(criteria.LoggedIn.Enddate.HasValue)
+            {
+                data = data.Where(x => x.LoggedIn < criteria.LoggedIn.Enddate.Value.Date).ToList();
+            }
+            if (criteria.LoggedOut.Startdate.HasValue)
+            {
+                data = data.Where(x => x.Loggedout >= criteria.LoggedOut.Startdate.Value.Date).ToList();
+            }
+            if (criteria.LoggedOut.Enddate.HasValue)
+            {
+                data = data.Where(x => x.Loggedout < criteria.LoggedOut.Enddate.Value.Date).ToList();
+            }
+            if(criteria.UserId >0)
+            {
+                data = data.Where(x => x.UserId == criteria.UserId).ToList();
+            }
+            if(criteria.LogoutState==1)
+            {
+                data = data.Where(x => x.IsLogout).ToList();
+            }
+            if(criteria.LogoutState==2)
+            {
+                data.Where(x => !x.IsLogout).ToList();
+            }
+            return data;
+
         }
     }
 }
