@@ -33,6 +33,7 @@
 @using TestUpload.Models.criteria;
 <script src="~/js/CommonSearch.js"></script>
 <link rel="stylesheet" href="~/css/Tooltip.css" />
+<script src="~/js/FilesIndex.js"></script>
 <div class="ui labeled input">
     <div class="ui orange label">
         CommonSearch
@@ -61,14 +62,14 @@
     </div>
     <br />
     <br />
-    <table class="ui  table" style="text-align:center" id="Session">
+    <table class="ui  table" style="text-align:center" id="Session" >
         <thead class="ui selectable inverted table" style="text-align:center">
             <tr>
-                <th>Id</th>
-                <th>User</th>
-                <th>Login</th>
-                <th>Logout</th>
-                <th>IpAddress</th>
+                <th onclick="sortTable(0, 'Session')">Id</th>
+                <th onclick="sortTable(1, 'Session')">User</th>
+                <th onclick="sortTable(2, 'Session')">Login</th>
+                <th onclick="sortTable(3, 'Session')">Logout</th>
+                <th onclick="sortTable(4, 'Session')">IpAddress</th>
             </tr>
         </thead>
         <tbody class="table-success" id="Mybody">

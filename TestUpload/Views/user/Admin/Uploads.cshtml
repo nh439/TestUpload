@@ -67,6 +67,7 @@ Space Used : @SizeConverter(Totalsize);
 <br />
 <br />
 <script src="/js/CommonSearch.js"></script>
+<script src="~/js/FilesIndex.js"></script>
 <div class="ui labeled input">
     <div class="ui orange label">
         CommonSearch
@@ -81,16 +82,16 @@ Space Used : @SizeConverter(Totalsize);
     <table class="ui  table" style="text-align:center" id="Uploads">
         <thead class="ui selectable inverted table" style="text-align:center">
             <tr>
-                <th>FileId</th>
-                <th>Filename</th>
-                <th>File Namespace</th>
-                <th>Owner</th>
-                <th>Filesize</th>
-                <th>FileType</th>
-                <th>Add Date</th>
-                <th>Password</th>
-                <th>Shared</th>
-                <th>Upload Id</th>
+                <th onclick="sortTable(0,'Uploads')">Id</th>
+                <th onclick="sortTable(1,'Uploads')">Filename</th>
+                <th onclick="sortTable(2,'Uploads')">File Namespace</th>
+                <th onclick="sortTable(3,'Uploads')">Owner</th>
+                <th onclick="sortTable(4,'Uploads')">Filesize</th>
+                <th onclick="sortTable(5,'Uploads')">FileType</th>
+                <th onclick="sortTable(6,'Uploads')">Add Date</th>
+                <th onclick="sortTable(7,'Uploads')">Password</th>
+                <th onclick="sortTable(8,'Uploads')">Shared</th>
+                <th onclick="sortTable(9,'Uploads')">Upload Id</th>
             </tr>
         </thead>
         <tbody class="table-success" id="Mybody">
