@@ -16,7 +16,7 @@ namespace TestUpload.Middleware
 
         public Schedule(RequestDelegate next,ISessionLogoutService sessionLogoutService)
         {
-            RecurringJob.AddOrUpdate(() => sessionLogoutService.AutoLogout(), "*/2 * * * *");
+            RecurringJob.AddOrUpdate(() => sessionLogoutService.AutoLogout(), "0 0 17 ? * * *");
             _next = next;
         }
 

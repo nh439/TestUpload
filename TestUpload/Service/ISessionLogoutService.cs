@@ -30,6 +30,8 @@ namespace TestUpload.Service
             {
                 string query = "update sessions set Loggedout=current_timestamp(),IsLogout=1  where timestampdiff(day,LoggedIn,current_timestamp()) >=1 and Loggedout is null;";
                 var i= _context.Database.ExecuteSqlRaw(query);
+                query = "delete from sessions where timestampdiff(month,loggedin,current_timestamp()) > 9";
+                _context.Database.ExecuteSqlRaw(query);
             }
             catch(Exception x)
             {
